@@ -1,9 +1,11 @@
-package cycki.fragmenttest;
+package catchme.contactlist;
 
 import java.util.ArrayList;
 
-import cycki.fragmenttest.dummy.DummyContent;
-import cycki.fragmenttest.dummy.DummyContent.DummyItem;
+import com.nostra13.universalimageloader.core.*;
+import catchme.exampleObjects.ExampleContent;
+import catchme.exampleObjects.ExampleContent.ExampleItem;
+import cycki.catchme.R;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,9 +18,9 @@ import android.widget.TextView;
 public class CustomListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private Activity activity;
-	private ArrayList<DummyItem> items;
+	private ArrayList<ExampleItem> items;
 
-	public CustomListAdapter(Activity activity, ArrayList<DummyItem> items) {
+	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.activity = activity;
 		this.items = items;
 	}
@@ -40,20 +42,28 @@ public class CustomListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if (inflater == null)
+		if (inflater == null) {
 			inflater = (LayoutInflater) activity
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		if (convertView == null)
+		}
+		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row, null);
-		DummyItem item = DummyContent.ITEMS.get(position);
-		
+		}
+		ExampleItem item = ExampleContent.ITEMS.get(position);
+
 		ImageView img = (ImageView) convertView.findViewById(R.id.thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.name);
 		TextView city = (TextView) convertView.findViewById(R.id.city);
-		
-		img.setImageResource(item.getImageResource());
+
+		if (item.getImageUrl() != null) {
+			ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
+		} else {
+			img.setImageResource(item.getImageResource());
+		}
+
 		name.setText(item.getName());
 		city.setText(item.getCity());
+
 		return convertView;
 	}
 

@@ -1,4 +1,7 @@
-package cycki.fragmenttest;
+package catchme.mapcontent;
+
+import catchme.contactlist.ItemListFragment;
+import catchme.exampleObjects.ExampleContent;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,14 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import cycki.fragmenttest.dummy.DummyContent;
+import cycki.catchme.R;
 
 public class ItemDetailFragment extends Fragment {
 	MapView mapView;
 	GoogleMap map;
-	public static final String ARG_ITEM_ID = "item_id";
 
-	private DummyContent.DummyItem mItem;
+	private ExampleContent.ExampleItem mItem;
 
 	public ItemDetailFragment() {
 	}
@@ -29,9 +31,9 @@ public class ItemDetailFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			mItem = DummyContent.ITEM_MAP.get(getArguments().getLong(
-					ARG_ITEM_ID));
+		if (getArguments().containsKey(ItemListFragment.ARG_ITEM_ID)) {
+			mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
+					ItemListFragment.ARG_ITEM_ID));
 		}
 	}
 
@@ -53,7 +55,7 @@ public class ItemDetailFragment extends Fragment {
 
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.item_detail))
-					.setText(mItem.name);
+					.setText(mItem.getName());
 		}
 
 		return rootView;
