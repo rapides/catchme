@@ -1,13 +1,17 @@
 package catchme.contactlist;
 
+import cycki.catchme.R;
 import catchme.exampleObjects.ExampleContent;
 import catchme.mapcontent.ItemDetailFragment;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 /**
@@ -19,10 +23,12 @@ import android.widget.ListView;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ItemListFragment extends ListFragment {
+public class ItemListFragment extends Fragment {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 	public static final String ARG_ITEM_ID = "item_id";
+	public static long lastChoosedContactId;
+	public ListView listView;
 
 	/**
 	 * The fragment's current callback object, which is notified of list item
@@ -39,9 +45,6 @@ public class ItemListFragment extends ListFragment {
 
 		public void onItemSelected(long id);
 
-		public void onItemSwipedLeft(long id);
-
-		public void onItemSwipedRight(long id);
 	}
 
 	private static Callbacks sDummyCallbacks = new Callbacks() {
@@ -49,27 +52,36 @@ public class ItemListFragment extends ListFragment {
 		public void onItemSelected(long id) {
 		}
 
-		@Override
-		public void onItemSwipedLeft(long id) {
-
-		}
-
-		@Override
-		public void onItemSwipedRight(long id) {
-
-		}
 	};
 
 	public ItemListFragment() {
-
+		lastChoosedContactId = 0;
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setListAdapter(new CustomListAdapter(getActivity(),
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_item_list, container,
+				false);
+
+		listView = (ListView) rootView.findViewById(R.id.item_list);
+		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
 
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> a, View v, int position,
+					long id) {
+				
+				lastChoosedContactId = ExampleContent.ITEMS.get(position)
+						.getId();
+				mCallbacks.onItemSelected(ExampleContent.ITEMS.get(position)
+						.getId());
+
+			}
+		});
+		return rootView;
 	}
 
 	@Override
@@ -104,13 +116,6 @@ public class ItemListFragment extends ListFragment {
 	}
 
 	@Override
-	public void onListItemClick(ListView listView, View view, int position,
-			long id) {
-		super.onListItemClick(listView, view, position, id);
-		mCallbacks.onItemSelected(ExampleContent.ITEMS.get(position).getId());
-	}
-
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (mActivatedPosition != AdapterView.INVALID_POSITION) {
@@ -142,5 +147,8 @@ public class ItemListFragment extends ListFragment {
 		mActivatedPosition = position;
 	}
 
-	
+	private ListView getListView() {
+		return listView;
+	}
+
 }

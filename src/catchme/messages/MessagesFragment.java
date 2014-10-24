@@ -1,5 +1,6 @@
 package catchme.messages;
 
+import catchme.contactlist.ItemListFragment;
 import catchme.exampleObjects.ExampleContent;
 import cycki.catchme.R;
 import android.app.Notification;
@@ -24,6 +25,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public static int timesClicked = 0;
 	private ExampleContent.ExampleItem mItem;
 	ListView listView;
+	View rootView;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,35 +38,45 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
+		/*if (getArguments() != null) {
 			if (getArguments().containsKey(ARG_ITEM_ID)) {
 				mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
 						ARG_ITEM_ID));
 			}
-			setListnerToRootView();
+
 		} else {
-			mItem = null;
-		}
+			mItem = ExampleContent.ITEM_MAP
+					.get(ItemListFragment.lastChoosedContactId);
+		}*/
+		setListnerToRootView();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_message_list,
-				container, false);
-		if (mItem != null) {
-			listView = (ListView) rootView.findViewById(R.id.messages_list);
-			TextView t = (TextView) rootView.findViewById(R.id.simpleText);
-			t.setText("" + mItem);
-			MessagesListAdapter adapter = new MessagesListAdapter(
-					getActivity(), mItem);
-			listView.setAdapter(adapter);
-			listView.setSelection(mItem.getMessages().size() - 1);
-		}
+		rootView = inflater.inflate(R.layout.fragment_message_list, container,
+				false);
+		loadData();
 		Button sendBtn = (Button) rootView.findViewById(R.id.message_send);
 		sendBtn.setOnClickListener(this);
-		getActivity().startService(new Intent(rootView.getContext(), MessagesRefreshService.class));
+		getActivity()
+				.startService(
+						new Intent(rootView.getContext(),
+								MessagesRefreshService.class));
 		return rootView;
+	}
+
+	private void loadData() {
+		mItem = ExampleContent.ITEM_MAP
+				.get(ItemListFragment.lastChoosedContactId);
+		listView = (ListView) rootView.findViewById(R.id.messages_list);
+		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
+		t.setText("" + mItem.getName());
+		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
+				mItem);
+		listView.setAdapter(adapter);
+		listView.setSelection(mItem.getMessages().size() - 1);
+
 	}
 
 	boolean isOpened = false;
@@ -99,16 +111,21 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.setContentText("Hello World!");
 		NotificationManager mNotificationManager = (NotificationManager) v
 				.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-		
+
 		if (timesClicked > 3) {
-			mNotifyBuilder.setContentText(timesClicked + " text")
-	        .setNumber(timesClicked);
+			mNotifyBuilder.setContentText(timesClicked + " text").setNumber(
+					timesClicked);
 		}
 		Notification note = mNotifyBuilder.build();
 		note.defaults |= Notification.DEFAULT_VIBRATE;
-	    note.defaults |= Notification.DEFAULT_SOUND;
+		note.defaults |= Notification.DEFAULT_SOUND;
 		mNotificationManager.notify(notifyID, note);
-		
+
+	}
+
+	public void updateView(long id) {
+		mItem = ExampleContent.ITEM_MAP.get(id);
+		loadData();
 	}
 
 }

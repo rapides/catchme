@@ -47,4 +47,8 @@ public class Message {
 		calendar.setTimeInMillis(milliSeconds);
 		return formatter.format(calendar.getTime());
 	}
+	
+	public String toString(){
+		return content;
+	}
 }

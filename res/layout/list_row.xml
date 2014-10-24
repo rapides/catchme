@@ -4,32 +4,50 @@
     android:layout_height="wrap_content"
     android:padding="8dp" >
  
-    <!-- Thumbnail Image -->
     <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/item_thumbnail"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="8dp" 
-        android:contentDescription=" "/>
+        android:layout_marginRight="8dp"
+        android:contentDescription=" "
+         />
  
-    <!-- Name -->
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
+        android:layout_alignTop="@+id/item_thumbnail"
+        android:layout_toRightOf="@+id/item_thumbnail"
         android:textStyle="bold" />
 
- 	<!-- City -->
     <TextView
-        android:id="@+id/city"
+        android:id="@+id/item_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
- 
+        android:layout_alignParentRight="true"
+         />
 
- 
+    <ImageButton
+        android:id="@+id/item_position_button"
+        
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/position_icon" />
+
+    <TextView
+        android:id="@+id/item_last_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_name"
+        android:layout_toLeftOf="@+id/item_position_button"
+        android:textSize="12sp"
+        android:maxLength="@integer/max_length" 
+        android:ellipsize="end"
+        android:layout_toRightOf="@+id/item_thumbnail"
+         />
+
 </RelativeLayout>

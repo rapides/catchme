@@ -35,7 +35,7 @@ public class ExampleContent {
 		 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
 		 * "Frankfurt"));
 		 */
-		addItem(new ExampleItem(6, "Weronika Grodecka 2", R.drawable.o5,
+		addItem(new ExampleItem(0, "Weronika Grodecka 2", R.drawable.o5,
 				"Poznan"));
 		addItem(new ExampleItem(1, "Evilish EviLeenda", R.drawable.o1, "Lublin"));
 		addItem(new ExampleItem(2, "Jarek Maksymiuk", R.drawable.o2,
@@ -98,6 +98,18 @@ public class ExampleContent {
 					+ "manowce istnienia. "));
 			messages.add(new Message("ok"));
 			messages.add(new Message("cycki"));
+			if (Math.random() < 0.5) {
+				messages.add(new Message(
+						"Ostatnia dluga wiadomosc, na tyle dluga zeby sie nie miescila "
+								+ ""
+								+ "w widoku na glownej stornie. Jednak musi byc"
+								+ " dlu¿sza bo to co napiaslem wczesniej nie "
+								+ "wystarczylo i sie nie skracalo, a ja chce "
+								+ "sprawdziæ czy elipsize dziala."));
+			} else {
+				messages.add(new Message("Ostatnia krótka wiadomosc"));
+			}
+
 		}
 
 		@Override

@@ -18,9 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="101dp"
         android:layout_above="@+id/message_input"
-        android:layout_below="@+id/simpleText"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_below="@+id/simpleText" />
 
     <EditText
         android:id="@+id/message_input"
