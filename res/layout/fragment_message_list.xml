@@ -11,29 +11,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"/>
-    
+        android:layout_alignParentTop="true" />
+
     <ListView
         android:id="@+id/messages_list"
         android:layout_width="match_parent"
+        android:stackFromBottom="true"
         android:layout_height="101dp"
         android:layout_above="@+id/message_input"
-        android:layout_below="@+id/simpleText" />
-
+        android:layout_below="@+id/simpleText"/>
+	
     <EditText
         android:id="@+id/message_input"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/message_send"
-        android:hint="@string/write_message" />
-
-    <Button
-        android:id="@+id/message_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:minHeight="50dip"
+        android:maxHeight="100dip"
+        android:layout_toLeftOf="@+id/message_send"
+        android:hint="@string/write_message" />
+
+    <ImageButton
+        android:id="@+id/message_send"
+        style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text=">" />
+        android:background="@color/messages_sendBtn_background"
+        android:contentDescription="@string/message_sendBtn"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_send" />
 
 </RelativeLayout>

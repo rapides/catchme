@@ -3,5 +3,5 @@
     android:id="@+id/item_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="catchme.mapcontent.ItemDetailActivity"
+    tools:context="com.catchme.mapcontent.ItemDetailActivity"
     tools:ignore="MergeRootFrame" />

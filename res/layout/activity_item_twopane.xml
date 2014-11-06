@@ -8,7 +8,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="catchme.contactlist.ItemListActivity" >
+    tools:context="com.catchme.contactlist.ItemListActivity" >
 
     <!--
     This layout is a two-pane layout for the Items
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/messages_list_container"
-        android:name="catchme.messages.MessagesFragment"
+        android:name="com.catchme.messages.MessagesFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/item_list"
-        android:name="catchme.contactlist.ItemListFragment"
+        android:name="com.catchme.contactlist.ItemListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"

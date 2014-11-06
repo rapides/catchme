@@ -21,6 +21,6 @@
         android:layout_alignParentTop="true"
         android:padding="16dp"
         android:textIsSelectable="true"
-        tools:context="catchme.mapcontent.ItemDetailFragment" />
+        tools:context="com.catchme.mapcontent.ItemDetailFragment" />
    
 </RelativeLayout>
