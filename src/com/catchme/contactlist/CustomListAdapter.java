@@ -1,7 +1,6 @@
 package com.catchme.contactlist;
 
 import java.util.ArrayList;
-
 import com.nostra13.universalimageloader.core.*;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
@@ -15,11 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomListAdapter extends BaseAdapter {
+public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
@@ -54,12 +55,13 @@ public class CustomListAdapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row, null);
 		}
-		ExampleItem item = ExampleContent.ITEMS.get(position);
+		ExampleItem item = items.get(position);
 
 		ImageView img = (ImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		TextView city = (TextView) convertView.findViewById(R.id.item_city);
+		//TextView city = (TextView) convertView.findViewById(R.id.item_city);
+
 		TextView lastMsg = (TextView) convertView
 				.findViewById(R.id.item_last_message);
 
@@ -73,16 +75,18 @@ public class CustomListAdapter extends BaseAdapter {
 		}
 
 		name.setText(item.getName());
-		city.setText(item.getCity());
+		// city.setText(item.getCity());
 		Message m = item.getMessages().get(item.getMessages().size() - 1);
 		if (m.getSenderId() % 2 == 0) {
 			lastMsg.setText("> " + m.getContent());
 		} else {
 			lastMsg.setText("Ty: " + m.getContent());
 		}
-		if (m.getContent().length() > R.integer.max_length) {
+		int maxLength = activity.getResources().getInteger(R.integer.max_length);
+		if (m.getContent().length() > maxLength) {
+			
 			lastMsg.setText(lastMsg.getText().subSequence(0,
-					lastMsg.length() - 3)
+					maxLength - 3)
 					+ "...");
 		}
 
@@ -90,19 +94,46 @@ public class CustomListAdapter extends BaseAdapter {
 		btn.setFocusable(false);
 		btn.setFocusableInTouchMode(false);
 
-		if (item.getState().equals(ExampleItem.STATE_TYPE[1])) {
-			setRequestSentView(convertView);
-		} else if (item.getState().equals(ExampleItem.STATE_TYPE[2])) {
-			setRequestReceivedView(convertView);
-		}
 		return convertView;
 	}
 
-	private void setRequestSentView(View itemView) {
-		//TODO 
-	}
+	@Override
+	public Filter getFilter() {
+		Filter filter = new Filter() {
+			;
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void publishResults(CharSequence constraint,
+					FilterResults results) {
 
-	private void setRequestReceivedView(View itemView) {
-		//TODO
+				items = (ArrayList<ExampleItem>) results.values;
+				notifyDataSetChanged();
+			}
+
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				FilterResults results = new FilterResults();
+				if (constraint == null || constraint.length() == 0) {
+					results.values = ExampleContent.ITEMS;
+					results.count = ExampleContent.ITEMS.size();
+				} else {
+					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
+
+					for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
+						ExampleItem dataItem = ExampleContent.ITEMS.get(i);
+						if (constraint.toString().startsWith(
+								"" + dataItem.getState())) {
+							filteredArrayNames.add(dataItem);
+						}
+					}
+
+					results.count = filteredArrayNames.size();
+					results.values = filteredArrayNames;
+				}
+				return results;
+
+			}
+		};
+		return filter;
 	}
 }

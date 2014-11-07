@@ -78,6 +78,7 @@ public class ServerConection {
 		return sb.toString();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String JsonPOST(String url, HashMap<String, HashMap<String, String>> data) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 
@@ -108,6 +109,7 @@ public class ServerConection {
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static JSONObject getJsonObjectFromMap(Map params)
 			throws JSONException {
 

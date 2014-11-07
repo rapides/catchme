@@ -12,6 +12,8 @@
     <string name="message_sendBtn">Send</string>
     <string name="tab_title_map">Positions</string>
     <string name="all_button">All contacts</string>
+    <string name="all">ALL</string>
+    <string name="accepted_button">Accepted contacts</string>
     <string name="sent_button">Sent invitations</string>
     <string name="received_button">Received invitations</string>
     

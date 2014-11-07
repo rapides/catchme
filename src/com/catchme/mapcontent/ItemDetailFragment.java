@@ -108,7 +108,7 @@ public class ItemDetailFragment extends Fragment {
 			mItem = ExampleContent.ITEM_MAP.get(id);
 			((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
 					.getName());
-			new GeocodeTask().execute(mItem.getCity());
+			//new GeocodeTask().execute(mItem.getCity());
 		}
 	}
 

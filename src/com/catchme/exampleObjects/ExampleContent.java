@@ -5,15 +5,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
+import android.annotation.SuppressLint;
 import com.catchme.R;
 
 public class ExampleContent {
 	public static ArrayList<ExampleItem> ITEMS = new ArrayList<ExampleItem>();
-	public static ArrayList<ExampleItem> ACTIVE = new ArrayList<ExampleItem>();
+	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
-	public static ArrayList<ExampleItem> RECEIVED = new ArrayList<ExampleItem>();
-	public static ArrayList<ExampleItem> SENT = new ArrayList<ExampleItem>();
 
 	static {
 		// Add 3 sample items.
@@ -26,62 +24,67 @@ public class ExampleContent {
 		 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
 		 * "Frankfurt"));
 		 */
-		addItem(new ExampleItem(0, "Weronika Grodecka 2", R.drawable.o5,
-				"Poznan", ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(1, "Evilish EviLeenda", R.drawable.o1, "Lublin", ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(2, "Jarek Maksymiuk", R.drawable.o2,
-				"Chlebczyn", ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(3, "Joachim Pflaume", R.drawable.o3,
-				"Frankfurt", ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(4, "Mayak Balop", R.drawable.o4, "Berlin", ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(5, "Mayak Balop 2", R.drawable.o4, "Berlin", ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem(6, "Weronika Grodecka", R.drawable.o5, "Poznan", ExampleItem.STATE_TYPE[2]));
+		addItem(new ExampleItem(0, "Weronika", "Grodecka 2",
+				"rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
+		addItem(new ExampleItem(1, "Evilish", "EviLeenda",
+				"rapides+2@gmail.com", R.drawable.o1, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem(2, "Jarek", "Maksymiuk", "rapides+3@gmail.com",
+				R.drawable.o2, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem(3, "Joachim", "Pflaume", "rapides+5@gmail.com",
+				R.drawable.o3, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem(4, "Mayak", "Balop", "rapides+6@gmail.com",
+				R.drawable.o4, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem(5, "Mayak", "STAN1", "rapides+7@gmail.com",
+				R.drawable.o4, ExampleItem.STATE_TYPE[1]));
+		addItem(new ExampleItem(6, "Weronika", "STAN2", "rapides+8@gmail.com",
+				R.drawable.o5, ExampleItem.STATE_TYPE[2]));
 	}
 
 	private static void addItem(ExampleItem item) {
-		ITEM_MAP.put(item.id, item);
+		ITEM_MAP.put(item.getId(), item);
 		ITEMS.add(item);
-		if(item.getState()==ExampleItem.STATE_TYPE[0]){
-			ACTIVE.add(item);
-		}else if(item.getState()==ExampleItem.STATE_TYPE[1]){
-			SENT.add(item);
-		}else if(item.getState()==ExampleItem.STATE_TYPE[2]){
-			RECEIVED.add(item);
-		}
 	}
 
 	/**
 	 * A dummy item representing a piece of content.
 	 */
 	public static class ExampleItem {
-		private long id;
-		private String name;
-		private int photoId;
-		private String cityName;
-		private LinkedList<Message> messages;
-		private String photoUrl;
-		private String state;
-		public static String[] STATE_TYPE = {"Accepted", "Sent", "Received"};
-		private String email;//TODO finish email\
+		public static int[] STATE_TYPE = { 0, 1, 2 };// "0-Accepted", "1-Sent",
+														// "2-Received" };
 
-		public ExampleItem(long id, String name, int photoId, String cityName, String state) {
+		private long id;// idcontactu
+		private int state;
+
+		private String name;
+		private String surname;
+		private String email;
+
+		private int photoId;
+		private String photoUrl;
+
+		private LinkedList<Message> messages;
+
+		public ExampleItem(long id, String name, String surname, String email,
+				int photoId, int state) {
 			this.id = id;
 			this.name = name;
 			this.photoId = photoId;
+			this.email = email;
+			this.surname = surname;
 			this.photoUrl = null;
-			this.cityName = cityName;
 			this.messages = new LinkedList<Message>();
 			this.state = state;
 			addRandomMessages();
 		}
 
-		public ExampleItem(long id, String name, String photoUrl,
-				String cityName, String state) {
+		public ExampleItem(long id, String name, String surname, String email, String photoUrl,
+				int state) {
 			this.id = id;
 			this.name = name;
 			this.photoUrl = photoUrl;
+			this.email = email;
+			this.surname = surname;
 			this.photoId = -1;
-			this.cityName = cityName;
 			this.state = state;
 			this.messages = new LinkedList<Message>();
 			addRandomMessages();
@@ -134,20 +137,21 @@ public class ExampleContent {
 		}
 
 		public String getName() {
-			return name;
+			return name + " " + surname;
 		}
 
 		public long getId() {
 			return id;
 		}
 
-		public String getCity() {
-			return cityName;
-		}
-
-		public String getState() {
+		public int getState() {
 			return state;
 		}
+
+		public String getEmail() {
+			return email;
+		}
+
 
 		public void addFirstMessage(Message message) {
 			Collections.reverse(messages);

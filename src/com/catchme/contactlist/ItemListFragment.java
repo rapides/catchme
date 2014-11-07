@@ -2,6 +2,7 @@ package com.catchme.contactlist;
 
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.mapcontent.ItemDetailFragment;
 
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
@@ -35,12 +37,14 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 	private final int UNDERLINE_HEIGHT_BIG = 8;
 	public static long lastChoosedContactId;
 	public ListView listView;
-	ImageButton btnAll;
-	ImageButton btnSent;
-	ImageButton btnReceived;
-	View btnAllUnderline;
-	View btnSentUnderline;
-	View btnReceivedUnderline;
+	private Button btnAll;
+	private ImageButton btnSent;
+	private ImageButton btnReceived;
+	private ImageButton btnAccepted;
+	private View btnAllUnderline;
+	private View btnSentUnderline;
+	private View btnReceivedUnderline;
+	private View btnAcceptedUnderline;
 
 	/**
 	 * The fragment's current callback object, which is notified of list item
@@ -75,17 +79,23 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
 		listView = (ListView) rootView.findViewById(R.id.list_item);
-		btnAll = (ImageButton) rootView.findViewById(R.id.list_all_button);
+		btnAll = (Button) rootView.findViewById(R.id.list_all_button);
 		btnSent = (ImageButton) rootView.findViewById(R.id.list_sent_button);
 		btnReceived = (ImageButton) rootView
 				.findViewById(R.id.list_received_button);
+		btnAccepted = (ImageButton) rootView
+				.findViewById(R.id.list_accepted_button);
 		btnAllUnderline = rootView.findViewById(R.id.list_all_underline);
 		btnReceivedUnderline = rootView
 				.findViewById(R.id.list_received_underline);
+		btnAcceptedUnderline = rootView
+				.findViewById(R.id.list_accepted_underline);
 		btnSentUnderline = rootView.findViewById(R.id.list_sent_underline);
 		btnAll.setOnClickListener(this);
+		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
+		
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
 
@@ -176,10 +186,16 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		if (v == btnAll) {
 			setUnderline(0);
-		} else if (v == btnReceived) {
+			filterList(-1);
+		} else if (v == btnAccepted) {
 			setUnderline(1);
-		} else if (v == btnSent) {
+			filterList(ExampleItem.STATE_TYPE[0]);
+		} else if (v == btnReceived) {
 			setUnderline(2);
+			filterList(ExampleItem.STATE_TYPE[1]);
+		} else if (v == btnSent) {
+			setUnderline(3);
+			filterList(ExampleItem.STATE_TYPE[2]);
 		}
 	}
 
@@ -190,23 +206,43 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 				.getLayoutParams();
 		LayoutParams paramsReceived = (LayoutParams) btnReceivedUnderline
 				.getLayoutParams();
+		LayoutParams paramsAccepted = (LayoutParams) btnAcceptedUnderline
+				.getLayoutParams();
 
 		if (tabNumber == 0) {
 			paramsAll.height = UNDERLINE_HEIGHT_BIG;
+			paramsAccepted.height = UNDERLINE_HEIGHT;
 			paramsSent.height = UNDERLINE_HEIGHT;
 			paramsReceived.height = UNDERLINE_HEIGHT;
 		} else if (tabNumber == 1) {
 			paramsAll.height = UNDERLINE_HEIGHT;
+			paramsAccepted.height = UNDERLINE_HEIGHT_BIG;
 			paramsSent.height = UNDERLINE_HEIGHT;
-			paramsReceived.height = UNDERLINE_HEIGHT_BIG;
+			paramsReceived.height = UNDERLINE_HEIGHT;
 		} else if (tabNumber == 2) {
 			paramsAll.height = UNDERLINE_HEIGHT;
+			paramsAccepted.height = UNDERLINE_HEIGHT;
+			paramsSent.height = UNDERLINE_HEIGHT;
+			paramsReceived.height = UNDERLINE_HEIGHT_BIG;
+		} else if (tabNumber == 3) {
+			paramsAll.height = UNDERLINE_HEIGHT;
+			paramsAccepted.height = UNDERLINE_HEIGHT;
 			paramsSent.height = UNDERLINE_HEIGHT_BIG;
 			paramsReceived.height = UNDERLINE_HEIGHT;
 		}
 		btnAllUnderline.setLayoutParams(paramsAll);
 		btnReceivedUnderline.setLayoutParams(paramsReceived);
 		btnSentUnderline.setLayoutParams(paramsSent);
+	}
+
+	private void filterList(int state) {
+		if (state >= 0) {
+			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+					"" + state);
+		} else {
+			((CustomListAdapter) listView.getAdapter()).getFilter()
+					.filter(null);
+		}
 	}
 
 }

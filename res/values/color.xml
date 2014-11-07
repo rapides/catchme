@@ -5,4 +5,5 @@
     <color name="list_filter_background">#FF222222</color>
     <color name="list_filter_underline">#FF33B5E5</color>
     <color name="list_filter_tab_selected">#AA33B5E5</color>
+    <color name="list_filter_tab_text">#FFEEEEEE</color>
 </resources>

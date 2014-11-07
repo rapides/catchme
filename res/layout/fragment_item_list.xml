@@ -8,15 +8,14 @@
         android:layout_height="wrap_content"
         android:background="@color/list_filter_background"
         android:orientation="horizontal"
-        android:weightSum="3" >
+        android:weightSum="4" >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
+            android:layout_weight="1" >
 
-            <ImageButton
+            <Button
                 android:id="@+id/list_all_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -24,13 +23,44 @@
                 android:contentDescription="@string/all_button"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:src="@drawable/ic_action_import_export" />
+                android:text="@string/all"
+                android:textColor="@color/list_filter_tab_text" />
 
             <View
                 android:id="@+id/list_all_underline"
                 android:layout_width="fill_parent"
                 android:layout_height="6dp"
                 android:layout_alignBottom="@+id/list_all_button"
+                android:background="@color/list_filter_underline" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageButton
+                android:id="@+id/list_accepted_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector"
+                android:contentDescription="@string/accepted_button"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:src="@drawable/ic_action_import_export" />
+
+            <View
+                android:id="@+id/list_accepted_underline"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:layout_alignBottom="@+id/list_accepted_button"
                 android:background="@color/list_filter_underline" />
         </RelativeLayout>
 
@@ -70,7 +100,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
             android:background="@android:color/darker_gray" />
-
 
         <RelativeLayout
             android:layout_width="match_parent"
