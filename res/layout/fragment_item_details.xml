@@ -92,4 +92,18 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/item_detail_tab_container" />
 
+    <RelativeLayout
+        android:id="@+id/loader_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+       >
+
+        <com.catchme.itemdetails.GifMovieView
+            android:id="@+id/gif_loader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
 </RelativeLayout>

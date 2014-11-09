@@ -1,6 +1,8 @@
 package com.catchme.contactlist;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
 import com.nostra13.universalimageloader.core.*;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
@@ -24,6 +26,9 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
+	public static final String[] SEARCHTYPES = {"0","1"};
+	public static final String SEARCHCHAR = ";";
+			
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.activity = activity;
@@ -60,7 +65,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		ImageView img = (ImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		//TextView city = (TextView) convertView.findViewById(R.id.item_city);
+		// TextView city = (TextView) convertView.findViewById(R.id.item_city);
 
 		TextView lastMsg = (TextView) convertView
 				.findViewById(R.id.item_last_message);
@@ -82,15 +87,15 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		} else {
 			lastMsg.setText("Ty: " + m.getContent());
 		}
-		int maxLength = activity.getResources().getInteger(R.integer.max_length);
+		int maxLength = activity.getResources()
+				.getInteger(R.integer.max_length);
 		if (m.getContent().length() > maxLength) {
-			
-			lastMsg.setText(lastMsg.getText().subSequence(0,
-					maxLength - 3)
+
+			lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3)
 					+ "...");
 		}
 
-		//btn.setOnClickListener(new PositonButtonListener(item.getId()));
+		// btn.setOnClickListener(new PositonButtonListener(item.getId()));
 		btn.setFocusable(false);
 		btn.setFocusableInTouchMode(false);
 
@@ -117,16 +122,35 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 					results.values = ExampleContent.ITEMS;
 					results.count = ExampleContent.ITEMS.size();
 				} else {
+					String searchType = constraint.toString().substring(0,
+							constraint.toString().indexOf(SEARCHCHAR));
+					String searchQuery = constraint.toString().substring(
+							constraint.toString().indexOf(SEARCHCHAR) + 1);
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
 
-					for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-						ExampleItem dataItem = ExampleContent.ITEMS.get(i);
-						if (constraint.toString().startsWith(
-								"" + dataItem.getState())) {
-							filteredArrayNames.add(dataItem);
+					if (searchType.equals(SEARCHTYPES[0])) {
+						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
+							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
+
+							if (searchQuery
+									.startsWith("" + dataItem.getState())) {
+								filteredArrayNames.add(dataItem);
+
+							}
+						}
+					} else if (searchType.equals(SEARCHTYPES[1])) {
+						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
+							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
+							if (dataItem
+									.getName()
+									.toLowerCase(Locale.getDefault())
+									.contains(
+											searchQuery.toLowerCase(Locale
+													.getDefault()))) {
+								filteredArrayNames.add(dataItem);
+							}
 						}
 					}
-
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}

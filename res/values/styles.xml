@@ -4,4 +4,6 @@
 
     <style name="AppTheme" parent="AppBaseTheme"></style>
 
+    <style name="Widget.GifMoviewView" parent="@android:style/Widget"></style>
+
 </resources>

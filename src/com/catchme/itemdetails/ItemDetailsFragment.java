@@ -1,7 +1,15 @@
 package com.catchme.itemdetails;
 
-import com.catchme.R;
+import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.catchme.R;
+import com.catchme.connections.ConnectionConst;
+import com.catchme.connections.ServerConection;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -26,6 +34,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	private Button btnProfileTab;
 	private Button btnMapTab;
 	private View tabUnderline;
+	private GifMovieView loader;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +56,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		btnMapTab = (Button) rootView.findViewById(R.id.detail_map_button);
 
 		tabUnderline = rootView.findViewById(R.id.detail_underline);
+		loader = (GifMovieView) rootView.findViewById(R.id.gif_loader);
 
 		btnMessagesTab.setOnClickListener(this);
 		btnProfileTab.setOnClickListener(this);
@@ -54,7 +64,10 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		viewPager.setOnPageChangeListener(this);
 		viewPager.setOffscreenPageLimit(2);
 		viewPager.setCurrentItem(0);
-		setUnderlinePos(0,0);
+		setUnderlinePos(0, 0);
+		loader.setMovieResource(R.drawable.loader);
+		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		new LoadProfile().execute();
 		return rootView;
 	}
 
@@ -77,9 +90,9 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 				+ btnMapTab.getWidth() + 2 * tabCount;
 		params.leftMargin = (int) (position * sum / tabCount + positionOffset
 				/ tabCount);
-		if(sum <100){
-			params.width = 180;//no idea why getWidth() returns 0
-		}else{
+		if (sum < 100) {
+			params.width = 180;// no idea why getWidth() returns 0
+		} else {
 			params.width = sum / tabCount;
 		}
 		tabUnderline.setLayoutParams(params);
@@ -103,14 +116,15 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	public void onPageSelected(int arg0) {
 
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setHasOptionsMenu(true);
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
-	
+
 	@Override
-	public void  onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
 		inflater.inflate(R.menu.item_details, menu);
 		super.onCreateOptionsMenu(menu, inflater);
@@ -128,6 +142,24 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+	private class LoadProfile extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				Thread.sleep((long) (Math.random()*5000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			loader.setVisibility(View.GONE);
 		}
 	}
 }

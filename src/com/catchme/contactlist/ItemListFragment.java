@@ -18,10 +18,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
 /**
  * A list fragment representing a list of Items. This fragment also supports
@@ -32,7 +35,8 @@ import android.widget.ListView;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ItemListFragment extends Fragment implements OnClickListener {
+public class ItemListFragment extends Fragment implements OnClickListener,
+		OnQueryTextListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 	private final int UNDERLINE_HEIGHT = 3;
@@ -46,7 +50,7 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 	private View btnSentUnderline;
 	private View btnReceivedUnderline;
 	private View btnAcceptedUnderline;
-
+	private SearchView searchView;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -98,16 +102,16 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
-		//new GetContactsTask().execute("tokenCyckitoken");
-		//new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
+		// new GetContactsTask().execute("tokenCyckitoken");
+		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				
-				mCallbacks.onItemSelected(((ExampleItem)a.getItemAtPosition(position))
-						.getId());
+
+				mCallbacks.onItemSelected(((ExampleItem) a
+						.getItemAtPosition(position)).getId());
 
 			}
 		});
@@ -237,22 +241,34 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 	private void filterList(int state) {
 		if (state >= 0) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					"" + state);
+					CustomListAdapter.SEARCHTYPES[0]
+							+ CustomListAdapter.SEARCHCHAR + state);
 		} else {
 			((CustomListAdapter) listView.getAdapter()).getFilter()
 					.filter(null);
 		}
 	}
+
+	private void filterList(String newText) {
+		((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+				CustomListAdapter.SEARCHTYPES[1] + CustomListAdapter.SEARCHCHAR
+						+ newText);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setHasOptionsMenu(true);
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
 		inflater.inflate(R.menu.main, menu);
+		MenuItem searchItem = menu.findItem(R.id.action_search);
+		searchView = (SearchView) searchItem.getActionView();
+		setupSearchView(searchItem);
+		
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -263,16 +279,49 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 		case R.id.action_sort:
 			return true;
 		case R.id.action_search:
-			// openSearch();
 			return true;
 		case R.id.action_settings:
-			// openSettings();
 			return true;
 		case R.id.action_overflow:
-			// openSettings();
+			openOverflowMenu();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	private void openOverflowMenu() {
+		PopupMenu popup = new PopupMenu(getActivity(), getActivity().findViewById(R.id.action_overflow));
+		MenuInflater inflater = popup.getMenuInflater();
+		inflater.inflate(R.menu.menu_overflow, popup.getMenu());
+		popup.show();
+
+	}
+	private void setupSearchView(MenuItem searchItem) {
+
+		if (isAlwaysExpanded()) {
+			searchView.setIconifiedByDefault(false);
+		} else {
+			searchItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM
+					| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+		}
+		searchView.setOnQueryTextListener(this);
+	}
+
+	protected boolean isAlwaysExpanded() {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		filterList(newText);
+		setUnderline(0);
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return false;
+	}
+	
+	
 }

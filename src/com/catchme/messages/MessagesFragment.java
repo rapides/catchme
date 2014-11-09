@@ -37,7 +37,6 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	View rootView;
 
 	public MessagesFragment() {
-
 	}
 
 	@Override
@@ -161,7 +160,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 						.println("Popacz sam, jak gumisie skacz¹ tam i siam: "
 								+ ((JSONObject) json.get("user")).get("email"));
 			} catch (JSONException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}
