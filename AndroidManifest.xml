@@ -30,30 +30,19 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyC0X94Vd6TlgG7qKJbNoEtAM-lpH2zdM1U" />
-        <service android:name="com.catchme.messages.MessagesRefreshService" /> 
+
+        <service android:name="com.catchme.messages.MessagesRefreshService" />
+
         <activity
             android:name="com.catchme.contactlist.ItemListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.catchme.mapcontent.ItemDetailActivity"
-            android:label="@string/title_item_detail" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="contactlist.ItemListActivity" />
-        </activity>
-        <activity
-            android:name="com.catchme.messages.MessagesActivity"
-            android:label="@string/title_messages" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="contactlist.ItemListActivity" />
-        </activity>
+        
+       
     </application>
 
 </manifest>

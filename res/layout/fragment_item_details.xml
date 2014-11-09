@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/item_detail_tab_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/item_detail_tab_background"
+        android:orientation="horizontal"
+        android:weightSum="3" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/detail_messages_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector"
+                android:contentDescription="@string/tab_title_messages"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/tab_title_messages"
+                android:textColor="@color/item_detail_tab_text" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/detail_profile_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector"
+                android:contentDescription="@string/tab_title_profile"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/tab_title_profile"
+                android:textColor="@color/item_detail_tab_text" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/detail_map_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/selector"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/tab_title_map"
+                android:textColor="@color/item_detail_tab_text" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/detail_underline"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_alignBottom="@+id/item_detail_tab_container"
+        android:background="@color/item_detail_tab_underline" />
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/item_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/item_detail_tab_container" />
+
+</RelativeLayout>

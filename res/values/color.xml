@@ -6,4 +6,9 @@
     <color name="list_filter_underline">#FF33B5E5</color>
     <color name="list_filter_tab_selected">#AA33B5E5</color>
     <color name="list_filter_tab_text">#FFEEEEEE</color>
+    <color name="item_detail_tab_background">#FF222222</color>
+    <color name="item_detail_tab_underline">#FF33B5E5</color>
+    <color name="item_detail_tab_selected">#AA33B5E5</color>
+    <color name="item_detail_tab_text">#FFEEEEEE</color>
+    <color name="background">#fff3f3f3</color>
 </resources>

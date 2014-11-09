@@ -1,22 +1,22 @@
 package com.catchme.messages;
 
-import com.catchme.contactlist.ItemListFragment;
-import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.exampleObjects.Message;
 
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MessagesScrollListener implements OnScrollListener {
 
 	ListView listView;
 	boolean isRefreshing = false;
+	private ExampleItem mItem;
 	public static int messagesCount = 0;
 
-	public MessagesScrollListener(ListView listView) {
+	public MessagesScrollListener(ListView listView, ExampleItem item) {
 		this.listView = listView;
+		this.mItem = item;
 	}
 
 	@Override
@@ -31,9 +31,8 @@ public class MessagesScrollListener implements OnScrollListener {
 
 	private void loadMoreMessages() {
 		for (int i = 0; i < 10; i++) {
-			ExampleContent.ITEM_MAP.get(ItemListFragment.lastChoosedContactId)
-					.addFirstMessage(
-							new Message("Nowa wiadomosc:  " + messagesCount));
+			mItem.addFirstMessage(new Message("Nowa wiadomosc:  "
+					+ messagesCount));
 		}
 
 		((MessagesListAdapter) listView.getAdapter()).notifyDataSetChanged();

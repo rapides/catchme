@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
-    
+    android:orientation="horizontal" 
+    android:background="@color/background">
+
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:paddingLeft="10dp">
-
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp" >
     </com.google.android.gms.maps.MapView>
 
     <TextView
@@ -21,6 +21,6 @@
         android:layout_alignParentTop="true"
         android:padding="16dp"
         android:textIsSelectable="true"
-        tools:context="com.catchme.mapcontent.ItemDetailFragment" />
-   
+        tools:context="com.catchme.mapcontent.ItemMapFragment" />
+
 </RelativeLayout>

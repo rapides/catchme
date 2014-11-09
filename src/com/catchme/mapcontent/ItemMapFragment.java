@@ -1,14 +1,5 @@
 package com.catchme.mapcontent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,37 +21,33 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.catchme.R;
-import com.catchme.contactlist.ItemListFragment;
+import com.catchme.connections.ServerConection;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.itemdetails.ItemDetailsFragment;
 
-public class ItemDetailFragment extends Fragment {
+public class ItemMapFragment extends Fragment {
 	MapView mapView;
 	GoogleMap map;
 	View rootView;
 
+	private long itemId;
 	private ExampleItem mItem;
 
-	public ItemDetailFragment() {
+	public ItemMapFragment() {
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/*
-		 * if (getArguments() != null) { if
-		 * (getArguments().containsKey(ItemListFragment.ARG_ITEM_ID)) { mItem =
-		 * ExampleContent.ITEM_MAP.get(getArguments().getLong(
-		 * ItemListFragment.ARG_ITEM_ID)); } } else { mItem =
-		 * ExampleContent.ITEM_MAP.get(ItemListFragment.lastChoosedContactId); }
-		 */
-
+		itemId = getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID);
+		mItem = ExampleContent.ITEM_MAP.get(itemId);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		rootView = inflater.inflate(R.layout.fragment_item_detail, container,
+		rootView = inflater.inflate(R.layout.fragment_item_map, container,
 				false);
 		mapView = (MapView) rootView.findViewById(R.id.mapview);
 		mapView.onCreate(savedInstanceState);
@@ -98,47 +85,18 @@ public class ItemDetailFragment extends Fragment {
 	}
 
 	public void updateView(long id) {
-		mItem = ExampleContent.ITEM_MAP
-				.get(ItemListFragment.lastChoosedContactId);
 		if (id < 0) {
 			((TextView) rootView.findViewById(R.id.item_detail))
 					.setText("TODO");
 			new GeocodeTask().execute("Wroclaw");
 		} else {
-			mItem = ExampleContent.ITEM_MAP.get(id);
 			((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
 					.getName());
-			//new GeocodeTask().execute(mItem.getCity());
+			// new GeocodeTask().execute(mItem.getCity());
 		}
 	}
 
-	public String GET(String url) {
-		InputStream inputStream = null;
-
-		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
-			inputStream = httpResponse.getEntity().getContent();
-			return convertInputStreamToString(inputStream);
-		} catch (Exception e) {
-		}
-
-		return "";
-	}
-
-	public String convertInputStreamToString(InputStream in) throws IOException {
-		InputStreamReader is = new InputStreamReader(in);
-		StringBuilder sb = new StringBuilder();
-		BufferedReader br = new BufferedReader(is);
-		String read = br.readLine();
-
-		while (read != null) {
-			sb.append(read);
-			read = br.readLine();
-		}
-
-		return sb.toString();
-	}
+	
 
 	private class GeocodeTask extends AsyncTask<String, Void, Location> {
 
@@ -147,7 +105,7 @@ public class ItemDetailFragment extends Fragment {
 			String query = "http://maps.googleapis.com/maps/api/geocode/json?address="
 					+ params[0] + "&sensor=true";
 
-			String result = GET(query);
+			String result = ServerConection.GET(query);
 			JSONObject json;
 			Location l = new Location("Google Maps");
 			try {
@@ -177,7 +135,7 @@ public class ItemDetailFragment extends Fragment {
 			map.animateCamera(cameraUpdate);
 			map.addMarker(new MarkerOptions().title(mItem.getName())
 					.snippet("Last seen: somewhen").position(location));
-			
+
 		}
 	}
 }

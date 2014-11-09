@@ -3,12 +3,15 @@ package com.catchme.contactlist;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.mapcontent.ItemDetailFragment;
+import com.catchme.mapcontent.ItemMapFragment;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,7 +27,7 @@ import android.widget.ListView;
  * A list fragment representing a list of Items. This fragment also supports
  * tablet devices by allowing list items to be given an 'activated' state upon
  * selection. This helps indicate which item is currently being viewed in a
- * {@link ItemDetailFragment}.
+ * {@link ItemMapFragment}.
  * <p>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
@@ -32,10 +35,8 @@ import android.widget.ListView;
 public class ItemListFragment extends Fragment implements OnClickListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-	public static final String ARG_ITEM_ID = "item_id";
 	private final int UNDERLINE_HEIGHT = 3;
 	private final int UNDERLINE_HEIGHT_BIG = 8;
-	public static long lastChoosedContactId;
 	public ListView listView;
 	private Button btnAll;
 	private ImageButton btnSent;
@@ -70,7 +71,6 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 	};
 
 	public ItemListFragment() {
-		lastChoosedContactId = 0;
 	}
 
 	@Override
@@ -95,19 +95,18 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
-		
+
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
-
+		//new GetContactsTask().execute("tokenCyckitoken");
+		//new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-
-				lastChoosedContactId = ExampleContent.ITEMS.get(position)
-						.getId();
-				mCallbacks.onItemSelected(ExampleContent.ITEMS.get(position)
+				
+				mCallbacks.onItemSelected(((ExampleItem)a.getItemAtPosition(position))
 						.getId());
 
 			}
@@ -244,5 +243,36 @@ public class ItemListFragment extends Fragment implements OnClickListener {
 					.filter(null);
 		}
 	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.clear();
+		inflater.inflate(R.menu.main, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+		case R.id.action_sort:
+			return true;
+		case R.id.action_search:
+			// openSearch();
+			return true;
+		case R.id.action_settings:
+			// openSettings();
+			return true;
+		case R.id.action_overflow:
+			// openSettings();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 }

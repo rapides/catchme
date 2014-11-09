@@ -7,19 +7,20 @@ import org.json.JSONObject;
 
 import com.catchme.R;
 import com.catchme.connections.ServerConection;
-import com.catchme.contactlist.ItemListFragment;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.itemdetails.ItemDetailsFragment;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -30,9 +31,8 @@ import android.widget.TextView;
 
 public class MessagesFragment extends Fragment implements OnClickListener {
 
-	public static final String ARG_ITEM_ID = "message_id";
 	public static int timesClicked = 0;
-	private ExampleContent.ExampleItem mItem;
+	private ExampleItem mItem;
 	ListView listView;
 	View rootView;
 
@@ -43,14 +43,9 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/*
-		 * if (getArguments() != null) { if
-		 * (getArguments().containsKey(ARG_ITEM_ID)) { mItem =
-		 * ExampleContent.ITEM_MAP.get(getArguments().getLong( ARG_ITEM_ID)); }
-		 * 
-		 * } else { mItem = ExampleContent.ITEM_MAP
-		 * .get(ItemListFragment.lastChoosedContactId); }
-		 */
+
+		mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
+				ItemDetailsFragment.ARG_ITEM_ID));
 		setListnerToRootView();
 	}
 
@@ -68,12 +63,19 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.startService(
 						new Intent(rootView.getContext(),
 								MessagesRefreshService.class));
+		rootView.setOnTouchListener(new View.OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+
+		});
 		return rootView;
 	}
 
 	private void loadData() {
-		mItem = ExampleContent.ITEM_MAP
-				.get(ItemListFragment.lastChoosedContactId);
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
 		t.setText("" + mItem.getName());
@@ -81,7 +83,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				mItem);
 		listView.setAdapter(adapter);
 		listView.setSelection(mItem.getMessages().size() - 1);
-		listView.setOnScrollListener(new MessagesScrollListener(listView));
+		listView.setOnScrollListener(new MessagesScrollListener(listView, mItem));
 	}
 
 	boolean isOpened = false;

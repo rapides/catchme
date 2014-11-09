@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.view.ViewPager
+<!--
+    <android.support.v4.view.ViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
-<!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cycki.fragmenttest.ItemListActivity" >
+    tools:context="com.catchme.contactlist.ItemListActivity" >
 
     <fragment
-        android:id="@+id/item_list"
-        android:name="catchme.contactlist.ItemListFragment"
+        android:id="@+id/item_list_fragment"
+        android:name="com.catchme.contactlist.ItemListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        tools:context="cycki.fragmenttest.ItemListActivity" />
-
-</RelativeLayout> -->
+        tools:context="com.catchme.contactlist.ItemListActivity" />
+</FrameLayout>

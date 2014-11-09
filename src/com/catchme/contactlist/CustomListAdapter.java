@@ -90,7 +90,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 					+ "...");
 		}
 
-		btn.setOnClickListener(new PositonButtonListener(item.getId()));
+		//btn.setOnClickListener(new PositonButtonListener(item.getId()));
 		btn.setFocusable(false);
 		btn.setFocusableInTouchMode(false);
 

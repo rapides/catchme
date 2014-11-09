@@ -1,4 +1,4 @@
-package com.catchme.contactlist;
+package com.catchme.itemdetails;
 
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -20,9 +20,6 @@ public class ActionBarListener implements TabListener{
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		viewPager.setCurrentItem(tab.getPosition());
-		if(tab.getPosition()==0){
-		}
-		
 	}
 
 	@Override
