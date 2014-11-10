@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 public class ItemProfileFragment extends Fragment {
 	private View rootView;
-	private GifMovieView loader;
 
 	public ItemProfileFragment() {
 

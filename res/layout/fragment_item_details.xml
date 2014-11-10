@@ -81,7 +81,7 @@
     <View
         android:id="@+id/detail_underline"
         android:layout_width="match_parent"
-        android:layout_height="6dp"
+        android:layout_height="@dimen/underline_height_big"
         android:layout_alignBottom="@+id/item_detail_tab_container"
         android:background="@color/item_detail_tab_underline" />
 
@@ -95,7 +95,8 @@
     <RelativeLayout
         android:id="@+id/loader_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
+        android:layout_height="match_parent"
+        android:background="@color/loader_background" 
        >
 
         <com.catchme.itemdetails.GifMovieView

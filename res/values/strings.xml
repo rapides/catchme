@@ -19,6 +19,8 @@
     <string name="accepted_button">Accepted contacts</string>
     <string name="sent_button">Sent invitations</string>
     <string name="received_button">Received invitations</string>
+    <string name="pull_to_refresh">Pull to refresh</string>
+    <string name="action_refresh">Refresh</string>
     
 
 </resources>

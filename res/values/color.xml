@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <color name="messages_sendBtn_background">#FFDDDDDD</color>
     <color name="list_filter_background">#FF222222</color>
     <color name="list_filter_underline">#FF33B5E5</color>
@@ -11,4 +11,10 @@
     <color name="item_detail_tab_selected">#AA33B5E5</color>
     <color name="item_detail_tab_text">#FFEEEEEE</color>
     <color name="background">#fff3f3f3</color>
+    <color name="loader_background">#AAfefefe</color>
+    <color name="swipelayout_bar">#ff00ddff</color>
+    <color name="swipelayout_color1">#ff99cc00</color>
+    <color name="swipelayout_color2">#ffffbb33</color>
+    <color name="swipelayout_color3">#ffff4444</color>
+
 </resources>

@@ -1,19 +1,13 @@
 package com.catchme.itemdetails;
 
-import java.util.HashMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.catchme.R;
-import com.catchme.connections.ConnectionConst;
-import com.catchme.connections.ServerConection;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +16,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class ItemDetailsFragment extends Fragment implements OnClickListener,
-		OnPageChangeListener {
+		OnPageChangeListener, OnMenuItemClickListener {
 	public static final String ARG_ITEM_ID = "contact_id";
 	private ItemDetailsPagerAdapter pagerAdapter;
 	private ViewPager viewPager;
@@ -35,6 +33,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	private Button btnMapTab;
 	private View tabUnderline;
 	private GifMovieView loader;
+	private RelativeLayout loaderContainer;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +56,8 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 
 		tabUnderline = rootView.findViewById(R.id.detail_underline);
 		loader = (GifMovieView) rootView.findViewById(R.id.gif_loader);
+		loaderContainer = (RelativeLayout) rootView
+				.findViewById(R.id.loader_container);
 
 		btnMessagesTab.setOnClickListener(this);
 		btnProfileTab.setOnClickListener(this);
@@ -132,24 +133,61 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-		case R.id.action_settings:
-			// openSettings();
+		case android.R.id.home:
+			getActivity().dispatchKeyEvent(
+					new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+			getActivity().onBackPressed();
 			return true;
-		case R.id.action_overflow:
-			// openSettings();
+		case R.id.details_action_overflow:
+			openOverflowMenu();
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+		case R.id.details_action_refresh2:
+			new LoadProfile().execute();
+			return true;
 		}
+		return super.onOptionsItemSelected(item);
 	}
+
+	private void openOverflowMenu() {
+		PopupMenu popup = new PopupMenu(getActivity(), getActivity()
+				.findViewById(R.id.details_action_overflow));
+		MenuInflater inflater = popup.getMenuInflater();
+		inflater.inflate(R.menu.menu_overflow, popup.getMenu());
+		popup.setOnMenuItemClickListener(this);
+		popup.show();
+	}
+	
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_overflow_item1:
+			Toast.makeText(getActivity(), "Menu 1", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item2:
+			Toast.makeText(getActivity(), "Menu 2", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item3:
+			Toast.makeText(getActivity(), "Menu 3", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item4:
+			Toast.makeText(getActivity(), "Menu 4", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
+	}
+
 	private class LoadProfile extends AsyncTask<Void, Void, Void> {
 
 		@Override
+		protected void onPreExecute(){
+			loader.setVisibility(View.VISIBLE);
+			loaderContainer.setVisibility(View.VISIBLE);
+		}
+		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				Thread.sleep((long) (Math.random()*5000));
+				Thread.sleep((long) (Math.random() * 5000));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -160,6 +198,8 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		@Override
 		protected void onPostExecute(Void result) {
 			loader.setVisibility(View.GONE);
+			loaderContainer.setVisibility(View.GONE);
 		}
 	}
+
 }

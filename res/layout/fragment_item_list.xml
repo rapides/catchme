@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-        android:animateLayoutChanges="true">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true" >
 
     <LinearLayout
         android:id="@+id/list_filter_buttons"
@@ -30,7 +30,7 @@
             <View
                 android:id="@+id/list_all_underline"
                 android:layout_width="fill_parent"
-                android:layout_height="6dp"
+                android:layout_height="@dimen/underline_height_big"
                 android:layout_alignBottom="@+id/list_all_button"
                 android:background="@color/list_filter_underline" />
         </RelativeLayout>
@@ -60,7 +60,7 @@
             <View
                 android:id="@+id/list_accepted_underline"
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="@dimen/underline_height"
                 android:layout_alignBottom="@+id/list_accepted_button"
                 android:background="@color/list_filter_underline" />
         </RelativeLayout>
@@ -90,7 +90,7 @@
             <View
                 android:id="@+id/list_received_underline"
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="@dimen/underline_height"
                 android:layout_alignBottom="@+id/list_received_button"
                 android:background="@color/list_filter_underline" />
         </RelativeLayout>
@@ -121,16 +121,27 @@
             <View
                 android:id="@+id/list_sent_underline"
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="@dimen/underline_height"
                 android:layout_alignBottom="@+id/list_sent_button"
                 android:background="@color/list_filter_underline" />
         </RelativeLayout>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_item"
+   
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/list_filter_buttons" />
+        android:layout_below="@+id/list_filter_buttons" >
+
+        <ListView
+            android:id="@+id/list_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/list_filter_buttons"
+            android:background="@color/background" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

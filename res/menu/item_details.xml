@@ -1,14 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    
-    
+     <item
+        android:id="@+id/details_action_refresh2"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_refresh"/>
     <item
-        android:id="@+id/action_overflow"
+        android:id="@+id/details_action_overflow"
         android:icon="@drawable/ic_action_overflow"
         android:showAsAction="ifRoom"
         android:title="@string/action_overflow"/>
+    
      <item
-        android:id="@+id/action_settings"
+        android:id="@+id/details_action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>

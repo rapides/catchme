@@ -1,6 +1,7 @@
 package com.catchme.contactlist;
 
 import com.catchme.R;
+import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.mapcontent.ItemMapFragment;
@@ -8,6 +9,8 @@ import com.catchme.mapcontent.ItemMapFragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +22,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
@@ -36,11 +41,9 @@ import android.widget.SearchView.OnQueryTextListener;
  * interface.
  */
 public class ItemListFragment extends Fragment implements OnClickListener,
-		OnQueryTextListener {
+		OnQueryTextListener, OnRefreshListener, OnMenuItemClickListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-	private final int UNDERLINE_HEIGHT = 3;
-	private final int UNDERLINE_HEIGHT_BIG = 8;
 	public ListView listView;
 	private Button btnAll;
 	private ImageButton btnSent;
@@ -51,6 +54,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private View btnReceivedUnderline;
 	private View btnAcceptedUnderline;
 	private SearchView searchView;
+	private SwipeRefreshLayout swipeLayout;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -95,14 +99,17 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		btnAcceptedUnderline = rootView
 				.findViewById(R.id.list_accepted_underline);
 		btnSentUnderline = rootView.findViewById(R.id.list_sent_underline);
+		swipeLayout = (SwipeRefreshLayout) rootView
+				.findViewById(R.id.swipe_container);
+
 		btnAll.setOnClickListener(this);
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
-
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
-		// new GetContactsTask().execute("tokenCyckitoken");
+		// new GetContactsTask(swipeLayout,
+		// listView.getAdapter()).execute("tokenCyckitoken");
 		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -112,9 +119,12 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 
 				mCallbacks.onItemSelected(((ExampleItem) a
 						.getItemAtPosition(position)).getId());
-
 			}
 		});
+		swipeLayout.setOnRefreshListener(this);
+		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
+				R.color.swipelayout_color1, R.color.swipelayout_color2,
+				R.color.swipelayout_color3);
 		return rootView;
 	}
 
@@ -134,7 +144,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof Callbacks)) {
 			throw new IllegalStateException(
 					"Activity must implement fragment's callbacks.");
@@ -211,27 +220,30 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				.getLayoutParams();
 		LayoutParams paramsAccepted = (LayoutParams) btnAcceptedUnderline
 				.getLayoutParams();
-
+		int underline_height = (int) getResources().getDimension(
+				R.dimen.underline_height);
+		int underline_height_large = (int) getResources().getDimension(
+				R.dimen.underline_height_big);
 		if (tabNumber == 0) {
-			paramsAll.height = UNDERLINE_HEIGHT_BIG;
-			paramsAccepted.height = UNDERLINE_HEIGHT;
-			paramsSent.height = UNDERLINE_HEIGHT;
-			paramsReceived.height = UNDERLINE_HEIGHT;
+			paramsAll.height = underline_height_large;
+			paramsAccepted.height = underline_height;
+			paramsSent.height = underline_height;
+			paramsReceived.height = underline_height;
 		} else if (tabNumber == 1) {
-			paramsAll.height = UNDERLINE_HEIGHT;
-			paramsAccepted.height = UNDERLINE_HEIGHT_BIG;
-			paramsSent.height = UNDERLINE_HEIGHT;
-			paramsReceived.height = UNDERLINE_HEIGHT;
+			paramsAll.height = underline_height;
+			paramsAccepted.height = underline_height_large;
+			paramsSent.height = underline_height;
+			paramsReceived.height = underline_height;
 		} else if (tabNumber == 2) {
-			paramsAll.height = UNDERLINE_HEIGHT;
-			paramsAccepted.height = UNDERLINE_HEIGHT;
-			paramsSent.height = UNDERLINE_HEIGHT;
-			paramsReceived.height = UNDERLINE_HEIGHT_BIG;
+			paramsAll.height = underline_height;
+			paramsAccepted.height = underline_height;
+			paramsSent.height = underline_height;
+			paramsReceived.height = underline_height_large;
 		} else if (tabNumber == 3) {
-			paramsAll.height = UNDERLINE_HEIGHT;
-			paramsAccepted.height = UNDERLINE_HEIGHT;
-			paramsSent.height = UNDERLINE_HEIGHT_BIG;
-			paramsReceived.height = UNDERLINE_HEIGHT;
+			paramsAll.height = underline_height;
+			paramsAccepted.height = underline_height;
+			paramsSent.height = underline_height_large;
+			paramsReceived.height = underline_height;
 		}
 		btnAllUnderline.setLayoutParams(paramsAll);
 		btnReceivedUnderline.setLayoutParams(paramsReceived);
@@ -265,10 +277,11 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
 		inflater.inflate(R.menu.main, menu);
+		
 		MenuItem searchItem = menu.findItem(R.id.action_search);
 		searchView = (SearchView) searchItem.getActionView();
 		setupSearchView(searchItem);
-		
+
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -278,10 +291,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		switch (item.getItemId()) {
 		case R.id.action_sort:
 			return true;
-		case R.id.action_search:
-			return true;
-		case R.id.action_settings:
-			return true;
 		case R.id.action_overflow:
 			openOverflowMenu();
 			return true;
@@ -289,13 +298,35 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_overflow_item1:
+			Toast.makeText(getActivity(), "menu1", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item2:
+			Toast.makeText(getActivity(), "menu2", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item3:
+			Toast.makeText(getActivity(), "menu3", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.menu_overflow_item4:
+			Toast.makeText(getActivity(), "menu4", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
+	}
+
 	private void openOverflowMenu() {
-		PopupMenu popup = new PopupMenu(getActivity(), getActivity().findViewById(R.id.action_overflow));
+		PopupMenu popup = new PopupMenu(getActivity(), getActivity()
+				.findViewById(R.id.action_overflow));
 		MenuInflater inflater = popup.getMenuInflater();
 		inflater.inflate(R.menu.menu_overflow, popup.getMenu());
+		popup.setOnMenuItemClickListener(this);
 		popup.show();
-
 	}
+
 	private void setupSearchView(MenuItem searchItem) {
 
 		if (isAlwaysExpanded()) {
@@ -322,6 +353,11 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public boolean onQueryTextSubmit(String query) {
 		return false;
 	}
-	
-	
+
+	@Override
+	public void onRefresh() {
+		new GetContactsTask(swipeLayout,
+				(CustomListAdapter) listView.getAdapter()).execute("token");
+	}
+
 }
