@@ -3,8 +3,7 @@
     android:id="@+id/message_list_layout"
     android:name="cycki.messages.MessagesFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/simpleText"

@@ -142,7 +142,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		case R.id.details_action_overflow:
 			openOverflowMenu();
 			return true;
-		case R.id.details_action_refresh2:
+		case R.id.details_action_refresh:
 			new LoadProfile().execute();
 			return true;
 		}

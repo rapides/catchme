@@ -7,8 +7,11 @@ import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.mapcontent.ItemMapFragment;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -55,6 +59,10 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private View btnAcceptedUnderline;
 	private SearchView searchView;
 	private SwipeRefreshLayout swipeLayout;
+	private DrawerLayout drawerLayout;
+	private ListView drawerList;
+	public ActionBarDrawerToggle drawerToggle;
+
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -101,6 +109,8 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		btnSentUnderline = rootView.findViewById(R.id.list_sent_underline);
 		swipeLayout = (SwipeRefreshLayout) rootView
 				.findViewById(R.id.swipe_container);
+		drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
+		drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
 
 		btnAll.setOnClickListener(this);
 		btnAccepted.setOnClickListener(this);
@@ -113,10 +123,11 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-
+				drawerToggle.setDrawerIndicatorEnabled(false);
 				mCallbacks.onItemSelected(((ExampleItem) a
 						.getItemAtPosition(position)).getId());
 			}
@@ -125,6 +136,36 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
+		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
+		drawerList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (position > 0) {
+					Toast.makeText(getActivity(), "Position: " + position,
+							Toast.LENGTH_SHORT).show();
+					drawerLayout.closeDrawer(drawerList);
+				}
+			}
+		});
+
+		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
+				R.drawable.ic_drawer, R.string.drawer_open,
+				R.string.drawer_close) {
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+			}
+
+			/** Called when a drawer has settled in a completely open state. */
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+			}
+
+		};
+		drawerLayout.setDrawerListener(drawerToggle);
+		drawerToggle.setDrawerIndicatorEnabled(true);
+
 		return rootView;
 	}
 
@@ -139,16 +180,25 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
 	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		drawerToggle.syncState();
+	}
+	@Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-
 		if (!(activity instanceof Callbacks)) {
 			throw new IllegalStateException(
 					"Activity must implement fragment's callbacks.");
 		}
-
 		mCallbacks = (Callbacks) activity;
 	}
 
@@ -277,7 +327,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
 		inflater.inflate(R.menu.main, menu);
-		
+
 		MenuItem searchItem = menu.findItem(R.id.action_search);
 		searchView = (SearchView) searchItem.getActionView();
 		setupSearchView(searchItem);
@@ -287,16 +337,22 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
+
 		switch (item.getItemId()) {
 		case R.id.action_sort:
 			return true;
-		case R.id.action_overflow:
-			openOverflowMenu();
+		case android.R.id.home: {
+			if (drawerLayout.isDrawerVisible(drawerList)) {
+				drawerLayout.closeDrawer(drawerList);
+			} else if (this.isVisible()) {
+				drawerLayout.openDrawer(drawerList);
+			}
 			return true;
+		}
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+
 	}
 
 	@Override
@@ -318,14 +374,13 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		return false;
 	}
 
-	private void openOverflowMenu() {
-		PopupMenu popup = new PopupMenu(getActivity(), getActivity()
-				.findViewById(R.id.action_overflow));
-		MenuInflater inflater = popup.getMenuInflater();
-		inflater.inflate(R.menu.menu_overflow, popup.getMenu());
-		popup.setOnMenuItemClickListener(this);
-		popup.show();
-	}
+	/*
+	 * private void openOverflowMenu() { PopupMenu popup = new
+	 * PopupMenu(getActivity(), getActivity()
+	 * .findViewById(R.id.action_overflow)); MenuInflater inflater =
+	 * popup.getMenuInflater(); inflater.inflate(R.menu.menu_overflow,
+	 * popup.getMenu()); popup.setOnMenuItemClickListener(this); popup.show(); }
+	 */
 
 	private void setupSearchView(MenuItem searchItem) {
 

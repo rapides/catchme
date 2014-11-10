@@ -21,6 +21,9 @@
     <string name="received_button">Received invitations</string>
     <string name="pull_to_refresh">Pull to refresh</string>
     <string name="action_refresh">Refresh</string>
-    
+    <string name="drawer_close">Close</string>
+    <string name="drawer_open">Open</string>
+    <string name="err_no_internet">There is no Internet connection</string>
+     
 
 </resources>

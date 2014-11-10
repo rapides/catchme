@@ -8,6 +8,7 @@ import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -48,21 +49,12 @@ public class ItemListActivity extends FragmentActivity implements
 				this).build();
 		ImageLoader.getInstance().init(config);
 
-		// pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-		// viewPager = (ViewPager) findViewById(R.id.main_pager);
-		// viewPager.setAdapter(pagerAdapter);
-		// actionBar.addTab(actionBar.newTab()
-		// .setText(R.string.tab_title_messages)
-		// .setTabListener(new ActionBarListener(viewPager)));
-		// actionBar.addTab(actionBar.newTab()
-		// .setText(R.string.tab_title_contacts)
-		// .setTabListener(new ActionBarListener(viewPager)));
-		// actionBar.addTab(actionBar.newTab().setText(R.string.tab_title_map)
-		// .setTabListener(new ActionBarListener(viewPager)));
+		ItemListFragment firstFragment = new ItemListFragment();
+		getSupportFragmentManager().beginTransaction()
+        .replace(R.id.main_fragment_container, firstFragment).commit();
 
-		// viewPager.setOnPageChangeListener(new ViewPagerListener(actionBar));
-		// viewPager.setOffscreenPageLimit(2);
-		// viewPager.setCurrentItem(1);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
 	}
 
 	/**
@@ -101,15 +93,16 @@ public class ItemListActivity extends FragmentActivity implements
 			transaction.replace(R.id.main_fragment_container, frag);
 			transaction.addToBackStack(null);
 			transaction.commit();
+
 			setTitle(ExampleContent.ITEM_MAP.get(id).getName());
-			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if(keyCode == KeyEvent.KEYCODE_BACK){
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			setTitle(getResources().getString(R.string.app_name));
-			getActionBar().setDisplayHomeAsUpEnabled(false);
+			//getActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 		return super.onKeyDown(keyCode, event);
 	}

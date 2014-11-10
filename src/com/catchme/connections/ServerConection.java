@@ -25,6 +25,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 public class ServerConection {
 
 	public static String GET(String url) {
@@ -150,5 +154,11 @@ public class ServerConection {
 			holder.put(key, data);
 		}
 		return holder;
+	}
+	public static boolean isOnline(Context c) {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
 }
