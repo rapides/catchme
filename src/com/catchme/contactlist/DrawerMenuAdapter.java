@@ -2,6 +2,7 @@ package com.catchme.contactlist;
 
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.utils.RoundedImageView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class DrawerMenuAdapter extends BaseAdapter {
@@ -59,7 +59,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			
 			TextView email = (TextView) convertView
 					.findViewById(R.id.drawer_title_email);
-			ImageButton avatar = (ImageButton)convertView.findViewById(R.id.drawer_title_avatar);
+			RoundedImageView avatar = (RoundedImageView)convertView.findViewById(R.id.drawer_title_avatar);
 			name.setText(ExampleContent.currentUser.getFullName());
 			email.setText(ExampleContent.currentUser.getEmail());
 			avatar.setImageResource(ExampleContent.currentUser.getImageResource());

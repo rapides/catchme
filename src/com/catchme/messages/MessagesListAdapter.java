@@ -1,10 +1,5 @@
 package com.catchme.messages;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -12,10 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.utils.RoundedImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class MessagesListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
@@ -69,7 +69,7 @@ public class MessagesListAdapter extends BaseAdapter {
 				LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 		timeParams.addRule(RelativeLayout.BELOW, R.id.single_message_content);
-		ImageView img = (ImageView) convertView
+		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.single_message_image);
 		if (item.getMessages().get(position).getSenderId() % 2 != 0) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);

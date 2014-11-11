@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:background="@color/list_filter_background"
             android:orientation="horizontal"
-            android:weightSum="4" >
+            android:weightSum="4" 
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"

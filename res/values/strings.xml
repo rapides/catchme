@@ -25,6 +25,7 @@
     <string name="drawer_open">Open</string>
     <string name="err_no_internet">There is no Internet connection</string>
     <string name="current_user_avatar">Avatar</string>
+    <string name="action_filter">Filter</string>
      
 
 </resources>

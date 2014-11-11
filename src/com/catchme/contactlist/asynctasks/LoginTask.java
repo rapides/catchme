@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import com.catchme.R;
 import com.catchme.connections.ConnectionConst;
 import com.catchme.connections.ServerConection;
-import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.DrawerMenuAdapter;
 import com.catchme.exampleObjects.ExampleContent;
@@ -15,7 +14,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,7 +35,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 		if (ServerConection.isOnline(context)) {
 			String login = params[0];
 			String password = params[1];
-
+			result = new JSONObject();
 			/*result = ServerConection.JsonPOST(ConnectionConst.URL_CONTACTS_ALL,
 					ServerRequests.getTokenRequest(login, password));*/
 		}

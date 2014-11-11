@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
@@ -73,6 +74,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	 * The current activated item position. Only used on tablets.
 	 */
 	private int mActivatedPosition = ListView.INVALID_POSITION;
+	private PopupMenu popup;
 
 	public interface Callbacks {
 
@@ -136,7 +138,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
-		
+
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -165,7 +167,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		};
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
-
 		return rootView;
 	}
 
@@ -316,12 +317,12 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(String newText) {
-		if(listView.getAdapter()!=null){
+		if (listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					CustomListAdapter.SEARCHTYPES[1] + CustomListAdapter.SEARCHCHAR
-							+ newText);
+					CustomListAdapter.SEARCHTYPES[1]
+							+ CustomListAdapter.SEARCHCHAR + newText);
 		}
-		
+
 	}
 
 	@Override
@@ -346,7 +347,8 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.action_sort:
+		case R.id.action_filter:
+			openSortMenu();
 			return true;
 		case android.R.id.home: {
 			if (drawerLayout.isDrawerVisible(drawerList)) {
@@ -362,20 +364,38 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 
 	}
 
+	private void openSortMenu() {
+		if (popup == null) {
+			popup = new PopupMenu(getActivity(), getActivity().findViewById(
+					R.id.action_filter));
+			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
+			popup.setOnMenuItemClickListener(this);
+		}
+		popup.show();
+	}
+
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_overflow_item1:
-			Toast.makeText(getActivity(), "menu1", Toast.LENGTH_SHORT).show();
+		case R.id.menu_group_all:
+			setUnderline(0);
+			filterList(-1);
+			item.setChecked(!item.isChecked());
 			return true;
-		case R.id.menu_overflow_item2:
-			Toast.makeText(getActivity(), "menu2", Toast.LENGTH_SHORT).show();
+		case R.id.menu_group_accepted:
+			setUnderline(1);
+			filterList(ExampleItem.STATE_TYPE[0]);
+			item.setChecked(!item.isChecked());
 			return true;
-		case R.id.menu_overflow_item3:
-			Toast.makeText(getActivity(), "menu3", Toast.LENGTH_SHORT).show();
+		case R.id.menu_group_sent:
+			setUnderline(2);
+			filterList(ExampleItem.STATE_TYPE[1]);
+			item.setChecked(!item.isChecked());
 			return true;
-		case R.id.menu_overflow_item4:
-			Toast.makeText(getActivity(), "menu4", Toast.LENGTH_SHORT).show();
+		case R.id.menu_group_received:
+			setUnderline(3);
+			filterList(ExampleItem.STATE_TYPE[2]);
+			item.setChecked(!item.isChecked());
 			return true;
 		}
 		return false;

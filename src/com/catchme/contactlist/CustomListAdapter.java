@@ -8,6 +8,7 @@ import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.Message;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.utils.RoundedImageView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,12 +16,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 
 public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
@@ -62,7 +58,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		}
 		ExampleItem item = items.get(position);
 
-		ImageView img = (ImageView) convertView
+		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
 		// TextView city = (TextView) convertView.findViewById(R.id.item_city);
@@ -70,8 +66,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		TextView lastMsg = (TextView) convertView
 				.findViewById(R.id.item_last_message);
 
-		ImageButton btn = (ImageButton) convertView
-				.findViewById(R.id.item_position_button);
+		
 
 		if (item.getImageUrl() != null) {
 			ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
@@ -95,9 +90,6 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 					+ "...");
 		}
 
-		// btn.setOnClickListener(new PositonButtonListener(item.getId()));
-		btn.setFocusable(false);
-		btn.setFocusableInTouchMode(false);
 
 		return convertView;
 	}

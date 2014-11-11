@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:checkableBehavior="single" >
+        <item
+            android:id="@+id/menu_group_all"
+            android:checked="true"
+            android:orderInCategory="1"
+            android:title="@string/all_button"/>
+        <item
+            android:id="@+id/menu_group_accepted"
+            android:orderInCategory="2"
+            android:title="@string/accepted_button"/>
+        <item
+            android:id="@+id/menu_group_sent"
+            android:orderInCategory="3"
+            android:title="@string/sent_button"/>
+        <item
+            android:id="@+id/menu_group_received"
+            android:orderInCategory="4"
+            android:title="@string/received_button"/>
+    </group>
+
+</menu>
