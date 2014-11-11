@@ -1,4 +1,4 @@
-package com.catchme.itemdetails;
+package com.catchme.utils;
 
 import com.catchme.R;
 

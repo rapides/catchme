@@ -5,14 +5,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
 import android.annotation.SuppressLint;
+
 import com.catchme.R;
 
 public class ExampleContent {
 	public static ArrayList<ExampleItem> ITEMS = new ArrayList<ExampleItem>();
 	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
-
+	public static LoggedUser currentUser;
 	static {
 		// Add 3 sample items.
 		/*
@@ -24,20 +26,23 @@ public class ExampleContent {
 		 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
 		 * "Frankfurt"));
 		 */
-		addItem(new ExampleItem(0, "Weronika", "Grodecka 2",
+		addItem(new ExampleItem("Weronika", "Grodecka 2",
 				"rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-		addItem(new ExampleItem(1, "Evilish", "EviLeenda",
-				"rapides+2@gmail.com", R.drawable.o1, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(2, "Jarek", "Maksymiuk", "rapides+3@gmail.com",
+		addItem(new ExampleItem("Evilish", "EviLeenda", "rapides+2@gmail.com",
+				R.drawable.o1, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem("Jarek", "Maksymiuk", "rapides+3@gmail.com",
 				R.drawable.o2, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(3, "Joachim", "Pflaume", "rapides+5@gmail.com",
+		addItem(new ExampleItem("Joachim", "Pflaume", "rapides+5@gmail.com",
 				R.drawable.o3, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(4, "Mayak", "Balop", "rapides+6@gmail.com",
+		addItem(new ExampleItem("Mayak", "Balop", "rapides+6@gmail.com",
 				R.drawable.o4, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(5, "Mayak", "STAN1", "rapides+7@gmail.com",
+		addItem(new ExampleItem("Mayak", "STAN1", "rapides+7@gmail.com",
 				R.drawable.o4, ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem(6, "Weronika", "STAN2", "rapides+8@gmail.com",
+		addItem(new ExampleItem("Janusz", "STAN1", "rapides+7@gmail.com",
+				-1, ExampleItem.STATE_TYPE[1]));
+		addItem(new ExampleItem("Weronika", "STAN2", "rapides+8@gmail.com",
 				R.drawable.o5, ExampleItem.STATE_TYPE[2]));
+		currentUser = new LoggedUser("Januszy", "Cebula—ski", "cycki@cycuszki.pl", "appleseed", -1, ExampleItem.STATE_TYPE[0]);
 	}
 
 	private static void addItem(ExampleItem item) {
@@ -64,9 +69,9 @@ public class ExampleContent {
 
 		private LinkedList<Message> messages;
 
-		public ExampleItem(long id, String name, String surname, String email,
+		public ExampleItem(String name, String surname, String email,
 				int photoId, int state) {
-			this.id = id;
+			this.id = email.hashCode();
 			this.name = name;
 			this.photoId = photoId;
 			this.email = email;
@@ -77,9 +82,9 @@ public class ExampleContent {
 			addRandomMessages();
 		}
 
-		public ExampleItem(long id, String name, String surname, String email, String photoUrl,
-				int state) {
-			this.id = id;
+		public ExampleItem(String name, String surname, String email,
+				String photoUrl, int state) {
+			this.id = email.hashCode();
 			this.name = name;
 			this.photoUrl = photoUrl;
 			this.email = email;
@@ -129,15 +134,24 @@ public class ExampleContent {
 		}
 
 		public int getImageResource() {
-			return photoId;
+			if(photoId==-1){
+				return R.drawable.loader;
+			}else{
+				return photoId;
+			}
 		}
 
 		public String getImageUrl() {
 			return photoUrl;
 		}
-
-		public String getName() {
+		public String getName(){
+			return name;
+		}
+		public String getFullName() {
 			return name + " " + surname;
+		}
+		public String getSurname() {
+			return surname;
 		}
 
 		public long getId() {
@@ -152,11 +166,23 @@ public class ExampleContent {
 			return email;
 		}
 
-
 		public void addFirstMessage(Message message) {
 			Collections.reverse(messages);
 			messages.add(message);
 			Collections.reverse(messages);
 		}
+	}
+
+	public static class LoggedUser extends ExampleItem{
+		String password;
+		public LoggedUser(String name, String surname, String email, String password,
+				int photoId, int state) {
+			super(name, surname, email, photoId, state);
+			this.password = password;
+		}
+		public String getPassword(){
+			return password;
+		}
+		
 	}
 }

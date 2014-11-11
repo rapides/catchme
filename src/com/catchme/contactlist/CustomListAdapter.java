@@ -79,7 +79,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			img.setImageResource(item.getImageResource());
 		}
 
-		name.setText(item.getName());
+		name.setText(item.getFullName());
 		// city.setText(item.getCity());
 		Message m = item.getMessages().get(item.getMessages().size() - 1);
 		if (m.getSenderId() % 2 == 0) {
@@ -142,7 +142,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
 							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
 							if (dataItem
-									.getName()
+									.getFullName()
 									.toLowerCase(Locale.getDefault())
 									.contains(
 											searchQuery.toLowerCase(Locale

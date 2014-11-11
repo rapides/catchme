@@ -2,6 +2,7 @@ package com.catchme.contactlist;
 
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
+import com.catchme.contactlist.asynctasks.LoginTask;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.mapcontent.ItemMapFragment;
@@ -23,9 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
@@ -44,6 +43,7 @@ import android.widget.SearchView.OnQueryTextListener;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
+@SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnClickListener,
 		OnQueryTextListener, OnRefreshListener, OnMenuItemClickListener {
 
@@ -111,19 +111,19 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				.findViewById(R.id.swipe_container);
 		drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
 		drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
-
+		new LoginTask(getActivity(), drawerList, listView).execute(
+				ExampleContent.currentUser.getEmail(),
+				ExampleContent.currentUser.getPassword());
 		btnAll.setOnClickListener(this);
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
-		listView.setAdapter(new CustomListAdapter(getActivity(),
-				ExampleContent.ITEMS));
+
 		// new GetContactsTask(swipeLayout,
 		// listView.getAdapter()).execute("tokenCyckitoken");
 		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
@@ -136,7 +136,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
-		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
+		
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -180,17 +180,18 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
 	}
-	
+
 	@Override
-	public void onResume(){
+	public void onResume() {
 		super.onResume();
 		drawerToggle.syncState();
 	}
+
 	@Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -301,20 +302,26 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(int state) {
-		if (state >= 0) {
-			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					CustomListAdapter.SEARCHTYPES[0]
-							+ CustomListAdapter.SEARCHCHAR + state);
-		} else {
-			((CustomListAdapter) listView.getAdapter()).getFilter()
-					.filter(null);
+		if (listView.getAdapter() != null) {
+			if (state >= 0) {
+				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+						CustomListAdapter.SEARCHTYPES[0]
+								+ CustomListAdapter.SEARCHCHAR + state);
+			} else {
+				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+						null);
+			}
 		}
+
 	}
 
 	private void filterList(String newText) {
-		((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-				CustomListAdapter.SEARCHTYPES[1] + CustomListAdapter.SEARCHCHAR
-						+ newText);
+		if(listView.getAdapter()!=null){
+			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+					CustomListAdapter.SEARCHTYPES[1] + CustomListAdapter.SEARCHCHAR
+							+ newText);
+		}
+		
 	}
 
 	@Override

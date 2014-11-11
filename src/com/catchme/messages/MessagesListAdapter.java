@@ -2,6 +2,7 @@ package com.catchme.messages;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 
 import android.annotation.SuppressLint;
@@ -75,8 +76,7 @@ public class MessagesListAdapter extends BaseAdapter {
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.rounded_rectangle);
 			
-			img.setImageDrawable(convertView.getResources().getDrawable(
-					R.drawable.o4));
+			img.setImageResource(ExampleContent.currentUser.getImageResource());
 			timeParams.addRule(RelativeLayout.ALIGN_RIGHT, R.id.single_message_content);
 		} else {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);

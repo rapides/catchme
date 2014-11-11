@@ -99,7 +99,7 @@
         android:background="@color/loader_background" 
        >
 
-        <com.catchme.itemdetails.GifMovieView
+        <com.catchme.utils.GifMovieView
             android:id="@+id/gif_loader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

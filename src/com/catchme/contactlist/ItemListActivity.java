@@ -8,7 +8,6 @@ import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -94,7 +93,7 @@ public class ItemListActivity extends FragmentActivity implements
 			transaction.addToBackStack(null);
 			transaction.commit();
 
-			setTitle(ExampleContent.ITEM_MAP.get(id).getName());
+			setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
 		}
 	}
 

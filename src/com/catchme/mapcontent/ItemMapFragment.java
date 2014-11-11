@@ -91,7 +91,7 @@ public class ItemMapFragment extends Fragment {
 			new GeocodeTask().execute("Wroclaw");
 		} else {
 			((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
-					.getName());
+					.getFullName());
 			// new GeocodeTask().execute(mItem.getCity());
 		}
 	}
@@ -133,7 +133,7 @@ public class ItemMapFragment extends Fragment {
 					location, 10);
 			map.clear();
 			map.animateCamera(cameraUpdate);
-			map.addMarker(new MarkerOptions().title(mItem.getName())
+			map.addMarker(new MarkerOptions().title(mItem.getFullName())
 					.snippet("Last seen: somewhen").position(location));
 
 		}

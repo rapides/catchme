@@ -149,8 +149,22 @@
                 android:layout_below="@+id/list_filter_buttons"
                 android:background="@color/background" />
         </android.support.v4.widget.SwipeRefreshLayout>
+        
+ 		<com.catchme.utils.FloatingActionButton
+            xmlns:fab="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/red_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            fab:fab_colorNormal="@color/floating_red"
+            fab:fab_colorPressed="@color/floating_red_pressed"
+            fab:fab_icon="@drawable/ic_action_user_add" />
+       
     </RelativeLayout>
- 
+
     <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"

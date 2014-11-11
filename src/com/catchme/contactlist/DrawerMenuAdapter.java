@@ -1,22 +1,18 @@
 package com.catchme.contactlist;
 
-import java.util.ArrayList;
-
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class DrawerMenuAdapter extends BaseAdapter {
-	private String title = "DRAWER TITLE";
 	private String[] array = { "Refresh", "Settings", "Help", "Logout" };
 	private LayoutInflater inflater;
 	private Activity activity;
@@ -33,7 +29,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	@Override
 	public Object getItem(int position) {
 		if (position == 0) {
-			return title;
+			return ExampleContent.currentUser;
 		} else {
 			return array[position-1];
 		}
@@ -42,7 +38,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		if (position == 0) {
-			return title.hashCode();
+			return ExampleContent.currentUser.hashCode();
 		} else {
 			return array[position-1].hashCode();
 		}
@@ -58,9 +54,15 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.drawer_list_title, null);
 			}
-			TextView item = (TextView) convertView
-					.findViewById(R.id.drawer_titleitem);
-			item.setText(title);
+			TextView name = (TextView) convertView
+					.findViewById(R.id.drawer_title_user);
+			
+			TextView email = (TextView) convertView
+					.findViewById(R.id.drawer_title_email);
+			ImageButton avatar = (ImageButton)convertView.findViewById(R.id.drawer_title_avatar);
+			name.setText(ExampleContent.currentUser.getFullName());
+			email.setText(ExampleContent.currentUser.getEmail());
+			avatar.setImageResource(ExampleContent.currentUser.getImageResource());
 			convertView.setClickable(false);
 		}else{
 			if (inflater == null) {

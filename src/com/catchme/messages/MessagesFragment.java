@@ -1,12 +1,11 @@
 package com.catchme.messages;
 
-import java.util.HashMap;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.catchme.R;
 import com.catchme.connections.ServerConection;
+import com.catchme.connections.ServerRequests;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
@@ -61,14 +60,14 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.startService(
 						new Intent(rootView.getContext(),
 								MessagesRefreshService.class));
-		
+
 		return rootView;
 	}
 
 	private void loadData() {
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
-		t.setText("" + mItem.getName());
+		t.setText("" + mItem.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
 				mItem);
 		listView.setAdapter(adapter);
@@ -127,31 +126,23 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		loadData();
 	}
 
-	private class ConnectTask extends AsyncTask<String, Void, String> {
+	private class ConnectTask extends AsyncTask<String, Void, JSONObject> {
 
 		@Override
-		protected String doInBackground(String... params) {
-			System.out.println("Connecting...");
-			HashMap<String, HashMap<String, String>> data = new HashMap<String, HashMap<String, String>>();
-			HashMap<String, String> dataContent = new HashMap<String, String>();
-			dataContent.put("email", "rapides+3@gmail.com");
-			dataContent.put("password", "appleseed");
-			data.put("user", dataContent);
-			String result = ServerConection.JsonPOST(params[0], data);
+		protected JSONObject doInBackground(String... params) {
+			JSONObject result = ServerConection.JsonPOST(params[0], ServerRequests
+					.getTokenRequest("rapides+3@gmail.com", "appleseed"));
 			return result;
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			JSONObject json;
-			System.out.println("OPS OPS: " + result);
+		protected void onPostExecute(JSONObject result) {
 			try {
-				json = new JSONObject(result);
 				System.out
 						.println("Popacz sam, jak gumisie skacz¹ tam i siam: "
-								+ ((JSONObject) json.get("user")).get("email"));
+								+ (result.getJSONObject("user")).get("email"));
 			} catch (JSONException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 	}

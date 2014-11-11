@@ -1,6 +1,7 @@
 package com.catchme.itemdetails;
 
 import com.catchme.R;
+import com.catchme.utils.GifMovieView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -68,7 +69,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		setUnderlinePos(0, 0);
 		loader.setMovieResource(R.drawable.loader);
 		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		new LoadProfile().execute();
+		new LoadProfileTask(loader, loaderContainer).execute();
 		return rootView;
 	}
 
@@ -143,7 +144,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 			openOverflowMenu();
 			return true;
 		case R.id.details_action_refresh:
-			new LoadProfile().execute();
+			new LoadProfileTask(loader, loaderContainer).execute();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -177,29 +178,6 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		return false;
 	}
 
-	private class LoadProfile extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected void onPreExecute(){
-			loader.setVisibility(View.VISIBLE);
-			loaderContainer.setVisibility(View.VISIBLE);
-		}
-		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				Thread.sleep((long) (Math.random() * 5000));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			loader.setVisibility(View.GONE);
-			loaderContainer.setVisibility(View.GONE);
-		}
-	}
+	
 
 }
