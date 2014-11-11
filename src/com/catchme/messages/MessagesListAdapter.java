@@ -60,34 +60,35 @@ public class MessagesListAdapter extends BaseAdapter {
 		message.setText(item.getMessages().get(position).getContent());
 		messageTime.setText(item.getMessages().get(position).getTime());
 
-		LayoutParams lp = new LayoutParams(
-				LayoutParams.WRAP_CONTENT,
+		LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-		LayoutParams imageParams = new LayoutParams(
-				60, 60);
-		LayoutParams timeParams = new LayoutParams(
-				LayoutParams.WRAP_CONTENT,
+		LayoutParams imageParams = new LayoutParams(60, 60);
+		LayoutParams timeParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 		timeParams.addRule(RelativeLayout.BELOW, R.id.single_message_content);
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.single_message_image);
 		if (item.getMessages().get(position).getSenderId() % 2 != 0) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			imageParams.addRule(RelativeLayout.ALIGN_TOP, R.id.single_message_content);
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
-			message.setBackgroundResource(R.drawable.rounded_rectangle);
-			
+			message.setBackgroundResource(R.drawable.bubble_right);
+
 			img.setImageResource(ExampleContent.currentUser.getImageResource());
-			timeParams.addRule(RelativeLayout.ALIGN_RIGHT, R.id.single_message_content);
+			timeParams.addRule(RelativeLayout.ALIGN_RIGHT,
+					R.id.single_message_content);
 		} else {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.single_message_content);
 			lp.addRule(RelativeLayout.RIGHT_OF, R.id.single_message_image);
-			message.setBackgroundResource(R.drawable.rounded_rectangle_sender);
+			message.setBackgroundResource(R.drawable.bubble_left);
 			if (item.getImageUrl() != null) {
 				ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
 			} else {
 				img.setImageResource(item.getImageResource());
 			}
-			timeParams.addRule(RelativeLayout.ALIGN_LEFT, R.id.single_message_content);
+			timeParams.addRule(RelativeLayout.ALIGN_LEFT,
+					R.id.single_message_content);
 		}
 		message.setMinimumWidth((int) (parent.getWidth() * 0.25));
 		message.setMaxWidth((int) (parent.getWidth() * 0.7));

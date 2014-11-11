@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="messages_sendBtn_background">#FFDDDDDD</color>
-    <color name="list_filter_background">#FF222222</color>
+    <color name="messages_sendBtn_background">@color/background</color>
+    <color name="list_filter_background">@color/color_base </color>
     <color name="list_filter_underline">#FF33B5E5</color>
     <color name="list_filter_tab_selected">#AA33B5E5</color>
     <color name="list_filter_tab_text">#FFEEEEEE</color>
-    <color name="item_detail_tab_background">#FF222222</color>
-    <color name="item_detail_tab_underline">#FF33B5E5</color>
-    <color name="item_detail_tab_selected">#AA33B5E5</color>
-    <color name="item_detail_tab_text">#FFEEEEEE</color>
+    <color name="item_detail_tab_background">@color/color_base</color>
+    <color name="item_detail_tab_underline">@color/color100</color>
+    <color name="item_detail_tab_selected">@color/color600</color>
+    <color name="item_detail_tab_text">#FFfce4ec</color>
     <color name="background">#fff3f3f3</color>
     <color name="loader_background">#AAfefefe</color>
     <color name="swipelayout_bar">#ff00ddff</color>
-    <color name="swipelayout_color1">#ff99cc00</color>
-    <color name="swipelayout_color2">#ffffbb33</color>
-    <color name="swipelayout_color3">#ffff4444</color>
-    <color name="drawer_background">#ffeeeeee</color>
-    <color name="floating_red">#FFe91e63</color>
-    <color name="floating_red_pressed">#ffec407a</color>
+    <color name="swipelayout_color1">#FF99CC00</color>
+    <color name="swipelayout_color2">#FFFFBB33</color>
+    <color name="swipelayout_color3">#FFFF4444</color>
+    <color name="drawer_background">#FFEEEEEE</color>
+    <color name="drawer_title">@color/colorA100</color>
+    <color name="floating_button_base">@color/colorA400</color>
+    <color name="floating_button_pressed">@color/colorA200</color>
+    <color name="actionbar_background">@color/color_base</color>
+    <color name="message_received_background">#AAeeff41</color>
+    <color name="message_sent_background">#AAb2ff59</color>
+    <color name="message_received_stroke">#20000000</color>
+    <color name="message_sent_stroke">#20000000</color>
+    <color name="color_base">#FF4caf50</color>
+    <color name="color50">#FFe8f5e9</color>
+    <color name="color100">#FFc8e6c9</color>
+    <color name="color200">#FFa5d6a7</color>
+    <color name="color300">#FF81c784</color>
+    <color name="color400">#FF66bb6a</color>
+    <color name="color600">#FF43a047</color>
+    <color name="color700">#FF388e3c</color>
+    <color name="color800">#FF2e7d32</color>
+    <color name="color900">#FF1b5e20</color>
+    <color name="colorA100">#FFb9f6ca</color>
+    <color name="colorA200">#FF69f0ae</color>
+    <color name="colorA400">#FF00e676</color>
+    <color name="colorA700">#FF00c853</color>
 
 </resources>

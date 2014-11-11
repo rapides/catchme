@@ -45,4 +45,10 @@ public class ServerRequests {
 		}
 		return o;
 	}
+
+	public static JSONObject getAllContactsRequest() {
+		JSONObject o = new JSONObject();
+		// TODO Auto-generated method stub
+		return o;
+	}
 }

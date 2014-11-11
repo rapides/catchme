@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -83,19 +87,32 @@ public class ServerConection {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static JSONObject JsonPOST(String url, JSONObject data) {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
+		JSONObject response = new JSONObject();
+		HttpParams httpParameters = new BasicHttpParams();
+		int timeoutConnection = 3000;
+		HttpConnectionParams.setConnectionTimeout(httpParameters,
+				timeoutConnection);
+		int timeoutSocket = 5000;
+		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+		DefaultHttpClient httpclient = new DefaultHttpClient(httpParameters);
 		HttpPost httpost = new HttpPost(url);
+
 		try {
 			StringEntity se = new StringEntity(data.toString());
 			httpost.setEntity(se);
 			httpost.setHeader("Accept", "application/json");
 			httpost.setHeader("Content-type", "application/json");
 			ResponseHandler responseHandler = new BasicResponseHandler();
-			return httpclient.execute(httpost, responseHandler);
-		} catch (Exception e) {
-			Log.e("ConnectionError",e.getMessage());
+			response = httpclient.execute(httpost, responseHandler);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return null;
+
+		return response;
 	}
 
 	public static boolean isOnline(Context c) {

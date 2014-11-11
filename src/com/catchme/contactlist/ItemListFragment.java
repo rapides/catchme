@@ -1,8 +1,7 @@
 package com.catchme.contactlist;
 
 import com.catchme.R;
-import com.catchme.contactlist.asynctasks.GetContactsTask;
-import com.catchme.contactlist.asynctasks.LoginTask;
+import com.catchme.contactlist.asynctasks.*;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.mapcontent.ItemMapFragment;
@@ -15,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -113,17 +113,15 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				.findViewById(R.id.swipe_container);
 		drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
 		drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
-		new LoginTask(getActivity(), drawerList, listView).execute(
-				ExampleContent.currentUser.getEmail(),
-				ExampleContent.currentUser.getPassword());
+
 		btnAll.setOnClickListener(this);
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
 
-		// new GetContactsTask(swipeLayout,
-		// listView.getAdapter()).execute("tokenCyckitoken");
 		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
+		listView.setAdapter(new CustomListAdapter(getActivity(),
+				ExampleContent.ITEMS));
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -139,15 +137,23 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
 
+		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (position > 0) {
+				if (position > 1) {
 					Toast.makeText(getActivity(), "Position: " + position,
 							Toast.LENGTH_SHORT).show();
 					drawerLayout.closeDrawer(drawerList);
+				}else if(position == 1){
+					drawerLayout.closeDrawer(drawerList);
+					new LoginTask((DrawerMenuAdapter) drawerList.getAdapter(),
+							(CustomListAdapter) listView.getAdapter(), swipeLayout)
+							.execute(ExampleContent.currentUser.getEmail(),
+									ExampleContent.currentUser.getPassword());
+					
 				}
 			}
 		});
@@ -167,13 +173,22 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		};
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
+
+		
+		new GetContactsTask(swipeLayout,
+				(CustomListAdapter) listView.getAdapter()).execute("token");
 		return rootView;
 	}
-
+	
+	@Override
+	public void onRefresh() {
+		new GetContactsTask(swipeLayout,
+				(CustomListAdapter) listView.getAdapter()).execute("token");
+	}
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
+		
 		// Restore the previously serialized activated item position.
 		if (savedInstanceState != null
 				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
@@ -303,7 +318,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(int state) {
-		if (listView.getAdapter() != null) {
+		if (listView!= null && listView.getAdapter() != null) {
 			if (state >= 0) {
 				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
 						CustomListAdapter.SEARCHTYPES[0]
@@ -317,7 +332,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(String newText) {
-		if (listView.getAdapter() != null) {
+		if (listView!= null && listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
 					CustomListAdapter.SEARCHTYPES[1]
 							+ CustomListAdapter.SEARCHCHAR + newText);
@@ -378,22 +393,22 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			setUnderline(0);
+			//setUnderline(0);
 			filterList(-1);
 			item.setChecked(!item.isChecked());
 			return true;
 		case R.id.menu_group_accepted:
-			setUnderline(1);
+			//setUnderline(1);
 			filterList(ExampleItem.STATE_TYPE[0]);
 			item.setChecked(!item.isChecked());
 			return true;
 		case R.id.menu_group_sent:
-			setUnderline(2);
+			//setUnderline(2);
 			filterList(ExampleItem.STATE_TYPE[1]);
 			item.setChecked(!item.isChecked());
 			return true;
 		case R.id.menu_group_received:
-			setUnderline(3);
+			//setUnderline(3);
 			filterList(ExampleItem.STATE_TYPE[2]);
 			item.setChecked(!item.isChecked());
 			return true;
@@ -427,7 +442,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		filterList(newText);
-		setUnderline(0);
+		//setUnderline(0);
 		return true;
 	}
 
@@ -436,10 +451,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		return false;
 	}
 
-	@Override
-	public void onRefresh() {
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter()).execute("token");
-	}
+	
 
 }

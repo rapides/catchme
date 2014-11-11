@@ -3,7 +3,6 @@ package com.catchme.itemdetails;
 import com.catchme.R;
 import com.catchme.utils.GifMovieView;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;

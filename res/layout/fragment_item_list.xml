@@ -160,8 +160,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
-            fab:fab_colorNormal="@color/floating_red"
-            fab:fab_colorPressed="@color/floating_red_pressed"
+            fab:fab_colorNormal="@color/floating_button_base"
+            fab:fab_colorPressed="@color/floating_button_pressed"
             fab:fab_icon="@drawable/ic_action_user_add" />
        
     </RelativeLayout>

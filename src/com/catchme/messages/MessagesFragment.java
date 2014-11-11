@@ -121,10 +121,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		(new ConnectTask()).execute("http://192.168.43.19:3000/api/v1/auth");
 	}
 
-	public void updateView(long id) {
-		mItem = ExampleContent.ITEM_MAP.get(id);
-		loadData();
-	}
+	
 
 	private class ConnectTask extends AsyncTask<String, Void, JSONObject> {
 

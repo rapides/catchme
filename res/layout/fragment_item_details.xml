@@ -96,8 +96,8 @@
         android:id="@+id/loader_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/loader_background" 
-       >
+        android:layout_alignTop="@+id/item_pager"
+        android:background="@color/loader_background" >
 
         <com.catchme.utils.GifMovieView
             android:id="@+id/gif_loader"
