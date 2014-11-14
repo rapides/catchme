@@ -10,6 +10,10 @@
     <color name="item_detail_tab_underline">@color/color100</color>
     <color name="item_detail_tab_selected">@color/color600</color>
     <color name="item_detail_tab_text">#FFfce4ec</color>
+    <color name="list_item_selected">@color/color100</color>
+    <color name="list_item_pressed">@color/color600</color>
+    <color name="list_item_focused">@color/colorA100</color>
+    <color name="list_item_background">@color/background</color>
     <color name="background">#fff3f3f3</color>
     <color name="loader_background">#AAfefefe</color>
     <color name="swipelayout_bar">#ff00ddff</color>

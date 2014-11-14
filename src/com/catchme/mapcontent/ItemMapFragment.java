@@ -21,7 +21,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.catchme.R;
-import com.catchme.connections.ServerConection;
+import com.catchme.connections.ServerConnection;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
@@ -105,11 +105,10 @@ public class ItemMapFragment extends Fragment {
 			String query = "http://maps.googleapis.com/maps/api/geocode/json?address="
 					+ params[0] + "&sensor=true";
 
-			String result = ServerConection.GET(query);
-			JSONObject json;
+			 
+			JSONObject json = ServerConnection.GET(query, null);;
 			Location l = new Location("Google Maps");
 			try {
-				json = new JSONObject(result);
 				JSONArray articles = json.getJSONArray("results");
 
 				l.setLatitude(articles.getJSONObject(0)

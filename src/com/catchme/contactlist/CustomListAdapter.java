@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.*;
 
@@ -22,9 +23,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
-	public static final String[] SEARCHTYPES = {"0","1"};
+	public static final String[] SEARCHTYPES = { "0", "1" };
 	public static final String SEARCHCHAR = ";";
-			
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.activity = activity;
@@ -48,25 +48,25 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
 	@SuppressLint("InflateParams")
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		if (inflater == null) {
 			inflater = (LayoutInflater) activity
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row, null);
+
 		}
 		ExampleItem item = items.get(position);
 
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		// TextView city = (TextView) convertView.findViewById(R.id.item_city);
+		// TextView city = (TextView)
+		// convertView.findViewById(R.id.item_city);
 
 		TextView lastMsg = (TextView) convertView
 				.findViewById(R.id.item_last_message);
-
-		
 
 		if (item.getImageUrl() != null) {
 			ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
@@ -89,8 +89,16 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3)
 					+ "...");
 		}
+		img.setOnClickListener(new OnClickListener() {
 
-
+			@Override
+			public void onClick(View v) {
+				ListView parentListView = (ListView) v.getParent().getParent();
+				//parentListView.setItemChecked(position, true);
+				Toast.makeText(activity,
+						"cycki: " + parentListView + " " + position, 0).show();
+			}
+		});
 		return convertView;
 	}
 

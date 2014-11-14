@@ -17,8 +17,8 @@
             android:layout_height="wrap_content"
             android:background="@color/list_filter_background"
             android:orientation="horizontal"
-            android:weightSum="4" 
-            android:visibility="gone">
+            android:visibility="gone"
+            android:weightSum="4" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -148,12 +148,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/list_filter_buttons"
-                android:background="@color/background" />
+                android:choiceMode="singleChoice" />
         </android.support.v4.widget.SwipeRefreshLayout>
-        
- 		<com.catchme.utils.FloatingActionButton
+
+        <com.catchme.utils.FloatingActionButton
             xmlns:fab="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/red_icon"
+            android:id="@+id/list_floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -163,7 +163,6 @@
             fab:fab_colorNormal="@color/floating_button_base"
             fab:fab_colorPressed="@color/floating_button_pressed"
             fab:fab_icon="@drawable/ic_action_user_add" />
-       
     </RelativeLayout>
 
     <ListView

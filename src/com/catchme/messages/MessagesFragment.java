@@ -1,20 +1,15 @@
 package com.catchme.messages;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.catchme.R;
-import com.catchme.connections.ServerConection;
-import com.catchme.connections.ServerRequests;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.messages.asynctask.SendMessageTask;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -23,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +29,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	private ExampleItem mItem;
 	ListView listView;
 	View rootView;
+	EditText textBox;
 
 	public MessagesFragment() {
 	}
@@ -66,6 +63,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 	private void loadData() {
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
+		textBox = (EditText) rootView.findViewById(R.id.message_input);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
 		t.setText("" + mItem.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
@@ -118,29 +116,8 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		mNotificationManager.notify(notifyID, note);
 		// (new
 		// ConnectTask()).execute("http://192.168.43.19:3000/api/v1/contacts/all");
-		(new ConnectTask()).execute("http://192.168.43.19:3000/api/v1/auth");
+		(new SendMessageTask(getActivity(), (MessagesListAdapter) listView.getAdapter()))
+				.execute(ExampleContent.currentUser.getToken(), textBox.getText().toString());
 	}
 
-	
-
-	private class ConnectTask extends AsyncTask<String, Void, JSONObject> {
-
-		@Override
-		protected JSONObject doInBackground(String... params) {
-			JSONObject result = ServerConection.JsonPOST(params[0], ServerRequests
-					.getTokenRequest("rapides+3@gmail.com", "appleseed"));
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(JSONObject result) {
-			try {
-				System.out
-						.println("Popacz sam, jak gumisie skacz¹ tam i siam: "
-								+ (result.getJSONObject("user")).get("email"));
-			} catch (JSONException e) {
-				// e.printStackTrace();
-			}
-		}
-	}
 }

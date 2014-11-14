@@ -1,26 +1,32 @@
 package com.catchme.contactlist.asynctasks;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.connections.ConnectionConst;
-import com.catchme.connections.ServerConection;
+import com.catchme.connections.ServerConnection;
+import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 
 	private SwipeRefreshLayout swipeLayout;
 	private CustomListAdapter adapter;
 	private Context context;
+
+	@Override
+	protected void onPreExecute() {
+		swipeLayout.setRefreshing(true);
+	}
 
 	public GetContactsTask(SwipeRefreshLayout swipeLayout,
 			CustomListAdapter listAdapter) {
@@ -34,12 +40,9 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	protected JSONObject doInBackground(String... params) {
 		String token = params[0];
 		JSONObject result = new JSONObject();
-		if (ServerConection.isOnline(context)) {
-			result = ServerConection.JsonPOST(ConnectionConst.URL_CONTACTS_ALL,
-					ServerRequests.getAllContactsRequest());
-
-		} else {
-			result = null;
+		if (ServerConnection.isOnline(context)) {
+			result = ServerRequests.getAcceptedContactsRequest(token);
+			addItemsToDatabase(ReadServerResponse.getContactList(result));
 		}
 		return result;
 
@@ -57,4 +60,7 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 		swipeLayout.setRefreshing(false);
 	}
 
+	private void addItemsToDatabase(ArrayList<ExampleItem> itemList) {
+		ExampleContent.updateItems(itemList);
+	}
 }

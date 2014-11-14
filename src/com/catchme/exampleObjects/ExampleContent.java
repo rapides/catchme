@@ -26,23 +26,24 @@ public class ExampleContent {
 		 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
 		 * "Frankfurt"));
 		 */
-		addItem(new ExampleItem("Weronika", "Grodecka 2",
+		addItem(new ExampleItem(1, "Weronika", "Grodecka 2",
 				"rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-		addItem(new ExampleItem("Evilish", "EviLeenda", "rapides+2@gmail.com",
-				R.drawable.o1, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem("Jarek", "Maksymiuk", "rapides+3@gmail.com",
+		addItem(new ExampleItem(2, "Evilish", "EviLeenda",
+				"rapides+2@gmail.com", R.drawable.o1, ExampleItem.STATE_TYPE[0]));
+		addItem(new ExampleItem(3, "Jarek", "Maksymiuk", "rapides+3@gmail.com",
 				R.drawable.o2, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem("Joachim", "Pflaume", "rapides+5@gmail.com",
+		addItem(new ExampleItem(4, "Joachim", "Pflaume", "rapides+5@gmail.com",
 				R.drawable.o3, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem("Mayak", "Balop", "rapides+6@gmail.com",
+		addItem(new ExampleItem(5, "Mayak", "Balop", "rapides+6@gmail.com",
 				R.drawable.o4, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem("Mayak", "STAN1", "rapides+7@gmail.com",
+		addItem(new ExampleItem(6, "Mayak", "STAN1", "rapides+7@gmail.com",
 				R.drawable.o4, ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem("Janusz", "STAN1", "rapides+7@gmail.com",
+		addItem(new ExampleItem(7, "Janusz", "STAN1", "rapides+7@gmail.com",
 				-1, ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem("Weronika", "STAN2", "rapides+8@gmail.com",
+		addItem(new ExampleItem(8, "Weronika", "STAN2", "rapides+8@gmail.com",
 				R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-		currentUser = new LoggedUser("Januszy", "Cebula—ski", "cycki@cycuszki.pl", "appleseed", -1, ExampleItem.STATE_TYPE[0]);
+		currentUser = new LoggedUser(9, "Januszy", "Cebula—ski",
+				"cycki@cycuszki.pl", ExampleItem.IMAGE_INVALID, null);
 	}
 
 	private static void addItem(ExampleItem item) {
@@ -50,10 +51,23 @@ public class ExampleContent {
 		ITEMS.add(item);
 	}
 
+	public static void updateItems(ArrayList<ExampleItem> itemList) {
+		if(itemList!=null && itemList.size()>0){
+			ITEMS = itemList;
+			ITEM_MAP.clear();
+			for(ExampleItem item: itemList){
+				ITEM_MAP.put(item.getId(), item);
+			}
+		}
+		
+	}
+
 	/**
 	 * A dummy item representing a piece of content.
 	 */
 	public static class ExampleItem {
+		public static final int IMAGE_INVALID = -1;
+
 		public static int[] STATE_TYPE = { 0, 1, 2 };// "0-Accepted", "1-Sent",
 														// "2-Received" };
 
@@ -69,9 +83,9 @@ public class ExampleContent {
 
 		private LinkedList<Message> messages;
 
-		public ExampleItem(String name, String surname, String email,
+		public ExampleItem(long id, String name, String surname, String email,
 				int photoId, int state) {
-			this.id = email.hashCode();
+			this.id = id;
 			this.name = name;
 			this.photoId = photoId;
 			this.email = email;
@@ -82,9 +96,9 @@ public class ExampleContent {
 			addRandomMessages();
 		}
 
-		public ExampleItem(String name, String surname, String email,
+		public ExampleItem(long id, String name, String surname, String email,
 				String photoUrl, int state) {
-			this.id = email.hashCode();
+			this.id = id;
 			this.name = name;
 			this.photoUrl = photoUrl;
 			this.email = email;
@@ -93,6 +107,17 @@ public class ExampleContent {
 			this.state = state;
 			this.messages = new LinkedList<Message>();
 			addRandomMessages();
+		}
+
+		public ExampleItem(ExampleItem item) {
+			this.id = item.id;
+			this.name = item.name;
+			this.photoUrl = item.photoUrl;
+			this.email = item.email;
+			this.surname = item.surname;
+			this.photoId = item.photoId;
+			this.state = item.state;
+			this.messages = item.messages;
 		}
 
 		private void addRandomMessages() {
@@ -126,7 +151,7 @@ public class ExampleContent {
 
 		@Override
 		public String toString() {
-			return name;
+			return name + " " + surname + " " + email;
 		}
 
 		public LinkedList<Message> getMessages() {
@@ -134,9 +159,9 @@ public class ExampleContent {
 		}
 
 		public int getImageResource() {
-			if(photoId==-1){
+			if (photoId == IMAGE_INVALID) {
 				return R.drawable.loader;
-			}else{
+			} else {
 				return photoId;
 			}
 		}
@@ -144,12 +169,15 @@ public class ExampleContent {
 		public String getImageUrl() {
 			return photoUrl;
 		}
-		public String getName(){
+
+		public String getName() {
 			return name;
 		}
+
 		public String getFullName() {
 			return name + " " + surname;
 		}
+
 		public String getSurname() {
 			return surname;
 		}
@@ -173,16 +201,28 @@ public class ExampleContent {
 		}
 	}
 
-	public static class LoggedUser extends ExampleItem{
-		String password;
-		public LoggedUser(String name, String surname, String email, String password,
-				int photoId, int state) {
-			super(name, surname, email, photoId, state);
-			this.password = password;
+	public static class LoggedUser extends ExampleItem {
+		private String token;
+
+		public LoggedUser(long id, String name, String surname, String email,
+				int photoId, String token) {
+			super(id, name, surname, email, photoId, ExampleItem.STATE_TYPE[0]);
+			this.token = token;
 		}
-		public String getPassword(){
-			return password;
+
+		public LoggedUser(ExampleItem item, String token) {
+			super(item);
+			this.token = token;
 		}
-		
+
+		public String getToken() {
+			return token;
+		}
+
+		public void setToken(String token) {
+			this.token = token;
+		}
+
 	}
+
 }

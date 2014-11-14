@@ -1,20 +1,24 @@
 package com.catchme.contactlist;
 
 import com.catchme.R;
-import com.catchme.contactlist.asynctasks.*;
+import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
+import com.catchme.contactlist.listeners.FloatingActionButtonListener;
+import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
+import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.mapcontent.ItemMapFragment;
+import com.catchme.utils.FloatingActionButton;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,28 +31,18 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
-/**
- * A list fragment representing a list of Items. This fragment also supports
- * tablet devices by allowing list items to be given an 'activated' state upon
- * selection. This helps indicate which item is currently being viewed in a
- * {@link ItemMapFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnClickListener,
-		OnQueryTextListener, OnRefreshListener, OnMenuItemClickListener {
+		OnQueryTextListener, OnMenuItemClickListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
+	private static final String SELECTED_FILTER = "filter";
 	public ListView listView;
 	private Button btnAll;
 	private ImageButton btnSent;
@@ -62,8 +56,10 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private SwipeRefreshLayout swipeLayout;
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;
-	public ActionBarDrawerToggle drawerToggle;
-
+	private ActionBarDrawerToggle drawerToggle;
+	private final String PREFERENCES = "com.catchme";
+	private SharedPreferences sharedpreferences;
+	private FloatingActionButton fab;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -77,9 +73,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private PopupMenu popup;
 
 	public interface Callbacks {
-
 		public void onItemSelected(long id);
-
 	}
 
 	private static Callbacks sDummyCallbacks = new Callbacks() {
@@ -89,6 +83,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	};
 
 	public ItemListFragment() {
+
 	}
 
 	@Override
@@ -96,6 +91,8 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
+		sharedpreferences = getActivity().getSharedPreferences(PREFERENCES,
+				Context.MODE_PRIVATE);
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 		btnAll = (Button) rootView.findViewById(R.id.list_all_button);
 		btnSent = (ImageButton) rootView.findViewById(R.id.list_sent_button);
@@ -113,50 +110,28 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				.findViewById(R.id.swipe_container);
 		drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
 		drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
-
+		fab = (FloatingActionButton) rootView
+				.findViewById(R.id.list_floating_action_button);
 		btnAll.setOnClickListener(this);
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
-
 		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
-		listView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> a, View v, int position,
-					long id) {
-				drawerToggle.setDrawerIndicatorEnabled(false);
-				mCallbacks.onItemSelected(((ExampleItem) a
-						.getItemAtPosition(position)).getId());
-			}
-		});
-		swipeLayout.setOnRefreshListener(this);
+		
+
+		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
+				swipeLayout, (CustomListAdapter) listView.getAdapter()));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
 
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
-		drawerList.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				if (position > 1) {
-					Toast.makeText(getActivity(), "Position: " + position,
-							Toast.LENGTH_SHORT).show();
-					drawerLayout.closeDrawer(drawerList);
-				}else if(position == 1){
-					drawerLayout.closeDrawer(drawerList);
-					new LoginTask((DrawerMenuAdapter) drawerList.getAdapter(),
-							(CustomListAdapter) listView.getAdapter(), swipeLayout)
-							.execute(ExampleContent.currentUser.getEmail(),
-									ExampleContent.currentUser.getPassword());
-					
-				}
-			}
-		});
+		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
+				drawerLayout, drawerList, (CustomListAdapter) listView
+						.getAdapter(), swipeLayout));
 
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
@@ -168,27 +143,64 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
+				((DrawerMenuAdapter)drawerList.getAdapter()).notifyDataSetChanged();
 			}
 
 		};
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
+		listView.setOnItemClickListener(new ItemListOnItemClickListener(
+				drawerToggle, mCallbacks));
+		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(), swipeLayout));
 
-		
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter()).execute("token");
+		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
+
+		/*new GetContactsTask(swipeLayout,
+				(CustomListAdapter) listView.getAdapter()).execute();*/
 		return rootView;
 	}
-	
-	@Override
-	public void onRefresh() {
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter()).execute("token");
+
+	private void setListItemChecked(int position) {
+		boolean isChecked = listView.getCheckedItemPositions().get(
+				listView.getCheckedItemPositions().keyAt(position));
+		listView.setItemChecked(position, !isChecked);
+		// View itemView = getViewByPosition(position);
+
+		/*
+		 * if (isChecked) {
+		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
+		 * R.color.list_item_background)); } else {
+		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
+		 * R.color.list_item_selected)); }
+		 */
+		String out = "";
+		for (int i = 0; i < listView.getCheckedItemPositions().size(); i++) {
+			out += ""
+					+ listView.getCheckedItemPositions().keyAt(i)
+					+ ":"
+					+ listView.getCheckedItemPositions().get(
+							listView.getCheckedItemPositions().keyAt(i)) + ", ";
+		}
+		System.out.println(out);
 	}
+
+	private View getViewByPosition(int pos) {
+		final int firstListItemPosition = listView.getFirstVisiblePosition();
+		final int lastListItemPosition = firstListItemPosition
+				+ listView.getChildCount() - 1;
+
+		if (pos < firstListItemPosition || pos > lastListItemPosition) {
+			return listView.getAdapter().getView(pos, null, listView);
+		} else {
+			final int childIndex = pos - firstListItemPosition;
+			return listView.getChildAt(childIndex);
+		}
+	}
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		
+
 		// Restore the previously serialized activated item position.
 		if (savedInstanceState != null
 				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
@@ -232,7 +244,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
 		}
-
 	}
 
 	/**
@@ -318,7 +329,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(int state) {
-		if (listView!= null && listView.getAdapter() != null) {
+		if (listView != null && listView.getAdapter() != null) {
 			if (state >= 0) {
 				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
 						CustomListAdapter.SEARCHTYPES[0]
@@ -332,7 +343,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	}
 
 	private void filterList(String newText) {
-		if (listView!= null && listView.getAdapter() != null) {
+		if (listView != null && listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
 					CustomListAdapter.SEARCHTYPES[1]
 							+ CustomListAdapter.SEARCHCHAR + newText);
@@ -385,32 +396,44 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 					R.id.action_filter));
 			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 			popup.setOnMenuItemClickListener(this);
+
 		}
+		popup.getMenu().getItem(sharedpreferences.getInt(SELECTED_FILTER, 0))
+				.setChecked(true);
 		popup.show();
 	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
+		Editor editor = sharedpreferences.edit();
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			//setUnderline(0);
+			// setUnderline(0);
 			filterList(-1);
 			item.setChecked(!item.isChecked());
+			editor.putInt(SELECTED_FILTER, 0);
+			editor.commit();
 			return true;
 		case R.id.menu_group_accepted:
-			//setUnderline(1);
+			// setUnderline(1);
 			filterList(ExampleItem.STATE_TYPE[0]);
 			item.setChecked(!item.isChecked());
+			editor.putInt(SELECTED_FILTER, 1);
+			editor.commit();
 			return true;
 		case R.id.menu_group_sent:
-			//setUnderline(2);
+			// setUnderline(2);
 			filterList(ExampleItem.STATE_TYPE[1]);
 			item.setChecked(!item.isChecked());
+			editor.putInt(SELECTED_FILTER, 2);
+			editor.commit();
 			return true;
 		case R.id.menu_group_received:
-			//setUnderline(3);
+			// setUnderline(3);
 			filterList(ExampleItem.STATE_TYPE[2]);
 			item.setChecked(!item.isChecked());
+			editor.putInt(SELECTED_FILTER, 3);
+			editor.commit();
 			return true;
 		}
 		return false;
@@ -442,7 +465,11 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		filterList(newText);
-		//setUnderline(0);
+		if(sharedpreferences!=null){
+			Editor e = sharedpreferences.edit();
+			e.putInt(SELECTED_FILTER, 0);
+			e.commit();
+		}
 		return true;
 	}
 
@@ -450,7 +477,5 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	public boolean onQueryTextSubmit(String query) {
 		return false;
 	}
-
-	
 
 }

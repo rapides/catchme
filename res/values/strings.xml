@@ -26,6 +26,10 @@
     <string name="err_no_internet">There is no Internet connection</string>
     <string name="current_user_avatar">Avatar</string>
     <string name="action_filter">Filter</string>
+    <string name="contact_email">Write friend email</string>
+    <string name="new_contact_add_button">Add contact</string>
+    <string name="cancel">Cancel</string>
+    <string name="bad_email">Wrong email format</string>
      
 
 </resources>

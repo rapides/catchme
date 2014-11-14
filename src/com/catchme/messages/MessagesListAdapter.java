@@ -70,7 +70,8 @@ public class MessagesListAdapter extends BaseAdapter {
 				.findViewById(R.id.single_message_image);
 		if (item.getMessages().get(position).getSenderId() % 2 != 0) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			imageParams.addRule(RelativeLayout.ALIGN_TOP, R.id.single_message_content);
+			imageParams.addRule(RelativeLayout.ALIGN_TOP,
+					R.id.single_message_content);
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_right);
 
@@ -79,7 +80,8 @@ public class MessagesListAdapter extends BaseAdapter {
 					R.id.single_message_content);
 		} else {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.single_message_content);
+			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM,
+					R.id.single_message_content);
 			lp.addRule(RelativeLayout.RIGHT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_left);
 			if (item.getImageUrl() != null) {

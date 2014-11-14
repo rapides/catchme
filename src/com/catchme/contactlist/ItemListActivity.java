@@ -4,6 +4,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 public class ItemListActivity extends FragmentActivity implements
 		ItemListFragment.Callbacks {
@@ -22,18 +24,10 @@ public class ItemListActivity extends FragmentActivity implements
 	 */
 	private boolean mTwoPane;
 
-	// ViewPagerAdapter pagerAdapter;
-	// ViewPager viewPager;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_item_list);
-		// final ActionBar actionBar = getActionBar();
-		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-		// actionBar.setDisplayShowHomeEnabled(false);
-		// actionBar.setDisplayShowTitleEnabled(false);
 		if (findViewById(R.id.item_detail_container) != null) {
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
@@ -50,7 +44,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 		ItemListFragment firstFragment = new ItemListFragment();
 		getSupportFragmentManager().beginTransaction()
-        .replace(R.id.main_fragment_container, firstFragment).commit();
+				.replace(R.id.main_fragment_container, firstFragment).commit();
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
@@ -81,19 +75,27 @@ public class ItemListActivity extends FragmentActivity implements
 					.replace(R.id.messages_list_container, fragment2).commit();
 
 		} else {
-			Bundle arguments = new Bundle();
-			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-			ItemDetailsFragment frag = new ItemDetailsFragment();
-			frag.setArguments(arguments);
-			FragmentTransaction transaction = getSupportFragmentManager()
-					.beginTransaction();
-			transaction.setCustomAnimations(android.R.anim.fade_in,
-					android.R.anim.fade_out);
-			transaction.replace(R.id.main_fragment_container, frag);
-			transaction.addToBackStack(null);
-			transaction.commit();
+			ExampleItem item = ExampleContent.ITEM_MAP.get(id);
+			if(item.getState() == ExampleItem.STATE_TYPE[0]){
+				Bundle arguments = new Bundle();
+				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
+				ItemDetailsFragment frag = new ItemDetailsFragment();
+				frag.setArguments(arguments);
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.setCustomAnimations(android.R.anim.fade_in,
+						android.R.anim.fade_out);
+				transaction.replace(R.id.main_fragment_container, frag);
+				transaction.addToBackStack(null);
+				transaction.commit();
 
-			setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
+				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
+			}else if (item.getState() == ExampleItem.STATE_TYPE[1]){
+				Toast.makeText(this, "state 1", 0).show();
+			}else if(item.getState() == ExampleItem.STATE_TYPE[2]){
+				Toast.makeText(this, "state 2", 0).show();
+			}
+			
 		}
 	}
 
@@ -101,7 +103,7 @@ public class ItemListActivity extends FragmentActivity implements
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			setTitle(getResources().getString(R.string.app_name));
-			//getActionBar().setDisplayHomeAsUpEnabled(false);
+			// getActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 		return super.onKeyDown(keyCode, event);
 	}

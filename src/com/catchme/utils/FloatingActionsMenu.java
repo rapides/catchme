@@ -90,12 +90,11 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private float mRotation;
 
-    @SuppressWarnings("UnusedDeclaration")
+    @SuppressWarnings({ "unused" })
     public float getRotation() {
       return mRotation;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void setRotation(float rotation) {
       mRotation = rotation;
       invalidateSelf();

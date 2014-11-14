@@ -6,25 +6,19 @@ import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.DrawerMenuAdapter;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
-public class LoginTask extends AsyncTask<String, Void, JSONObject> {
-	private Context context;
-	private DrawerMenuAdapter drawerAdapter;
+public class AddContactTask extends AsyncTask<String, Void, JSONObject> {
 	private SwipeRefreshLayout swipeLayout;
+	private Context context;
 
-	public LoginTask(DrawerMenuAdapter drawerAdapter, SwipeRefreshLayout swipeLayout) {
+	public AddContactTask(SwipeRefreshLayout swipeLayout) {
 		super();
-		this.drawerAdapter = drawerAdapter;
 		this.swipeLayout = swipeLayout;
-		context = swipeLayout.getContext();
+		this.context = swipeLayout.getContext();
 	}
 
 	@Override
@@ -34,21 +28,13 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected JSONObject doInBackground(String... params) {
-		JSONObject result = new JSONObject();
+		String token = params[0];
+		String email = params[1];
+		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
-			String login = params[0];
-			String password = params[1];
-			result = ServerRequests.getTokenRequest(login, password);
-			setCurrentLoggedUser(ReadServerResponse.getLoggedUser(result));
-		}else{
-			result = null;
+			result = ServerRequests.addContactRequest(token, email);
 		}
-
 		return result;
-	}
-
-	private void setCurrentLoggedUser(LoggedUser loggedUser) {
-		ExampleContent.currentUser = loggedUser;
 	}
 
 	@Override
@@ -57,9 +43,16 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			Toast.makeText(context,
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
+		} else if (ReadServerResponse.isSuccess(result)) {
+			Toast.makeText(context, "Add contact succeded: ", Toast.LENGTH_SHORT)
+					.show();
+			// TODO importing
 		} else {
-			drawerAdapter.notifyDataSetChanged();
+			Toast.makeText(context, "Add contact failed, server error", Toast.LENGTH_SHORT)
+					.show();
 		}
+
+		// TODO handling error
 		swipeLayout.setRefreshing(false);
 	}
 
