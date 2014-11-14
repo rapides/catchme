@@ -64,7 +64,8 @@ public class ServerConnection {
 			System.out.println(response);
 			Log.e("ConnectionError", response);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {

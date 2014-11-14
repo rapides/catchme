@@ -52,14 +52,24 @@ public class ServerRequests {
 						confirmationPassword), getHeader(null));
 	}
 
-	public static JSONObject sendMessageRequest(String token, String message) {
+	public static JSONObject sendMessageRequest(String token, long convId,
+			String message) {
 		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES,
-				buildSendMessageRequest(message), getHeader(token));
+				buildSendMessageRequest(convId, message), getHeader(token));
 	}
 
-	private static JSONObject buildSendMessageRequest(String message) {
-		// TODO
-		return null;
+	public static JSONObject buildSendMessageRequest(long conversationId,
+			String message) {
+		JSONObject o = new JSONObject();
+		JSONObject mes = new JSONObject();
+		try {
+			mes.put(ServerConst.MESSAGE_ID, conversationId);
+			mes.put(ServerConst.MESSAGE_CONTENT, message);
+			o.put(ServerConst.MESSAGE, mes);
+		} catch (JSONException e) {
+			Log.e("JSONParseError", e.getMessage());
+		}
+		return o;
 	}
 
 	private static JSONObject buildUpdateUserRequest(String name, String surname) {
