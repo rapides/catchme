@@ -2,6 +2,7 @@ package com.catchme.itemdetails;
 
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
+import com.catchme.profile.ItemProfileFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

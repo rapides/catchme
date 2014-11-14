@@ -3,7 +3,7 @@
     android:id="@+id/message_list_layout"
     android:name="cycki.messages.MessagesFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <TextView
         android:id="@+id/simpleText"
@@ -12,24 +12,31 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <ListView
-        android:id="@+id/messages_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/message_swipe_container"
         android:layout_width="match_parent"
-        android:stackFromBottom="true"
-        android:layout_height="101dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/message_input"
-        android:layout_below="@+id/simpleText"/>
-	
+        android:layout_below="@+id/simpleText" >
+
+        <ListView
+            android:id="@+id/messages_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stackFromBottom="true" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <EditText
         android:id="@+id/message_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:minHeight="50dip"
-        android:maxHeight="100dip"
         android:layout_toLeftOf="@+id/message_send"
-        android:hint="@string/write_message" />
+        android:hint="@string/write_message"
+        android:maxHeight="100dip"
+        android:minHeight="50dip" />
 
     <ImageButton
         android:id="@+id/message_send"

@@ -1,15 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/textView1"
+    <View 
+        android:id="@+id/profile_background"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:background="@color/color100"
+        android:layout_alignBottom="@+id/profile_email"/>
+        
+    <com.catchme.utils.RoundedImageView
+        android:id="@+id/profile_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/o1" />
+    
+    <LinearLayout
+        android:id="@+id/profile_name_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Helllo" />
+        android:layout_below="@+id/profile_image"
+        android:layout_centerHorizontal="true" >
 
-   
+        <TextView
+            android:id="@+id/profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Janusz" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/profile_surname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="Nazwisko" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_name_container"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10dp"
+        android:text="Email@email.com" />
+
+    
+
+</RelativeLayout>

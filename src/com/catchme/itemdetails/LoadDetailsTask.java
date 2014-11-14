@@ -6,11 +6,11 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-public class LoadProfileTask extends AsyncTask<Void, Void, Void> {
+public class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
 	private GifMovieView loader;
 	private RelativeLayout loaderContainer;
 
-	public LoadProfileTask(GifMovieView loader, RelativeLayout loaderContainer) {
+	public LoadDetailsTask(GifMovieView loader, RelativeLayout loaderContainer) {
 		this.loader = loader;
 		this.loaderContainer = loaderContainer;
 	}
@@ -24,7 +24,7 @@ public class LoadProfileTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
-			Thread.sleep((long) (Math.random() * 5000));
+			Thread.sleep((long) (Math.random() * 2000));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

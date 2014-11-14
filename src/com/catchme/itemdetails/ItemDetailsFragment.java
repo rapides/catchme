@@ -68,7 +68,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		setUnderlinePos(0, 0);
 		loader.setMovieResource(R.drawable.loader);
 		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		new LoadProfileTask(loader, loaderContainer).execute();
+		new LoadDetailsTask(loader, loaderContainer).execute();
 		return rootView;
 	}
 
@@ -114,8 +114,10 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onPageSelected(int arg0) {
-
+	public void onPageSelected(int position) {
+		if(position==1){
+			Toast.makeText(getActivity(), "selected tab 1", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -143,7 +145,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 			openOverflowMenu();
 			return true;
 		case R.id.details_action_refresh:
-			new LoadProfileTask(loader, loaderContainer).execute();
+			new LoadDetailsTask(loader, loaderContainer).execute();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

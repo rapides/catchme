@@ -154,7 +154,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(), swipeLayout));
 
 		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
-
 		/*new GetContactsTask(swipeLayout,
 				(CustomListAdapter) listView.getAdapter()).execute();*/
 		return rootView;

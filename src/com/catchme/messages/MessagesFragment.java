@@ -1,6 +1,8 @@
 package com.catchme.messages;
 
 import com.catchme.R;
+import com.catchme.contactlist.CustomListAdapter;
+import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
@@ -13,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +33,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	ListView listView;
 	View rootView;
 	EditText textBox;
+	private SwipeRefreshLayout swipeLayout;
 
 	public MessagesFragment() {
 	}
@@ -40,6 +44,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 		mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
 				ItemDetailsFragment.ARG_ITEM_ID));
+
 		setListnerToRootView();
 	}
 
@@ -53,10 +58,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.findViewById(R.id.message_send);
 		sendBtn.setOnClickListener(this);
 
-		getActivity()
+		/*getActivity()
 				.startService(
 						new Intent(rootView.getContext(),
-								MessagesRefreshService.class));
+								MessagesRefreshService.class));*/
 
 		return rootView;
 	}
@@ -65,12 +70,17 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
 		textBox = (EditText) rootView.findViewById(R.id.message_input);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
+		swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.message_swipe_container);
 		t.setText("" + mItem.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
 				mItem);
 		listView.setAdapter(adapter);
 		listView.setSelection(mItem.getMessages().size() - 1);
-		listView.setOnScrollListener(new MessagesScrollListener(listView, mItem));
+		listView.setOnScrollListener(new MessagesScrollListener(listView, mItem, swipeLayout));
+		
+		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
+				R.color.swipelayout_color1, R.color.swipelayout_color2,
+				R.color.swipelayout_color3);
 	}
 
 	boolean isOpened = false;
@@ -116,8 +126,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		mNotificationManager.notify(notifyID, note);
 		// (new
 		// ConnectTask()).execute("http://192.168.43.19:3000/api/v1/contacts/all");
-		(new SendMessageTask(getActivity(), (MessagesListAdapter) listView.getAdapter()))
-				.execute(ExampleContent.currentUser.getToken(), textBox.getText().toString());
+		(new SendMessageTask(getActivity(),
+				(MessagesListAdapter) listView.getAdapter())).execute(
+				ExampleContent.currentUser.getToken(), textBox.getText()
+						.toString());
 	}
 
 }

@@ -121,7 +121,7 @@ public class ExampleContent {
 		}
 
 		private void addRandomMessages() {
-			for (int i = 0; i < 50; i++) {
+			for (int i = 0; i < 20; i++) {
 				messages.add(new Message());
 			}
 			messages.add(new Message("Poszukiwanie gor¹cej linii z Niebem "
