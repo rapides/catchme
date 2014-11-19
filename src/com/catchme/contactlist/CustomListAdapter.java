@@ -3,13 +3,6 @@ package com.catchme.contactlist;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.nostra13.universalimageloader.core.*;
-import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.Message;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.utils.RoundedImageView;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.Message;
+import com.catchme.utils.RoundedImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
@@ -27,8 +30,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	public static final String SEARCHCHAR = ";";
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
-		this.activity = activity;
 		this.items = items;
+		this.activity = activity;
 	}
 
 	@Override
@@ -95,8 +98,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			public void onClick(View v) {
 				ListView parentListView = (ListView) v.getParent().getParent();
 				//parentListView.setItemChecked(position, true);
-				Toast.makeText(activity,
-						"cycki: " + parentListView + " " + position, 0).show();
+				//todo image checking
 			}
 		});
 		return convertView;
@@ -159,5 +161,9 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			}
 		};
 		return filter;
+	}
+	public void swapItems(ArrayList<ExampleItem> items) {
+	    this.items = items;
+	    notifyDataSetChanged();
 	}
 }

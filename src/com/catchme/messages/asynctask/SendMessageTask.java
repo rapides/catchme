@@ -2,14 +2,14 @@ package com.catchme.messages.asynctask;
 
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.messages.MessagesListAdapter;
-
-import android.content.Context;
-import android.os.AsyncTask;
-import android.widget.Toast;
 
 public class SendMessageTask extends AsyncTask<String, Void, JSONObject> {
 	private MessagesListAdapter adapter;

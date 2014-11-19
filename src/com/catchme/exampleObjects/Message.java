@@ -1,8 +1,9 @@
 package com.catchme.exampleObjects;
 
-import android.annotation.SuppressLint;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import android.annotation.SuppressLint;
 
 public class Message {
 	private int senderId;

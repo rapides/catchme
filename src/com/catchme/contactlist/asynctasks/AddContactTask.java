@@ -2,14 +2,15 @@ package com.catchme.contactlist.asynctasks;
 
 import org.json.JSONObject;
 
-import com.catchme.R;
-import com.catchme.connections.ReadServerResponse;
-import com.catchme.connections.ServerConnection;
-import com.catchme.connections.ServerRequests;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
+
+import com.catchme.R;
+import com.catchme.connections.ReadServerResponse;
+import com.catchme.connections.ServerConnection;
+import com.catchme.connections.ServerRequests;
 
 public class AddContactTask extends AsyncTask<String, Void, JSONObject> {
 	private SwipeRefreshLayout swipeLayout;
@@ -44,15 +45,17 @@ public class AddContactTask extends AsyncTask<String, Void, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else if (ReadServerResponse.isSuccess(result)) {
-			Toast.makeText(context, "Add contact succeded: ", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(context, "Add contact succeded: ",
+					Toast.LENGTH_SHORT).show();
 			// TODO importing
 		} else {
-			Toast.makeText(context, "Add contact failed, server error", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(
+					context,
+					"Add contact failed, server error\n"
+							+ ReadServerResponse.getErrors(result),
+					Toast.LENGTH_SHORT).show();
 		}
 
-		// TODO handling error
 		swipeLayout.setRefreshing(false);
 	}
 

@@ -43,7 +43,7 @@ public class ExampleContent {
 		addItem(new ExampleItem(8, "Weronika", "STAN2", "rapides+8@gmail.com",
 				R.drawable.o5, ExampleItem.STATE_TYPE[2]));
 		currentUser = new LoggedUser(9, "Januszy", "Cebula—ski",
-				"cycki@cycuszki.pl", ExampleItem.IMAGE_INVALID, null);
+				"cycki@cycuszki.pl", "appleseed", ExampleItem.IMAGE_INVALID, null);
 	}
 
 	private static void addItem(ExampleItem item) {
@@ -203,16 +203,19 @@ public class ExampleContent {
 
 	public static class LoggedUser extends ExampleItem {
 		private String token;
+		private String password;
 
-		public LoggedUser(long id, String name, String surname, String email,
+		public LoggedUser(long id, String name, String surname, String email, String password,
 				int photoId, String token) {
 			super(id, name, surname, email, photoId, ExampleItem.STATE_TYPE[0]);
 			this.token = token;
+			this.password = password;
 		}
 
-		public LoggedUser(ExampleItem item, String token) {
+		public LoggedUser(ExampleItem item, String token, String password) {
 			super(item);
 			this.token = token;
+			this.password = password;
 		}
 
 		public String getToken() {
@@ -221,6 +224,14 @@ public class ExampleContent {
 
 		public void setToken(String token) {
 			this.token = token;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+		public void setPassword(String pass) {
+			this.password = pass;
 		}
 
 	}

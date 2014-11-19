@@ -2,13 +2,13 @@ package com.catchme.messages.asynctask;
 
 import org.json.JSONObject;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.Message;
-import com.catchme.messages.MessagesListAdapter;
-
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ListView;
+
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.Message;
+import com.catchme.messages.MessagesListAdapter;
 
 public class GetMessagesTask extends AsyncTask<String, Void, JSONObject> {
 	private MessagesListAdapter adapter;
@@ -17,17 +17,20 @@ public class GetMessagesTask extends AsyncTask<String, Void, JSONObject> {
 	private SwipeRefreshLayout swipeLatout;
 	private static int messagesCount = 0;
 
-	public GetMessagesTask(ListView listView, ExampleItem item, SwipeRefreshLayout swipeLayout) {
+	public GetMessagesTask(ListView listView, ExampleItem item,
+			SwipeRefreshLayout swipeLayout) {
 		super();
 		this.listView = listView;
 		this.item = item;
 		this.swipeLatout = swipeLayout;
 		this.adapter = (MessagesListAdapter) listView.getAdapter();
 	}
+
 	@Override
-	protected void onPreExecute(){
+	protected void onPreExecute() {
 		swipeLatout.setRefreshing(true);
 	}
+
 	@Override
 	protected JSONObject doInBackground(String... params) {
 		try {

@@ -10,8 +10,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ReadServerResponse;
+import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.exampleObjects.ExampleContent;
@@ -23,11 +23,6 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	private CustomListAdapter adapter;
 	private Context context;
 
-	@Override
-	protected void onPreExecute() {
-		swipeLayout.setRefreshing(true);
-	}
-
 	public GetContactsTask(SwipeRefreshLayout swipeLayout,
 			CustomListAdapter listAdapter) {
 		super();
@@ -37,12 +32,16 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	}
 
 	@Override
+	protected void onPreExecute() {
+		swipeLayout.setRefreshing(true);
+	}
+
+	@Override
 	protected JSONObject doInBackground(String... params) {
 		String token = params[0];
-		JSONObject result = new JSONObject();
+		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getAcceptedContactsRequest(token);
-			addItemsToDatabase(ReadServerResponse.getContactList(result));
+			result = ServerRequests.getSentContactsRequest(token);
 		}
 		return result;
 
@@ -55,12 +54,26 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else {
-			adapter.notifyDataSetChanged();
+			if (ReadServerResponse.isSuccess(result)) {
+				Toast.makeText(
+						context,
+						"Refresh succeded. Contact count: "
+								+ ReadServerResponse.getContactList(result)
+										.size(), Toast.LENGTH_SHORT).show();
+				addItemsToDatabase(ReadServerResponse.getContactList(result));
+			} else {
+				Toast.makeText(
+						context,
+						"Refresh Failed, server error\n"
+								+ ReadServerResponse.getErrors(result),
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 		swipeLayout.setRefreshing(false);
 	}
 
 	private void addItemsToDatabase(ArrayList<ExampleItem> itemList) {
 		ExampleContent.updateItems(itemList);
+		adapter.swapItems(itemList);
 	}
 }

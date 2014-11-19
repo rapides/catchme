@@ -1,12 +1,12 @@
 package com.catchme.contactlist.listeners;
 
-import com.catchme.contactlist.NoticeDialogFragment;
-
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import com.catchme.contactlist.NoticeDialogFragment;
 
 public class FloatingActionButtonListener implements OnClickListener {
 	FragmentActivity activity;

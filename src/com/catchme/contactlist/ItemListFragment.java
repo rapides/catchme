@@ -1,14 +1,5 @@
 package com.catchme.contactlist;
 
-import com.catchme.R;
-import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
-import com.catchme.contactlist.listeners.FloatingActionButtonListener;
-import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
-import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.utils.FloatingActionButton;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,13 +20,22 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
+
+import com.catchme.R;
+import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
+import com.catchme.contactlist.listeners.FloatingActionButtonListener;
+import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
+import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.utils.FloatingActionButton;
 
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnClickListener,
@@ -57,7 +57,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;
 	private ActionBarDrawerToggle drawerToggle;
-	private final String PREFERENCES = "com.catchme";
 	private SharedPreferences sharedpreferences;
 	private FloatingActionButton fab;
 	/**
@@ -91,8 +90,8 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
-		sharedpreferences = getActivity().getSharedPreferences(PREFERENCES,
-				Context.MODE_PRIVATE);
+		sharedpreferences = getActivity().getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 		btnAll = (Button) rootView.findViewById(R.id.list_all_button);
 		btnSent = (ImageButton) rootView.findViewById(R.id.list_sent_button);
@@ -116,23 +115,20 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		btnAccepted.setOnClickListener(this);
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
-		// new GetTokenTask().execute("rapides+03@gmail.com","appleseed");
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				ExampleContent.ITEMS));
 
-		
-
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				swipeLayout, (CustomListAdapter) listView.getAdapter()));
+				swipeLayout, listView));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
 
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				drawerLayout, drawerList, (CustomListAdapter) listView
-						.getAdapter(), swipeLayout));
+				drawerLayout, drawerList, listView, swipeLayout));
 
+		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -143,7 +139,8 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				((DrawerMenuAdapter)drawerList.getAdapter()).notifyDataSetChanged();
+				((DrawerMenuAdapter) drawerList.getAdapter())
+						.notifyDataSetChanged();
 			}
 
 		};
@@ -151,11 +148,14 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		listView.setOnItemClickListener(new ItemListOnItemClickListener(
 				drawerToggle, mCallbacks));
-		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(), swipeLayout));
+		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
+				swipeLayout));
 
 		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
-		/*new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter()).execute();*/
+		/*
+		 * new GetContactsTask(swipeLayout, (CustomListAdapter)
+		 * listView.getAdapter()).execute();
+		 */
 		return rootView;
 	}
 
@@ -338,7 +338,6 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 						null);
 			}
 		}
-
 	}
 
 	private void filterList(String newText) {
@@ -464,7 +463,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		filterList(newText);
-		if(sharedpreferences!=null){
+		if (sharedpreferences != null) {
 			Editor e = sharedpreferences.edit();
 			e.putInt(SELECTED_FILTER, 0);
 			e.commit();

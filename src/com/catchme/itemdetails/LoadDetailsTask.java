@@ -1,10 +1,10 @@
 package com.catchme.itemdetails;
 
-import com.catchme.utils.GifMovieView;
-
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import com.catchme.utils.GifMovieView;
 
 public class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
 	private GifMovieView loader;

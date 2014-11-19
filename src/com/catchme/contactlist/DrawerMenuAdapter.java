@@ -1,9 +1,5 @@
 package com.catchme.contactlist;
 
-import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.utils.RoundedImageView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,8 +8,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.utils.RoundedImageView;
+
 public class DrawerMenuAdapter extends BaseAdapter {
-	private String[] array = { "Refresh", "Settings", "Help", "Logout" };
+	private String[] array = { "Refresh", "Settings", "Help","TEST_Login", "Logout" };
 	private LayoutInflater inflater;
 	private Activity activity;
 

@@ -1,7 +1,5 @@
 package com.catchme.utils;
 
-import com.catchme.R;
-
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -19,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
+
+import com.catchme.R;
 
 public class FloatingActionsMenu extends ViewGroup {
   public static final int EXPAND_UP = 0;

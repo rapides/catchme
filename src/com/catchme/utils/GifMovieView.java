@@ -1,7 +1,5 @@
 package com.catchme.utils;
 
-import com.catchme.R;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,6 +8,8 @@ import android.graphics.Movie;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.catchme.R;
 
 /**
  * This is a View class that wraps Android {@link Movie} object and displays it.

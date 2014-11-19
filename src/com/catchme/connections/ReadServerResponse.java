@@ -38,7 +38,7 @@ public class ReadServerResponse {
 				String name = user.getString(ServerConst.USER_NAME);
 				String surname = user.getString(ServerConst.USER_SURNAME);
 				String email = user.getString(ServerConst.USER_EMAIL);
-				logged = new LoggedUser(id, name, surname, email,
+				logged = new LoggedUser(id, name, surname, email, "",
 						ExampleItem.IMAGE_INVALID, getToken(fullResponse));
 
 			}
@@ -63,12 +63,12 @@ public class ReadServerResponse {
 	public static boolean isSuccess(JSONObject fullResponse) {
 		boolean isSuccess = false;
 		try {
-			if(fullResponse!=null){
+			if (fullResponse != null) {
 				isSuccess = fullResponse.getBoolean(ServerConst.SUCCESS);
-			}else{
+			} else {
 				isSuccess = false;
 			}
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

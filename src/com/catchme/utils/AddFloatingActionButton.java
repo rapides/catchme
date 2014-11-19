@@ -1,8 +1,6 @@
 package com.catchme.utils;
 
 
-import com.catchme.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -12,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.util.AttributeSet;
+
+import com.catchme.R;
 
 public class AddFloatingActionButton extends FloatingActionButton {
   int mPlusColor;

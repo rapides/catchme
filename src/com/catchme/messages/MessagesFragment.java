@@ -1,17 +1,8 @@
 package com.catchme.messages;
 
-import com.catchme.R;
-import com.catchme.contactlist.CustomListAdapter;
-import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.messages.asynctask.SendMessageTask;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -25,6 +16,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.messages.asynctask.SendMessageTask;
 
 public class MessagesFragment extends Fragment implements OnClickListener {
 
@@ -58,10 +55,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.findViewById(R.id.message_send);
 		sendBtn.setOnClickListener(this);
 
-		/*getActivity()
-				.startService(
-						new Intent(rootView.getContext(),
-								MessagesRefreshService.class));*/
+		/*
+		 * getActivity() .startService( new Intent(rootView.getContext(),
+		 * MessagesRefreshService.class));
+		 */
 
 		return rootView;
 	}
@@ -70,14 +67,16 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
 		textBox = (EditText) rootView.findViewById(R.id.message_input);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
-		swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.message_swipe_container);
+		swipeLayout = (SwipeRefreshLayout) rootView
+				.findViewById(R.id.message_swipe_container);
 		t.setText("" + mItem.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
 				mItem);
 		listView.setAdapter(adapter);
 		listView.setSelection(mItem.getMessages().size() - 1);
-		listView.setOnScrollListener(new MessagesScrollListener(listView, mItem, swipeLayout));
-		
+		listView.setOnScrollListener(new MessagesScrollListener(listView,
+				mItem, swipeLayout));
+
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);

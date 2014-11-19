@@ -1,9 +1,5 @@
 package com.catchme.contactlist.listeners;
 
-import com.catchme.R;
-import com.catchme.contactlist.asynctasks.AddContactTask;
-import com.catchme.exampleObjects.ExampleContent;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -11,6 +7,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.catchme.R;
+import com.catchme.contactlist.asynctasks.AddContactTask;
+import com.catchme.exampleObjects.ExampleContent;
 
 public class DialogAddContactClickListener implements OnClickListener {
 	View dialogView;

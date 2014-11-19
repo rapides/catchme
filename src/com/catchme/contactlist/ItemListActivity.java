@@ -1,23 +1,36 @@
 package com.catchme.contactlist;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.mapcontent.ItemMapFragment;
-import com.catchme.messages.MessagesFragment;
-
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.locationServices.LocationReceiver;
+import com.catchme.locationServices.LocationRecorder;
+import com.catchme.mapcontent.ItemMapFragment;
+import com.catchme.messages.MessagesFragment;
+import com.commonsware.cwac.locpoll.LocationPoller;
+import com.commonsware.cwac.locpoll.LocationPollerParameter;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 public class ItemListActivity extends FragmentActivity implements
 		ItemListFragment.Callbacks {
 
+	public static final String USER_TOKEN = "user_token";
+	public final static String PREFERENCES = "com.catchme";
+	public static final String USER_EMAIL = "user_email";
+	public static final String USER_PASSWORD = "user_password";
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -48,6 +61,25 @@ public class ItemListActivity extends FragmentActivity implements
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		
+	    //LocationRecorder locationRecorder = new LocationRecorder(getApplicationContext());
+	    //locationRecorder.startRecording();
+		 
+		AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+		Intent i = new Intent(this, LocationPoller.class);
+
+		Bundle bundle = new Bundle();
+		LocationPollerParameter parameter = new LocationPollerParameter(bundle);
+		parameter.setIntentToBroadcastOnCompletion(new Intent(this,
+				LocationReceiver.class));
+		parameter.setProviders(new String[] { LocationManager.GPS_PROVIDER,
+				LocationManager.NETWORK_PROVIDER });
+		parameter.setTimeout(20000);
+		i.putExtras(bundle);
+		
+		PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+		alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+				SystemClock.elapsedRealtime(), 300000, pi);
 	}
 
 	/**
@@ -76,7 +108,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 		} else {
 			ExampleItem item = ExampleContent.ITEM_MAP.get(id);
-			if(item.getState() == ExampleItem.STATE_TYPE[0]){
+			if (item.getState() == ExampleItem.STATE_TYPE[0]) {
 				Bundle arguments = new Bundle();
 				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
 				ItemDetailsFragment frag = new ItemDetailsFragment();
@@ -90,12 +122,12 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.commit();
 
 				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
-			}else if (item.getState() == ExampleItem.STATE_TYPE[1]){
+			} else if (item.getState() == ExampleItem.STATE_TYPE[1]) {
 				Toast.makeText(this, "state 1", 0).show();
-			}else if(item.getState() == ExampleItem.STATE_TYPE[2]){
+			} else if (item.getState() == ExampleItem.STATE_TYPE[2]) {
 				Toast.makeText(this, "state 2", 0).show();
 			}
-			
+
 		}
 	}
 

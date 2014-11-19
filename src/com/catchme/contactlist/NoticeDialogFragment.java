@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import com.catchme.R;
 import com.catchme.contactlist.listeners.DialogAddContactClickListener;
 

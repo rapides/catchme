@@ -1,12 +1,12 @@
 package com.catchme.contactlist.listeners;
 
-import com.catchme.contactlist.ItemListFragment.Callbacks;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.catchme.contactlist.ItemListFragment.Callbacks;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 
 @SuppressWarnings("deprecation")
 public class ItemListOnItemClickListener implements OnItemClickListener {

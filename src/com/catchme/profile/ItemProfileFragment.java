@@ -1,17 +1,17 @@
 package com.catchme.profile;
 
-import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.utils.RoundedImageView;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.catchme.R;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.utils.RoundedImageView;
 
 public class ItemProfileFragment extends Fragment {
 	private View rootView;

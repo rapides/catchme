@@ -3,14 +3,23 @@
     android:id="@+id/message_list_layout"
     android:name="cycki.messages.MessagesFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
+    android:layout_height="match_parent" 
+    >
+    
+    <!--  <com.catchme.utils.ChipsMultiAutoCompleteTextview
+        android:id="@+id/chipsNames"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:ems="10"
+        android:text="" /> -->
+ 
     <TextView
         android:id="@+id/simpleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true" /> 
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -1,15 +1,13 @@
 package com.catchme.messages;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.Message;
-import com.catchme.messages.asynctask.GetMessagesTask;
-
-import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
+
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.messages.asynctask.GetMessagesTask;
 
 public class MessagesScrollListener implements OnScrollListener {
 

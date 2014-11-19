@@ -1,13 +1,13 @@
 package com.catchme.itemdetails;
 
-import com.catchme.mapcontent.ItemMapFragment;
-import com.catchme.messages.MessagesFragment;
-import com.catchme.profile.ItemProfileFragment;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.catchme.mapcontent.ItemMapFragment;
+import com.catchme.messages.MessagesFragment;
+import com.catchme.profile.ItemProfileFragment;
 
 
 public class ItemDetailsPagerAdapter extends FragmentStatePagerAdapter{

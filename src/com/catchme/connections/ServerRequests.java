@@ -31,12 +31,12 @@ public class ServerRequests {
 			double lng) {
 		return ServerConnection.JsonPOST(ServerConst.URL_POSITION_CREATE,
 				buildAddPositionRequest(lat, lng), getHeader(token));
-	}// TODO wysylac dane do serwera w serwisie co 5minut
+	}
 
 	public static JSONObject addContactRequest(String token, String email) {
 		return ServerConnection.JsonPOST(ServerConst.URL_CONTACTS_CREATE,
 				buildAddContactRequest(email), getHeader(token));
-	}// dialog do dodawania kontaktów + asyncTask + odswiezenie widoku
+	}
 
 	public static JSONObject updateUserRequest(String token, String name,
 			String surname) {
@@ -57,8 +57,11 @@ public class ServerRequests {
 		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES,
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
-
-	public static JSONObject buildSendMessageRequest(long conversationId,
+	public static JSONObject getReceivedContactsRequest(String token) {
+		return ServerConnection.GET(ServerConst.URL_CONTACTS_RECEIVED,
+				getHeader(token));
+	}
+	private static JSONObject buildSendMessageRequest(long conversationId,
 			String message) {
 		JSONObject o = new JSONObject();
 		JSONObject mes = new JSONObject();
@@ -151,5 +154,7 @@ public class ServerRequests {
 		}
 		return header;
 	}
+
+	
 
 }

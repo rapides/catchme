@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -53,19 +54,14 @@ public class ServerConnection {
 			}
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
-			// return new
-			// JSONObject(EntityUtils.toString(responsePost.getEntity()));
-
-			// String response = httpclient.execute(httpost, responseHandler);
 			result = new JSONObject(response);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			System.out.println(response);
-			Log.e("ConnectionError", response);
+			Log.e("ConnectionError", "Error: "+response);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
-			Log.e("ConnectionError", e.getMessage());
+			Log.e("ConnectionError", "Error: "+e.getMessage());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
@@ -83,18 +79,26 @@ public class ServerConnection {
 	}
 
 	public static JSONObject GET(String url, Map<String, String> header) {
+		HttpResponse responseGet = null;
 		try {
-			HttpClient client = new DefaultHttpClient();
+			HttpParams httpParameters = new BasicHttpParams();
+			int timeoutConnection = 3000;
+			HttpConnectionParams.setConnectionTimeout(httpParameters,
+					timeoutConnection);
+			int timeoutSocket = 5000;
+			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+			HttpClient client = new DefaultHttpClient(httpParameters);
 			HttpGet get = new HttpGet(url);
-
+			
 			if (header != null) {
 				for (String s : header.keySet()) {
 					get.setHeader(s, header.get(s));
 				}
 			}
-			HttpResponse responseGet = client.execute(get);
+			responseGet = client.execute(get);
 			return new JSONObject(EntityUtils.toString(responseGet.getEntity()));
 		} catch (Exception e) {
+			Log.e("ConnectionError", responseGet+"\n"+e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
