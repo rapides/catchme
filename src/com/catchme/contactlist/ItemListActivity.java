@@ -16,7 +16,6 @@ import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
-import com.catchme.locationServices.LocationRecorder;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
