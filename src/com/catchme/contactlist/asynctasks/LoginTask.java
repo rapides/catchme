@@ -6,35 +6,28 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.DrawerMenuAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
-
 public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
-	private DrawerMenuAdapter drawerAdapter;
-	private SwipeRefreshLayout swipeLayout;
-
-	public LoginTask(DrawerMenuAdapter drawerAdapter,
-			SwipeRefreshLayout swipeLayout) {
+	private OnTaskCompleted listener;
+	
+	public LoginTask(Context context, OnTaskCompleted listener) {
 		super();
-		this.drawerAdapter = drawerAdapter;
-		this.swipeLayout = swipeLayout;
-		context = swipeLayout.getContext();
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		swipeLayout.setRefreshing(true);
 	}
 
 	@Override
@@ -44,7 +37,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			String login = params[0];
 			String password = params[1];
 			result = ServerRequests.getTokenRequest(login, password);
-			setCurrentLoggedUser(ReadServerResponse.getLoggedUser(result), password);
+			setCurrentLoggedUser(ReadServerResponse.getLoggedUser(result));
 		} else {
 			result = null;
 		}
@@ -52,10 +45,8 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 		return result;
 	}
 
-	private void setCurrentLoggedUser(LoggedUser loggedUser, String password) {
-		loggedUser.setPassword(password);
+	private void setCurrentLoggedUser(LoggedUser loggedUser) {
 		ExampleContent.currentUser = loggedUser;
-		
 	}
 
 	@Override
@@ -71,20 +62,19 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 						"Success! Logged user: "
 								+ ExampleContent.currentUser.getFullName(),
 						Toast.LENGTH_SHORT).show();
-				SharedPreferences preferences = context.getSharedPreferences(ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+				SharedPreferences preferences = context.getSharedPreferences(
+						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
-				e.putString(ItemListActivity.USER_TOKEN, ExampleContent.currentUser.getToken());
-				e.putString(ItemListActivity.USER_EMAIL, ExampleContent.currentUser.getEmail());
-				e.putString(ItemListActivity.USER_PASSWORD, ExampleContent.currentUser.getPassword());
+				e.putString(ItemListActivity.USER_TOKEN,
+						ExampleContent.currentUser.getToken());
 				e.commit();
-				drawerAdapter.notifyDataSetChanged();
+
 			} else {
 				Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),
 						Toast.LENGTH_SHORT).show();
-
 			}
 		}
-		swipeLayout.setRefreshing(false);
+		listener.onTaskCompleted();
 	}
 }

@@ -38,7 +38,7 @@ public class ReadServerResponse {
 				String name = user.getString(ServerConst.USER_NAME);
 				String surname = user.getString(ServerConst.USER_SURNAME);
 				String email = user.getString(ServerConst.USER_EMAIL);
-				logged = new LoggedUser(id, name, surname, email, "",
+				logged = new LoggedUser(id, name, surname, email,
 						ExampleItem.IMAGE_INVALID, getToken(fullResponse));
 
 			}

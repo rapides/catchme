@@ -56,6 +56,7 @@ public class ServerConnection {
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
 			result = new JSONObject(response);
+			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {

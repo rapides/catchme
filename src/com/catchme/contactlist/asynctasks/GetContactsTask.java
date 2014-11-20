@@ -41,7 +41,7 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 		String token = params[0];
 		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getSentContactsRequest(token);
+			result = ServerRequests.getAcceptedContactsRequest(token);
 		}
 		return result;
 

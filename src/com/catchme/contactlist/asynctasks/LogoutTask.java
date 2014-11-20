@@ -57,8 +57,6 @@ public class LogoutTask extends AsyncTask<String, Void, JSONObject> {
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
 				e.remove(ItemListActivity.USER_TOKEN);
-				e.remove(ItemListActivity.USER_EMAIL);
-				e.remove(ItemListActivity.USER_PASSWORD);
 				e.commit();
 			} else {
 				Toast.makeText(context,

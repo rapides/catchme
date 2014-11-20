@@ -1,5 +1,7 @@
 package com.catchme.contactlist;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.RoundedImageView;
 
 public class DrawerMenuAdapter extends BaseAdapter {
@@ -18,9 +22,11 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			"Logout" };
 	private LayoutInflater inflater;
 	private Activity activity;
+	private LoggedUser user;
 
-	public DrawerMenuAdapter(Activity activity) {
+	public DrawerMenuAdapter(Activity activity, LoggedUser user) {
 		this.activity = activity;
+		this.user = user;
 	}
 
 	@Override
@@ -31,7 +37,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	@Override
 	public Object getItem(int position) {
 		if (position == 0) {
-			return ExampleContent.currentUser;
+			return user;
 		} else {
 			return array[position - 1];
 		}
@@ -40,7 +46,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		if (position == 0) {
-			return ExampleContent.currentUser.hashCode();
+			return user==null?0:user.hashCode();
 		} else {
 			return array[position - 1].hashCode();
 		}
@@ -64,7 +70,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 					.findViewById(R.id.drawer_title_email);
 			RoundedImageView avatar = (RoundedImageView) convertView
 					.findViewById(R.id.drawer_title_avatar);
-			if (ExampleContent.currentUser != null) {
+			if (user != null) {
 				name.setText(ExampleContent.currentUser.getFullName());
 				email.setText(ExampleContent.currentUser.getEmail());
 				avatar.setImageResource(ExampleContent.currentUser
@@ -89,5 +95,10 @@ public class DrawerMenuAdapter extends BaseAdapter {
 		}
 
 		return convertView;
+	}
+	
+	public void swapItems(LoggedUser user) {
+	    this.user = user;
+	    notifyDataSetChanged();
 	}
 }

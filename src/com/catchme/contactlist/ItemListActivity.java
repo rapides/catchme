@@ -2,7 +2,9 @@ package com.catchme.contactlist;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -28,9 +30,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 	public static final String USER_TOKEN = "user_token";
 	public final static String PREFERENCES = "com.catchme";
-	public static final String USER_EMAIL = "user_email";
-	public static final String USER_PASSWORD = "user_password";
-	private static final int INTERVAL = 300000;//ms
+	private static final int INTERVAL = 300000;// ms
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -41,45 +41,62 @@ public class ItemListActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_item_list);
-		if (findViewById(R.id.item_detail_container) != null) {
-			// The detail container view will be present only in the
-			// large-screen layouts (res/values-large and
-			// res/values-sw600dp). If this view is present, then the
-			// activity should be in two-pane mode.
-			mTwoPane = true;
 
-			((ItemListFragment) getSupportFragmentManager().findFragmentById(
-					R.id.item_list)).setActivateOnItemClick(true);
+		SharedPreferences preferences = getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		// preferences.edit().putString(USER_TOKEN,
+		// "75CGntvADGsMyN6odzb1").commit();
+		// preferences.edit().clear().commit();
+		if (preferences.contains(USER_TOKEN)) {
+			if (findViewById(R.id.item_detail_container) != null) {
+				// The detail container view will be present only in the
+				// large-screen layouts (res/values-large and
+				// res/values-sw600dp). If this view is present, then the
+				// activity should be in two-pane mode.
+				mTwoPane = true;
+
+				((ItemListFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.item_list))
+						.setActivateOnItemClick(true);
+			}
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+					this).build();
+			ImageLoader.getInstance().init(config);
+
+			ItemListFragment firstFragment = new ItemListFragment();
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.main_fragment_container, firstFragment)
+					.commit();
+
+			// LocationRecorder locationRecorder = new
+			// LocationRecorder(getApplicationContext());
+			// locationRecorder.startRecording();
+
+			AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+			Intent i = new Intent(this, LocationPoller.class);
+
+			Bundle bundle = new Bundle();
+			LocationPollerParameter parameter = new LocationPollerParameter(
+					bundle);
+			parameter.setIntentToBroadcastOnCompletion(new Intent(this,
+					LocationReceiver.class));
+			parameter.setProviders(new String[] { LocationManager.GPS_PROVIDER,
+					LocationManager.NETWORK_PROVIDER });
+			parameter.setTimeout(20000);
+			i.putExtras(bundle);
+
+			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+					SystemClock.elapsedRealtime(), INTERVAL, pi);
+
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+			getActionBar().setHomeButtonEnabled(true);
+		} else {
+			LoginFragment loginFragment = new LoginFragment();
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.main_fragment_container, loginFragment)
+					.commit();
 		}
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).build();
-		ImageLoader.getInstance().init(config);
-
-		ItemListFragment firstFragment = new ItemListFragment();
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.main_fragment_container, firstFragment).commit();
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
-		
-	    //LocationRecorder locationRecorder = new LocationRecorder(getApplicationContext());
-	    //locationRecorder.startRecording();
-		 
-		AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
-		Intent i = new Intent(this, LocationPoller.class);
-
-		Bundle bundle = new Bundle();
-		LocationPollerParameter parameter = new LocationPollerParameter(bundle);
-		parameter.setIntentToBroadcastOnCompletion(new Intent(this,
-				LocationReceiver.class));
-		parameter.setProviders(new String[] { LocationManager.GPS_PROVIDER,
-				LocationManager.NETWORK_PROVIDER });
-		parameter.setTimeout(20000);
-		i.putExtras(bundle);
-		
-		PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-		alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-				SystemClock.elapsedRealtime(), INTERVAL, pi);
 	}
 
 	/**

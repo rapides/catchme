@@ -12,7 +12,7 @@ public class ServerConst {
 	public static final String URL_CONTACTS_ALL = SERVER_IP+ "/api/v1/contacts/all";
 	public static final String URL_CONTACTS_SENT = SERVER_IP+ "/api/v1/contacts/invited_by_user";
 	public static final String URL_CONTACTS_RECEIVED = SERVER_IP+ "/api/v1/contacts/invited_by_others";
-	public static final String URL_MESSAGES = SERVER_IP+"/api/v1/messages/create";
+	public static final String URL_MESSAGES = SERVER_IP+"/api/v1/conversations/create_message";
 	
 	//People stuff
 	public static final String USER_EMAIL = "email";

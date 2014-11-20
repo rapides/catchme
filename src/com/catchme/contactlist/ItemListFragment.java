@@ -1,5 +1,7 @@
 package com.catchme.contactlist;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +31,7 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
 import com.catchme.R;
+import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
@@ -116,7 +119,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		btnSent.setOnClickListener(this);
 		btnReceived.setOnClickListener(this);
 		listView.setAdapter(new CustomListAdapter(getActivity(),
-				ExampleContent.ITEMS));
+				new ArrayList<ExampleItem>()));
 
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
 				swipeLayout, listView));
@@ -124,9 +127,11 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
 
-		drawerList.setAdapter(new DrawerMenuAdapter(getActivity()));
-		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				drawerLayout, drawerList, listView, swipeLayout));
+		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), ExampleContent.currentUser));
+		drawerList
+				.setOnItemClickListener(new DrawerOnItemClickListener(
+						getActivity(), drawerLayout, drawerList, listView,
+						swipeLayout));
 
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
@@ -152,10 +157,9 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				swipeLayout));
 
 		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
-		/*
-		 * new GetContactsTask(swipeLayout, (CustomListAdapter)
-		 * listView.getAdapter()).execute();
-		 */
+		new GetContactsTask(swipeLayout,
+				(CustomListAdapter) listView.getAdapter())
+				.execute(ExampleContent.currentUser.getToken());
 		return rootView;
 	}
 
