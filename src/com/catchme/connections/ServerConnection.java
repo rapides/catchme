@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -65,7 +66,7 @@ public class ServerConnection {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
-			e.printStackTrace();
+			//Log.e("JSON Parse error", e.getMessage());
 		}
 
 		return result;
@@ -103,4 +104,36 @@ public class ServerConnection {
 		}
 		return null;
 	}
+
+	public static JSONObject DELETE(String url, Map<String, String> header ){
+		HttpResponse responseDelete = null;
+		try {
+			HttpParams httpParameters = new BasicHttpParams();
+			int timeoutConnection = 3000;
+			HttpConnectionParams.setConnectionTimeout(httpParameters,
+					timeoutConnection);
+			int timeoutSocket = 5000;
+			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+			HttpClient client = new DefaultHttpClient(httpParameters);
+			HttpDelete delete = new HttpDelete(url);
+			
+			if (header != null) {
+				for (String s : header.keySet()) {
+					delete.setHeader(s, header.get(s));
+				}
+			}
+			System.out.println("\nHeader: ");
+			for(Header h: delete.getAllHeaders()){
+				System.out.println(h);
+			}
+			System.out.println();
+			responseDelete = client.execute(delete);
+			return new JSONObject(EntityUtils.toString(responseDelete.getEntity()));
+		} catch (Exception e) {
+			//Log.e("ConnectionError", responseDelete+"\n"+e.getMessage());
+			//e.printStackTrace();
+		}
+		return null;
+	}
+
 }

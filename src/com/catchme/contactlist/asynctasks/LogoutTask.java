@@ -1,7 +1,10 @@
 package com.catchme.contactlist.asynctasks;
 
+import java.util.Currency;
+
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -16,46 +19,28 @@ import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.DrawerMenuAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
-
-public class LoginTask extends AsyncTask<String, Void, JSONObject> {
+public class LogoutTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
-	private DrawerMenuAdapter drawerAdapter;
-	private SwipeRefreshLayout swipeLayout;
 
-	public LoginTask(DrawerMenuAdapter drawerAdapter,
-			SwipeRefreshLayout swipeLayout) {
+	public LogoutTask(SwipeRefreshLayout swipeLayout) {
 		super();
-		this.drawerAdapter = drawerAdapter;
-		this.swipeLayout = swipeLayout;
 		context = swipeLayout.getContext();
 	}
 
 	@Override
-	protected void onPreExecute() {
-		swipeLayout.setRefreshing(true);
-	}
-
-	@Override
 	protected JSONObject doInBackground(String... params) {
+		String token = params[0];
+		long id = Long.parseLong(params[1]);
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			String login = params[0];
-			String password = params[1];
-			result = ServerRequests.getTokenRequest(login, password);
-			setCurrentLoggedUser(ReadServerResponse.getLoggedUser(result), password);
+			result = ServerRequests.setUserLogOutRequest(token, id);
+			ExampleContent.currentUser = null;
 		} else {
 			result = null;
 		}
 
 		return result;
-	}
-
-	private void setCurrentLoggedUser(LoggedUser loggedUser, String password) {
-		loggedUser.setPassword(password);
-		ExampleContent.currentUser = loggedUser;
-		
 	}
 
 	@Override
@@ -66,18 +51,15 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(
-						context,
-						"Success! Logged user: "
-								+ ExampleContent.currentUser.getFullName(),
+				Toast.makeText(context, "Success! Logged out",
 						Toast.LENGTH_SHORT).show();
-				SharedPreferences preferences = context.getSharedPreferences(ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+				SharedPreferences preferences = context.getSharedPreferences(
+						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
-				e.putString(ItemListActivity.USER_TOKEN, ExampleContent.currentUser.getToken());
-				e.putString(ItemListActivity.USER_EMAIL, ExampleContent.currentUser.getEmail());
-				e.putString(ItemListActivity.USER_PASSWORD, ExampleContent.currentUser.getPassword());
+				e.remove(ItemListActivity.USER_TOKEN);
+				e.remove(ItemListActivity.USER_EMAIL);
+				e.remove(ItemListActivity.USER_PASSWORD);
 				e.commit();
-				drawerAdapter.notifyDataSetChanged();
 			} else {
 				Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),
@@ -85,6 +67,5 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 
 			}
 		}
-		swipeLayout.setRefreshing(false);
 	}
 }

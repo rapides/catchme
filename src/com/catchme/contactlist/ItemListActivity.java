@@ -30,6 +30,7 @@ public class ItemListActivity extends FragmentActivity implements
 	public final static String PREFERENCES = "com.catchme";
 	public static final String USER_EMAIL = "user_email";
 	public static final String USER_PASSWORD = "user_password";
+	private static final int INTERVAL = 300000;//ms
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -78,7 +79,7 @@ public class ItemListActivity extends FragmentActivity implements
 		
 		PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 		alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-				SystemClock.elapsedRealtime(), 300000, pi);
+				SystemClock.elapsedRealtime(), INTERVAL, pi);
 	}
 
 	/**

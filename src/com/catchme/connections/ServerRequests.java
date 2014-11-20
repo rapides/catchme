@@ -27,6 +27,11 @@ public class ServerRequests {
 
 	}
 
+	public static JSONObject setUserLogOutRequest(String token, long userId) {
+		return ServerConnection.DELETE(ServerConst.URL_USER_LOGOUT + "/"+userId,
+				getHeader(token));
+	}
+
 	public static JSONObject setUserLocationRequest(String token, double lat,
 			double lng) {
 		return ServerConnection.JsonPOST(ServerConst.URL_POSITION_CREATE,
@@ -57,10 +62,12 @@ public class ServerRequests {
 		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES,
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
+
 	public static JSONObject getReceivedContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_RECEIVED,
 				getHeader(token));
 	}
+
 	private static JSONObject buildSendMessageRequest(long conversationId,
 			String message) {
 		JSONObject o = new JSONObject();
@@ -154,7 +161,5 @@ public class ServerRequests {
 		}
 		return header;
 	}
-
-	
 
 }

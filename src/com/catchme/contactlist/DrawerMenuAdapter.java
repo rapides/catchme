@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.catchme.R;
@@ -13,7 +14,8 @@ import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.utils.RoundedImageView;
 
 public class DrawerMenuAdapter extends BaseAdapter {
-	private String[] array = { "Refresh", "Settings", "Help","TEST_Login", "Logout" };
+	private String[] array = { "Refresh", "Settings", "Help", "TEST_Login",
+			"Logout" };
 	private LayoutInflater inflater;
 	private Activity activity;
 
@@ -31,7 +33,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 		if (position == 0) {
 			return ExampleContent.currentUser;
 		} else {
-			return array[position-1];
+			return array[position - 1];
 		}
 	}
 
@@ -40,31 +42,40 @@ public class DrawerMenuAdapter extends BaseAdapter {
 		if (position == 0) {
 			return ExampleContent.currentUser.hashCode();
 		} else {
-			return array[position-1].hashCode();
+			return array[position - 1].hashCode();
 		}
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if(position==0){
+		if (position == 0) {
 			if (inflater == null) {
 				inflater = (LayoutInflater) activity
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			}
 			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.drawer_list_title, null);
+				convertView = inflater
+						.inflate(R.layout.drawer_list_title, null);
 			}
 			TextView name = (TextView) convertView
 					.findViewById(R.id.drawer_title_user);
-			
+
 			TextView email = (TextView) convertView
 					.findViewById(R.id.drawer_title_email);
-			RoundedImageView avatar = (RoundedImageView)convertView.findViewById(R.id.drawer_title_avatar);
-			name.setText(ExampleContent.currentUser.getFullName());
-			email.setText(ExampleContent.currentUser.getEmail());
-			avatar.setImageResource(ExampleContent.currentUser.getImageResource());
+			RoundedImageView avatar = (RoundedImageView) convertView
+					.findViewById(R.id.drawer_title_avatar);
+			if (ExampleContent.currentUser != null) {
+				name.setText(ExampleContent.currentUser.getFullName());
+				email.setText(ExampleContent.currentUser.getEmail());
+				avatar.setImageResource(ExampleContent.currentUser
+						.getImageResource());
+			} else {
+				name.setText("");
+				email.setText("");
+				avatar.setImageResource(-1);	
+			}
 			convertView.setClickable(false);
-		}else{
+		} else {
 			if (inflater == null) {
 				inflater = (LayoutInflater) activity
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -74,9 +85,9 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			}
 			TextView item = (TextView) convertView
 					.findViewById(R.id.drawer_menuitem);
-			item.setText(array[position-1]);
+			item.setText(array[position - 1]);
 		}
-		
+
 		return convertView;
 	}
 }
