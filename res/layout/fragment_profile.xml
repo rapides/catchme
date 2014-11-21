@@ -3,28 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <View 
+    <RelativeLayout
         android:id="@+id/profile_background"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:background="@color/color100"
-        android:layout_alignBottom="@+id/profile_email"/>
-        
-    <com.catchme.utils.RoundedImageView
-        android:id="@+id/profile_image"
-        android:layout_width="120dp"
+        android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/o1" />
-    
+        android:background="@color/profile_background" >
+
+        <com.catchme.utils.RoundedImageView
+            android:id="@+id/profile_image"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/o1" />
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/profile_name_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_image"
-        android:layout_centerHorizontal="true" >
+        android:layout_alignLeft="@+id/profile_email"
+        android:layout_below="@+id/profile_background"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/profile_name"
@@ -49,6 +51,17 @@
         android:paddingTop="10dp"
         android:text="Email@email.com" />
 
-    
+    <com.catchme.utils.FloatingActionButton
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_background"
+        android:layout_marginTop="-35dp"
+        android:layout_alignParentRight="true"
+        android:visible="false"
+        fab:fab_colorNormal="@color/profile_floating_button_base"
+        fab:fab_colorPressed="@color/profile_floating_button_pressed"
+        fab:fab_icon="@drawable/ic_action_edit" />
 
 </RelativeLayout>

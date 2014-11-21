@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.profile.ItemProfileFragment;
 
 public class DrawerOnItemClickListener implements OnItemClickListener {
 	private DrawerLayout drawerLayout;
@@ -29,9 +32,11 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 	private SwipeRefreshLayout swipeLayout;
 	private Context context;
 	private LoggedUser user;
+	private ActionBarDrawerToggle drawerToggle;
 
 	public DrawerOnItemClickListener(Context context,
-			DrawerLayout drawerLayout, ListView drawerList, ListView listView,
+			DrawerLayout drawerLayout, ActionBarDrawerToggle drawerToggle,
+			ListView drawerList, ListView listView,
 			SwipeRefreshLayout swipeLayout, LoggedUser user) {
 		super();
 		this.context = context;
@@ -40,6 +45,7 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 		this.listView = listView;
 		this.swipeLayout = swipeLayout;
 		this.user = user;
+		this.drawerToggle = drawerToggle;
 	}
 
 	@Override
@@ -70,8 +76,17 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 					.setDisplayHomeAsUpEnabled(false);
 			((Activity) context).getActionBar().setHomeButtonEnabled(false);
 		}
-		if (position != 0) {
-			drawerLayout.closeDrawer(drawerList);
+		drawerLayout.closeDrawer(drawerList);
+		if (position == 0) {
+			ItemProfileFragment frag = new ItemProfileFragment();
+			FragmentTransaction transaction = ((FragmentActivity) context)
+					.getSupportFragmentManager().beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+			drawerToggle.setDrawerIndicatorEnabled(false);
 		}
 	}
 

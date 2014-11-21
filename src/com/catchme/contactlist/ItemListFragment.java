@@ -112,11 +112,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				R.color.swipelayout_color3);
 
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), user));
-		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				getActivity(), drawerLayout, drawerList, listView, swipeLayout,
-				user));
-
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
+		
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -132,8 +129,12 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			}
 
 		};
+		
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
+		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
+				getActivity(), drawerLayout, drawerToggle, drawerList, listView, swipeLayout,
+				user));
 		listView.setOnItemClickListener(new ItemListOnItemClickListener(
 				drawerToggle, mCallbacks));
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),

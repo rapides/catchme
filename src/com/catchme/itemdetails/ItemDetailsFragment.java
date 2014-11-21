@@ -85,7 +85,6 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 
 	private void setUnderlinePos(int position, float positionOffset) {
 		LayoutParams params = (LayoutParams) tabUnderline.getLayoutParams();
-
 		int tabCount = viewPager.getAdapter().getCount();
 		int sum = btnProfileTab.getWidth() + btnMessagesTab.getWidth()
 				+ btnMapTab.getWidth() + 2 * tabCount;
@@ -115,8 +114,9 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onPageSelected(int position) {
-		if(position==1){
-			Toast.makeText(getActivity(), "selected tab 1", Toast.LENGTH_SHORT).show();
+		if (position == 1) {
+			Toast.makeText(getActivity(), "selected tab 1", Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 
@@ -159,7 +159,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		popup.setOnMenuItemClickListener(this);
 		popup.show();
 	}
-	
+
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
@@ -178,7 +178,5 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		}
 		return false;
 	}
-
-	
 
 }
