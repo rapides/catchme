@@ -28,8 +28,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class ItemListActivity extends FragmentActivity implements
 		ItemListFragment.Callbacks {
 
-	public static final String USER_TOKEN = "user_token";
 	public final static String PREFERENCES = "com.catchme";
+	public static final String USER = "user";
 	private static final int INTERVAL = 300000;// ms
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -44,10 +44,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		// preferences.edit().putString(USER_TOKEN,
-		// "75CGntvADGsMyN6odzb1").commit();
-		// preferences.edit().clear().commit();
-		if (preferences.contains(USER_TOKEN)) {
+		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
 				// The detail container view will be present only in the
 				// large-screen layouts (res/values-large and

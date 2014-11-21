@@ -11,17 +11,20 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.AddContactTask;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
 public class DialogAddContactClickListener implements OnClickListener {
 	View dialogView;
 	SwipeRefreshLayout swipeLayout;
 	Context context;
+	private LoggedUser user;
 
 	public DialogAddContactClickListener(View dialogView,
-			SwipeRefreshLayout swipeLayout) {
+			SwipeRefreshLayout swipeLayout, LoggedUser user) {
 		this.dialogView = dialogView;
 		this.swipeLayout = swipeLayout;
 		this.context = swipeLayout.getContext();
+		this.user = user;
 	}
 
 	@Override
@@ -31,8 +34,7 @@ public class DialogAddContactClickListener implements OnClickListener {
 					.findViewById(R.id.new_contact_email);
 			String email = txt.getText().toString();
 			if (isEmailValid(email)) {
-				new AddContactTask(swipeLayout).execute(
-						ExampleContent.currentUser.getToken(), email);
+				new AddContactTask(swipeLayout).execute(user.getToken(), email);
 			} else {
 				Toast.makeText(context,
 						context.getResources().getString(R.string.bad_email),

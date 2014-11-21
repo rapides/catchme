@@ -14,7 +14,6 @@ public class ExampleContent {
 	public static ArrayList<ExampleItem> ITEMS = new ArrayList<ExampleItem>();
 	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
-	public static LoggedUser currentUser;
 	static {
 		// Add 3 sample items.
 		/*
@@ -226,7 +225,6 @@ public class ExampleContent {
 	}
 
 	public static void clear() {
-		currentUser = null;
 		ITEM_MAP.clear();
 		ITEMS.clear();
 	}

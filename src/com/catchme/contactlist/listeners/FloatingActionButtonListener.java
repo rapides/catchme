@@ -7,15 +7,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.catchme.contactlist.NoticeDialogFragment;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
 public class FloatingActionButtonListener implements OnClickListener {
 	FragmentActivity activity;
 	private SwipeRefreshLayout swipeLayout;
+	private LoggedUser user;
 
 	public FloatingActionButtonListener(FragmentActivity activity,
-			SwipeRefreshLayout swipeLayout) {
+			SwipeRefreshLayout swipeLayout, LoggedUser user) {
 		this.activity = activity;
 		this.swipeLayout = swipeLayout;
+		this.user  =user;
 	}
 
 	@Override
@@ -25,7 +28,7 @@ public class FloatingActionButtonListener implements OnClickListener {
 	}
 
 	public void showAddContactDialog() {
-		DialogFragment dialog = new NoticeDialogFragment(swipeLayout);
+		DialogFragment dialog = new NoticeDialogFragment(swipeLayout, user);
 		dialog.show(activity.getSupportFragmentManager(),
 				"NoticeDialogFragment");
 	}

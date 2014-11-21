@@ -1,19 +1,15 @@
 package com.catchme.contactlist;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.RoundedImageView;
 
@@ -71,9 +67,9 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			RoundedImageView avatar = (RoundedImageView) convertView
 					.findViewById(R.id.drawer_title_avatar);
 			if (user != null) {
-				name.setText(ExampleContent.currentUser.getFullName());
-				email.setText(ExampleContent.currentUser.getEmail());
-				avatar.setImageResource(ExampleContent.currentUser
+				name.setText(user.getFullName());
+				email.setText(user.getEmail());
+				avatar.setImageResource(user
 						.getImageResource());
 			} else {
 				name.setText("");

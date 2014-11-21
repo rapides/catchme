@@ -1,10 +1,7 @@
 package com.catchme.contactlist.asynctasks;
 
-import java.util.Currency;
-
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -16,7 +13,6 @@ import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.DrawerMenuAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 
@@ -35,7 +31,6 @@ public class LogoutTask extends AsyncTask<String, Void, JSONObject> {
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.setUserLogOutRequest(token, id);
-			ExampleContent.currentUser = null;
 		} else {
 			result = null;
 		}
@@ -56,7 +51,7 @@ public class LogoutTask extends AsyncTask<String, Void, JSONObject> {
 				SharedPreferences preferences = context.getSharedPreferences(
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
-				e.remove(ItemListActivity.USER_TOKEN);
+				e.remove(ItemListActivity.USER);
 				e.commit();
 			} else {
 				Toast.makeText(context,

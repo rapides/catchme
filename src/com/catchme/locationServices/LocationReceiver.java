@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.catchme.contactlist.ItemListActivity;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.commonsware.cwac.locpoll.LocationPollerResult;
+import com.google.gson.Gson;
 
 public class LocationReceiver extends BroadcastReceiver {
 
@@ -36,8 +38,10 @@ public class LocationReceiver extends BroadcastReceiver {
 
 				SharedPreferences preferences = context.getSharedPreferences(
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-				String token = preferences.getString(
-						ItemListActivity.USER_TOKEN, "ERROR");
+				Gson gson = new Gson();
+			    String json = preferences.getString(ItemListActivity.USER, "");
+			    LoggedUser user = gson.fromJson(json, LoggedUser.class);
+				String token = user.getToken();
 				System.out.println("Cycki: " + token);
 				new SendLocationTask(context, token).execute(loc);
 			}

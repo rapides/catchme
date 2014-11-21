@@ -3,10 +3,12 @@ package com.catchme.messages;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.telephony.gsm.GsmCellLocation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,10 +20,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.catchme.R;
+import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.asynctask.SendMessageTask;
+import com.google.gson.Gson;
 
 public class MessagesFragment extends Fragment implements OnClickListener {
 
@@ -30,6 +35,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	ListView listView;
 	View rootView;
 	EditText textBox;
+	LoggedUser user;
 	private SwipeRefreshLayout swipeLayout;
 
 	public MessagesFragment() {
@@ -38,11 +44,12 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
 				ItemDetailsFragment.ARG_ITEM_ID));
-
-		setListnerToRootView();
+		SharedPreferences preferences = getActivity().getSharedPreferences(ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		String json = preferences.getString(ItemListActivity.USER, "");
+	    user = new Gson().fromJson(json, LoggedUser.class);
+	    setListnerToRootView();
 	}
 
 	@Override
@@ -71,7 +78,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				.findViewById(R.id.message_swipe_container);
 		t.setText("" + mItem.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
-				mItem);
+				mItem, user);
 		listView.setAdapter(adapter);
 		listView.setSelection(mItem.getMessages().size() - 1);
 		listView.setOnScrollListener(new MessagesScrollListener(listView,
@@ -127,7 +134,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		// ConnectTask()).execute("http://192.168.43.19:3000/api/v1/contacts/all");
 		(new SendMessageTask(getActivity(),
 				(MessagesListAdapter) listView.getAdapter())).execute(
-				ExampleContent.currentUser.getToken(), textBox.getText()
+				user.getToken(), textBox.getText()
 						.toString());
 	}
 

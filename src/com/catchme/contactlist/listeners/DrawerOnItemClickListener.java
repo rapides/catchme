@@ -1,5 +1,6 @@
 package com.catchme.contactlist.listeners;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -17,6 +18,7 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.LoginFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
 public class DrawerOnItemClickListener implements OnItemClickListener {
 	private DrawerLayout drawerLayout;
@@ -24,16 +26,18 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 	private ListView listView;
 	private SwipeRefreshLayout swipeLayout;
 	private Context context;
+	private LoggedUser user;
 
 	public DrawerOnItemClickListener(Context context,
 			DrawerLayout drawerLayout, ListView drawerList, ListView listView,
-			SwipeRefreshLayout swipeLayout) {
+			SwipeRefreshLayout swipeLayout, LoggedUser user) {
 		super();
 		this.context = context;
 		this.drawerLayout = drawerLayout;
 		this.drawerList = drawerList;
 		this.listView = listView;
 		this.swipeLayout = swipeLayout;
+		this.user = user;
 	}
 
 	@Override
@@ -42,13 +46,13 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 		if (position == 1) {
 			new GetContactsTask(swipeLayout,
 					(CustomListAdapter) listView.getAdapter())
-					.execute(ExampleContent.currentUser.getToken());
+					.execute(user.getToken());
 
 		} else if (position == 5) {
 			SharedPreferences preferences = context.getSharedPreferences(
 					ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 			Editor e = preferences.edit();
-			e.remove(ItemListActivity.USER_TOKEN);
+			e.remove(ItemListActivity.USER);
 			e.commit();
 			ExampleContent.clear();
 			LoginFragment loginFragment = new LoginFragment();
@@ -56,6 +60,8 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 					.beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();
+			((Activity) context).getActionBar().setDisplayHomeAsUpEnabled(false);
+			((Activity) context).getActionBar().setHomeButtonEnabled(false);
 		}
 		if (position != 0) {
 			drawerLayout.closeDrawer(drawerList);

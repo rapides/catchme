@@ -13,13 +13,13 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.google.gson.Gson;
 
 public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnTaskCompleted listener;
-	
+	private LoggedUser user;
 	public LoginTask(Context context, OnTaskCompleted listener) {
 		super();
 		this.context = context;
@@ -37,16 +37,12 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			String login = params[0];
 			String password = params[1];
 			result = ServerRequests.getTokenRequest(login, password);
-			setCurrentLoggedUser(ReadServerResponse.getLoggedUser(result));
+			user = ReadServerResponse.getLoggedUser(result);
 		} else {
 			result = null;
 		}
 
 		return result;
-	}
-
-	private void setCurrentLoggedUser(LoggedUser loggedUser) {
-		ExampleContent.currentUser = loggedUser;
 	}
 
 	@Override
@@ -60,21 +56,21 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 				Toast.makeText(
 						context,
 						"Success! Logged user: "
-								+ ExampleContent.currentUser.getFullName(),
+								+ user.getFullName(),
 						Toast.LENGTH_SHORT).show();
 				SharedPreferences preferences = context.getSharedPreferences(
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
-				e.putString(ItemListActivity.USER_TOKEN,
-						ExampleContent.currentUser.getToken());
-				e.commit();
-
+				Gson gsonUser = new Gson();
+			    String json = gsonUser.toJson(user);
+			    e.putString(ItemListActivity.USER, json);
+			    e.commit();
 			} else {
 				Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),
 						Toast.LENGTH_SHORT).show();
 			}
 		}
-		listener.onTaskCompleted();
+		listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 	}
 }

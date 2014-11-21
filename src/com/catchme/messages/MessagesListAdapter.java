@@ -12,8 +12,8 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -21,10 +21,13 @@ public class MessagesListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ExampleItem item;
+	private LoggedUser user;
 
-	public MessagesListAdapter(Activity activity, ExampleItem mItem) {
+	public MessagesListAdapter(Activity activity, ExampleItem mItem,
+			LoggedUser user) {
 		this.activity = activity;
 		this.item = mItem;
+		this.user = user;
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class MessagesListAdapter extends BaseAdapter {
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_right);
 
-			img.setImageResource(ExampleContent.currentUser.getImageResource());
+			img.setImageResource(user.getImageResource());
 			timeParams.addRule(RelativeLayout.ALIGN_RIGHT,
 					R.id.single_message_content);
 		} else {

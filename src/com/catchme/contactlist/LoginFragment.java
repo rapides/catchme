@@ -1,5 +1,7 @@
 package com.catchme.contactlist;
 
+import java.util.ArrayList;
+
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.LoginTask;
 import com.catchme.contactlist.asynctasks.OnTaskCompleted;
@@ -39,14 +41,16 @@ public class LoginFragment extends Fragment implements OnClickListener, OnTaskCo
 	}
 
 	@Override
-	public void onTaskCompleted() {
+	public void onTaskCompleted(ArrayList<String> errors) {
 		SharedPreferences preferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		if (preferences.contains(ItemListActivity.USER_TOKEN)) {
+		if (preferences.contains(ItemListActivity.USER)) {
 			ItemListFragment mainFragment = new ItemListFragment();
 			getActivity().getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, mainFragment)
 					.commit();
+			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+			getActivity().getActionBar().setHomeButtonEnabled(true);
 		}
 	}
 }

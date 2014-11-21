@@ -38,7 +38,9 @@ import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
+import com.google.gson.Gson;
 
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnClickListener,
@@ -62,6 +64,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 	private ActionBarDrawerToggle drawerToggle;
 	private SharedPreferences sharedpreferences;
 	private FloatingActionButton fab;
+	private LoggedUser user;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -95,6 +98,9 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				container, false);
 		sharedpreferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		String json = sharedpreferences.getString(ItemListActivity.USER, "");
+		user = new Gson().fromJson(json, LoggedUser.class);
+		
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 		btnAll = (Button) rootView.findViewById(R.id.list_all_button);
 		btnSent = (ImageButton) rootView.findViewById(R.id.list_sent_button);
@@ -120,18 +126,17 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		btnReceived.setOnClickListener(this);
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				new ArrayList<ExampleItem>()));
-
+		
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				swipeLayout, listView));
+				swipeLayout, listView, user));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
 
-		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), ExampleContent.currentUser));
-		drawerList
-				.setOnItemClickListener(new DrawerOnItemClickListener(
-						getActivity(), drawerLayout, drawerList, listView,
-						swipeLayout));
+		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), user));
+		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
+				getActivity(), drawerLayout, drawerList, listView, swipeLayout,
+				user));
 
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
@@ -154,12 +159,13 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		listView.setOnItemClickListener(new ItemListOnItemClickListener(
 				drawerToggle, mCallbacks));
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
-				swipeLayout));
+				swipeLayout, user));
 
 		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
+
 		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter())
-				.execute(ExampleContent.currentUser.getToken());
+				(CustomListAdapter) listView.getAdapter()).execute(user
+				.getToken());
 		return rootView;
 	}
 
