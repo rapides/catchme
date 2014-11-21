@@ -36,27 +36,19 @@ import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
 import com.google.gson.Gson;
 
 @SuppressWarnings("deprecation")
-public class ItemListFragment extends Fragment implements OnClickListener,
-		OnQueryTextListener, OnMenuItemClickListener {
+public class ItemListFragment extends Fragment implements OnQueryTextListener,
+		OnMenuItemClickListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-	private static final String SELECTED_FILTER = "filter";
+	public static final String SELECTED_FILTER = "filter";
 	public ListView listView;
-	private Button btnAll;
-	private ImageButton btnSent;
-	private ImageButton btnReceived;
-	private ImageButton btnAccepted;
-	private View btnAllUnderline;
-	private View btnSentUnderline;
-	private View btnReceivedUnderline;
-	private View btnAcceptedUnderline;
 	private SearchView searchView;
 	private SwipeRefreshLayout swipeLayout;
 	private DrawerLayout drawerLayout;
@@ -100,33 +92,19 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		String json = sharedpreferences.getString(ItemListActivity.USER, "");
 		user = new Gson().fromJson(json, LoggedUser.class);
-		
+
 		listView = (ListView) rootView.findViewById(R.id.list_item);
-		btnAll = (Button) rootView.findViewById(R.id.list_all_button);
-		btnSent = (ImageButton) rootView.findViewById(R.id.list_sent_button);
-		btnReceived = (ImageButton) rootView
-				.findViewById(R.id.list_received_button);
-		btnAccepted = (ImageButton) rootView
-				.findViewById(R.id.list_accepted_button);
-		btnAllUnderline = rootView.findViewById(R.id.list_all_underline);
-		btnReceivedUnderline = rootView
-				.findViewById(R.id.list_received_underline);
-		btnAcceptedUnderline = rootView
-				.findViewById(R.id.list_accepted_underline);
-		btnSentUnderline = rootView.findViewById(R.id.list_sent_underline);
+
 		swipeLayout = (SwipeRefreshLayout) rootView
 				.findViewById(R.id.swipe_container);
 		drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
 		drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
-		btnAll.setOnClickListener(this);
-		btnAccepted.setOnClickListener(this);
-		btnSent.setOnClickListener(this);
-		btnReceived.setOnClickListener(this);
+
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				new ArrayList<ExampleItem>()));
-		
+
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
 				swipeLayout, listView, user));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
@@ -161,10 +139,10 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
 				swipeLayout, user));
 
-		filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
+		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
 
 		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter()).execute(user
+				(CustomListAdapter) listView.getAdapter(), ContactStateType.ACCEPTED).execute(user
 				.getToken());
 		return rootView;
 	}
@@ -281,80 +259,19 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		return listView;
 	}
 
-	@Override
-	public void onClick(View v) {
-		if (v == btnAll) {
-			setUnderline(0);
-			filterList(-1);
-		} else if (v == btnAccepted) {
-			setUnderline(1);
-			filterList(ExampleItem.STATE_TYPE[0]);
-		} else if (v == btnReceived) {
-			setUnderline(2);
-			filterList(ExampleItem.STATE_TYPE[1]);
-		} else if (v == btnSent) {
-			setUnderline(3);
-			filterList(ExampleItem.STATE_TYPE[2]);
-		}
-	}
-
-	private void setUnderline(int tabNumber) {
-		LayoutParams paramsAll = (LayoutParams) btnAllUnderline
-				.getLayoutParams();
-		LayoutParams paramsSent = (LayoutParams) btnSentUnderline
-				.getLayoutParams();
-		LayoutParams paramsReceived = (LayoutParams) btnReceivedUnderline
-				.getLayoutParams();
-		LayoutParams paramsAccepted = (LayoutParams) btnAcceptedUnderline
-				.getLayoutParams();
-		int underline_height = (int) getResources().getDimension(
-				R.dimen.underline_height);
-		int underline_height_large = (int) getResources().getDimension(
-				R.dimen.underline_height_big);
-		if (tabNumber == 0) {
-			paramsAll.height = underline_height_large;
-			paramsAccepted.height = underline_height;
-			paramsSent.height = underline_height;
-			paramsReceived.height = underline_height;
-		} else if (tabNumber == 1) {
-			paramsAll.height = underline_height;
-			paramsAccepted.height = underline_height_large;
-			paramsSent.height = underline_height;
-			paramsReceived.height = underline_height;
-		} else if (tabNumber == 2) {
-			paramsAll.height = underline_height;
-			paramsAccepted.height = underline_height;
-			paramsSent.height = underline_height;
-			paramsReceived.height = underline_height_large;
-		} else if (tabNumber == 3) {
-			paramsAll.height = underline_height;
-			paramsAccepted.height = underline_height;
-			paramsSent.height = underline_height_large;
-			paramsReceived.height = underline_height;
-		}
-		btnAllUnderline.setLayoutParams(paramsAll);
-		btnReceivedUnderline.setLayoutParams(paramsReceived);
-		btnSentUnderline.setLayoutParams(paramsSent);
-	}
-
-	private void filterList(int state) {
-		if (listView != null && listView.getAdapter() != null) {
-			if (state >= 0) {
-				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-						CustomListAdapter.SEARCHTYPES[0]
-								+ CustomListAdapter.SEARCHCHAR + state);
-			} else {
-				((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-						null);
-			}
-		}
-	}
+	/*
+	 * private void filterList(int state) { if (listView != null &&
+	 * listView.getAdapter() != null) { if (state >= 0) { ((CustomListAdapter)
+	 * listView.getAdapter()).getFilter().filter(
+	 * CustomListAdapter.SEARCHTYPES[0] + CustomListAdapter.SEARCHCHAR + state);
+	 * } else { ((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+	 * null); } } }
+	 */
 
 	private void filterList(String newText) {
 		if (listView != null && listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					CustomListAdapter.SEARCHTYPES[1]
-							+ CustomListAdapter.SEARCHCHAR + newText);
+					newText);
 		}
 
 	}
@@ -404,10 +321,13 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 					R.id.action_filter));
 			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 			popup.setOnMenuItemClickListener(this);
-
+			popup.getMenu().getItem(1).setChecked(true);
 		}
-		popup.getMenu().getItem(sharedpreferences.getInt(SELECTED_FILTER, 0))
-				.setChecked(true);
+		else{
+			popup.getMenu().getItem(sharedpreferences.getInt(SELECTED_FILTER, 1)+1)
+			.setChecked(true);//+1 because model doesn't handle ALL filter
+		}
+		
 		popup.show();
 	}
 
@@ -416,31 +336,35 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		Editor editor = sharedpreferences.edit();
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			// setUnderline(0);
-			filterList(-1);
+			new GetContactsTask(swipeLayout,
+					(CustomListAdapter) listView.getAdapter(),
+					ContactStateType.ACCEPTED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, 0);
+			editor.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_accepted:
-			// setUnderline(1);
-			filterList(ExampleItem.STATE_TYPE[0]);
+			new GetContactsTask(swipeLayout,
+					(CustomListAdapter) listView.getAdapter(),
+					ContactStateType.ACCEPTED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, 1);
+			editor.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_sent:
-			// setUnderline(2);
-			filterList(ExampleItem.STATE_TYPE[1]);
+			new GetContactsTask(swipeLayout,
+					(CustomListAdapter) listView.getAdapter(),
+					ContactStateType.SENT).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, 2);
+			editor.putInt(SELECTED_FILTER, ContactStateType.SENT.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_received:
-			// setUnderline(3);
-			filterList(ExampleItem.STATE_TYPE[2]);
+			new GetContactsTask(swipeLayout,
+					(CustomListAdapter) listView.getAdapter(),
+					ContactStateType.RECEIVED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, 3);
+			editor.putInt(SELECTED_FILTER, ContactStateType.RECEIVED.getIntegerValue());
 			editor.commit();
 			return true;
 		}
@@ -475,7 +399,7 @@ public class ItemListFragment extends Fragment implements OnClickListener,
 		filterList(newText);
 		if (sharedpreferences != null) {
 			Editor e = sharedpreferences.edit();
-			e.putInt(SELECTED_FILTER, 0);
+			e.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
 			e.commit();
 		}
 		return true;

@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.RoundedImageView;
 

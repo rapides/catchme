@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.mapcontent.ItemMapFragment;
@@ -122,7 +123,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 		} else {
 			ExampleItem item = ExampleContent.ITEM_MAP.get(id);
-			if (item.getState() == ExampleItem.STATE_TYPE[0]) {
+			if (item.getState() == ContactStateType.ACCEPTED) {
 				Bundle arguments = new Bundle();
 				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
 				ItemDetailsFragment frag = new ItemDetailsFragment();
@@ -136,9 +137,9 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.commit();
 
 				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
-			} else if (item.getState() == ExampleItem.STATE_TYPE[1]) {
+			} else if (item.getState() == ContactStateType.RECEIVED) {
 				Toast.makeText(this, "state 1", 0).show();
-			} else if (item.getState() == ExampleItem.STATE_TYPE[2]) {
+			} else if (item.getState() == ContactStateType.SENT) {
 				Toast.makeText(this, "state 2", 0).show();
 			}
 

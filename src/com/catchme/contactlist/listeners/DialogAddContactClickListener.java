@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.AddContactTask;
-import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 
 public class DialogAddContactClickListener implements OnClickListener {

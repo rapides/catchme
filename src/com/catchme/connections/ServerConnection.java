@@ -58,15 +58,15 @@ public class ServerConnection {
 			result = new JSONObject(response);
 			
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.e("JSON Parse error", e.getMessage());
 		} catch (ClientProtocolException e) {
 			Log.e("ConnectionError", "Error: "+response);
 		} catch (IOException e) {
 			Log.e("ConnectionError", "Error: "+e.getMessage());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Log.e("JSON Parse error", e.getMessage());
 		} catch (JSONException e) {
-			//Log.e("JSON Parse error", e.getMessage());
+			Log.e("JSON Parse error", e.getMessage());
 		}
 
 		return result;
@@ -100,7 +100,7 @@ public class ServerConnection {
 			return new JSONObject(EntityUtils.toString(responseGet.getEntity()));
 		} catch (Exception e) {
 			Log.e("ConnectionError", responseGet+"\n"+e.getMessage());
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return null;
 	}
@@ -130,7 +130,7 @@ public class ServerConnection {
 			responseDelete = client.execute(delete);
 			return new JSONObject(EntityUtils.toString(responseDelete.getEntity()));
 		} catch (Exception e) {
-			//Log.e("ConnectionError", responseDelete+"\n"+e.getMessage());
+			Log.e("ConnectionError", responseDelete+"\n"+e.getMessage());
 			//e.printStackTrace();
 		}
 		return null;

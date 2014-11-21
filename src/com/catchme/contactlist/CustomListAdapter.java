@@ -25,9 +25,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
-	private ArrayList<ExampleItem> items;
+	private ArrayList<ExampleItem> items;/*
 	public static final String[] SEARCHTYPES = { "0", "1" };
-	public static final String SEARCHCHAR = ";";
+	public static final String SEARCHCHAR = ";";*/
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.items = items;
@@ -121,15 +121,17 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults results = new FilterResults();
+				
 				if (constraint == null || constraint.length() == 0) {
 					results.values = ExampleContent.ITEMS;
 					results.count = ExampleContent.ITEMS.size();
 				} else {
-					String searchType = constraint.toString().substring(0,
+
+					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
+					/*String searchType = constraint.toString().substring(0,
 							constraint.toString().indexOf(SEARCHCHAR));
 					String searchQuery = constraint.toString().substring(
 							constraint.toString().indexOf(SEARCHCHAR) + 1);
-					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
 
 					if (searchType.equals(SEARCHTYPES[0])) {
 						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
@@ -138,22 +140,21 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 							if (searchQuery
 									.startsWith("" + dataItem.getState())) {
 								filteredArrayNames.add(dataItem);
-
 							}
 						}
-					} else if (searchType.equals(SEARCHTYPES[1])) {
+					} else if (searchType.equals(SEARCHTYPES[1])) {*/
 						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
 							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
 							if (dataItem
 									.getFullName()
 									.toLowerCase(Locale.getDefault())
 									.contains(
-											searchQuery.toLowerCase(Locale
+											constraint.toString().toLowerCase(Locale
 													.getDefault()))) {
 								filteredArrayNames.add(dataItem);
 							}
 						}
-					}
+					//}
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}

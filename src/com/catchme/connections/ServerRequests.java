@@ -19,6 +19,11 @@ public class ServerRequests {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_SENT,
 				getHeader(token));
 	}
+	
+	public static JSONObject getReceivedContactsRequest(String token) {
+		return ServerConnection.GET(ServerConst.URL_CONTACTS_RECEIVED,
+				getHeader(token));
+	}
 
 	public static JSONObject getTokenRequest(String login, String password) {
 		return ServerConnection.JsonPOST(ServerConst.URL_AUTH,
@@ -56,6 +61,8 @@ public class ServerRequests {
 
 	public static JSONObject setContactStateRequest(String token,
 			long contactId, int state) {
+		System.out.println(ServerConst.URL_CONTACTS_UPDATE_STATE_PART1 + contactId
+				+ ServerConst.URL_CONTACTS_UPDATE_STATE_PART2);
 		return ServerConnection.JsonPOST(
 				ServerConst.URL_CONTACTS_UPDATE_STATE_PART1 + contactId
 						+ ServerConst.URL_CONTACTS_UPDATE_STATE_PART2,
@@ -89,17 +96,15 @@ public class ServerRequests {
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
 
-	public static JSONObject getReceivedContactsRequest(String token) {
-		return ServerConnection.GET(ServerConst.URL_CONTACTS_RECEIVED,
-				getHeader(token));
-	}
+	
 	private static JSONObject buildSetContactStateRequest(long state) {
 		JSONObject data = new JSONObject();
 		try {
-			data.put(ServerConst.USER_STATE, state);
+			data.put(ServerConst.USER_STATE, ""+state);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
 		}
+		System.out.println(data);
 		return data;
 	}
 

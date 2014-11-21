@@ -16,18 +16,22 @@ import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 
 	private SwipeRefreshLayout swipeLayout;
 	private CustomListAdapter adapter;
 	private Context context;
-
+	private ContactStateType state;
+	
+	
 	public GetContactsTask(SwipeRefreshLayout swipeLayout,
-			CustomListAdapter listAdapter) {
+			CustomListAdapter listAdapter, ContactStateType state) {
 		super();
 		this.swipeLayout = swipeLayout;
 		this.adapter = listAdapter;
+		this.state = state;
 		context = swipeLayout.getContext();
 	}
 
@@ -41,10 +45,15 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 		String token = params[0];
 		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getAcceptedContactsRequest(token);
+			if(state == ContactStateType.ACCEPTED){
+				result = ServerRequests.getAcceptedContactsRequest(token);
+			}else if(state == ContactStateType.SENT){
+				result = ServerRequests.getSentContactsRequest(token);
+			}else if(state == ContactStateType.RECEIVED){
+				result = ServerRequests.getReceivedContactsRequest(token);
+			}
 		}
 		return result;
-
 	}
 
 	@Override

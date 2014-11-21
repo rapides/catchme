@@ -61,11 +61,30 @@ public class ExampleContent {
 	public static class ExampleItem {
 		public static final int IMAGE_INVALID = -1;
 
-		public static int[] STATE_TYPE = { 0, 1, 2 };// "0-Accepted", "1-Sent",
-														// "2-Received" };
+		public enum ContactStateType {
+			ACCEPTED(0), SENT(1), RECEIVED(2);
+			int intValue;
+
+			ContactStateType(int val) {
+				intValue = val;
+			}
+
+			public int getIntegerValue() {
+				return intValue;
+			}
+
+			public static ContactStateType getStateType(int integerValue) {
+				for (int i = 0; i < values().length; i++) {
+					if(values()[i].getIntegerValue() == integerValue){
+						return values()[i];
+					}
+				}
+				return null;
+			}
+		}
 
 		private long id;// idcontactu
-		private int state;
+		private ContactStateType state;
 
 		private String name;
 		private String surname;
@@ -78,7 +97,7 @@ public class ExampleContent {
 		private List<Long> conversationIds;
 
 		public ExampleItem(long id, String name, String surname, String email,
-				int photoId, int state, List<Long> conv_ids) {
+				int photoId, ContactStateType state, List<Long> conv_ids) {
 			this.id = id;
 			this.name = name;
 			this.photoId = photoId;
@@ -92,7 +111,7 @@ public class ExampleContent {
 		}
 
 		public ExampleItem(long id, String name, String surname, String email,
-				String photoUrl, int state, List<Long> conv_ids) {
+				String photoUrl, ContactStateType state, List<Long> conv_ids) {
 			this.id = id;
 			this.name = name;
 			this.photoUrl = photoUrl;
@@ -152,8 +171,8 @@ public class ExampleContent {
 
 		@Override
 		public String toString() {
-			return "Id: "+id+", "+name + " " + surname + ", " + email + ", ConvId"
-					+ conversationIds.get(0);
+			return "Id: " + id + ", " + name + " " + surname + ", " + email
+					+ ", ConvId: " + conversationIds.get(0);
 		}
 
 		public List<Message> getMessages(long conversationId) {
@@ -198,7 +217,7 @@ public class ExampleContent {
 			return id;
 		}
 
-		public int getState() {
+		public ContactStateType getState() {
 			return state;
 		}
 
@@ -239,7 +258,7 @@ public class ExampleContent {
 
 		public LoggedUser(long id, String name, String surname, String email,
 				int photoId, String token) {
-			super(id, name, surname, email, photoId, ExampleItem.STATE_TYPE[0],
+			super(id, name, surname, email, photoId, ContactStateType.ACCEPTED,
 					null);
 			this.token = token;
 		}

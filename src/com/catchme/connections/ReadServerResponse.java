@@ -7,8 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.google.gson.JsonObject;
 
 public class ReadServerResponse {
 	public static ArrayList<String> getErrors(JSONObject fullResponse) {
@@ -34,14 +34,12 @@ public class ReadServerResponse {
 		try {
 			if (isSuccess(fullResponse)) {
 				JSONObject user = fullResponse.getJSONObject(ServerConst.USER);
-
 				long id = user.getLong(ServerConst.USER_ID);
 				String name = user.getString(ServerConst.USER_NAME);
 				String surname = user.getString(ServerConst.USER_SURNAME);
 				String email = user.getString(ServerConst.USER_EMAIL);
 				logged = new LoggedUser(id, name, surname, email,
 						ExampleItem.IMAGE_INVALID, getToken(fullResponse));
-
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -80,9 +78,7 @@ public class ReadServerResponse {
 			throws JSONException {
 		ArrayList<ExampleItem> contactList = new ArrayList<ExampleItem>();
 		for (int i = 0; i < contactsArray.length(); i++) {
-
 			contactList.add(getContact(contactsArray.getJSONObject(i)));
-
 		}
 		return contactList;
 	}
@@ -95,21 +91,36 @@ public class ReadServerResponse {
 	}
 
 	private static ExampleItem getContact(JSONObject o) throws JSONException {
-		int state = o.getInt(ServerConst.USER_STATE)-1;
+		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE));
 		JSONObject user = o.getJSONObject(ServerConst.USER);
-
-		long id = user.getLong(ServerConst.USER_ID);
+		long id = o.getLong(ServerConst.USER_ID);
 		String name = user.getString(ServerConst.USER_NAME);
 		String surname = user.getString(ServerConst.USER_SURNAME);
 		String email = user.getString(ServerConst.USER_EMAIL);
 		JSONArray jsonArray = o.getJSONArray(ServerConst.USER_CONVERSATIONS);
 		ArrayList<Long> conv_ids = new ArrayList<Long>();
-		for(int i=0;i<jsonArray.length();i++){
+		for (int i = 0; i < jsonArray.length(); i++) {
 			conv_ids.add(jsonArray.getLong(i));
 		}
 		ExampleItem contact = new ExampleItem(id, name, surname, email,
 				ExampleItem.IMAGE_INVALID, state, conv_ids);
 		return contact;
+	}
+
+	private static ContactStateType adjustState(int oldState) {
+		ContactStateType state = null;
+		switch(oldState){
+		case 0: 
+			state = ContactStateType.RECEIVED;
+			break;
+		case 1: 
+			state = ContactStateType.ACCEPTED;
+			break;
+		case 2: 
+			state = ContactStateType.SENT;
+			break;
+		}
+		return state;
 	}
 
 	private static String getToken(JSONObject fullResponse)
