@@ -16,10 +16,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class LoginFragment extends Fragment implements OnClickListener, OnTaskCompleted {
+public class LoginFragment extends Fragment implements OnClickListener,
+		OnTaskCompleted {
 	private View rootView;
-
-	
 
 	public LoginFragment() {
 	}
@@ -27,7 +26,10 @@ public class LoginFragment extends Fragment implements OnClickListener, OnTaskCo
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		// inflate layout from xml
 		rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+		// set behaviour after click
 		Button b = (Button) rootView.findViewById(R.id.button1);
 		b.setOnClickListener(this);
 		return rootView;
@@ -35,22 +37,31 @@ public class LoginFragment extends Fragment implements OnClickListener, OnTaskCo
 
 	@Override
 	public void onClick(View v) {
-		LoginTask task = new LoginTask(getActivity(), this);
-		task.execute("mailCzeslawa@cycki.pl", "appleseed");
-		// show animation
+		new LoginTask(getActivity(), this).execute("mailCzeslawa@cycki.pl",
+				"appleseed");
+		// TODO show animation or something else
 	}
 
 	@Override
 	public void onTaskCompleted(ArrayList<String> errors) {
+		//get storage
 		SharedPreferences preferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		
+		//if LoginTask was able to download user data
 		if (preferences.contains(ItemListActivity.USER)) {
+			//prepare new view
 			ItemListFragment mainFragment = new ItemListFragment();
+			//replace old view
 			getActivity().getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, mainFragment)
 					.commit();
+			//adjust actionBar
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActivity().getActionBar().setHomeButtonEnabled(true);
+		} else {
+			//Here you can handle errors.
+			//error messages returned by server are stored in errors
 		}
 	}
 }

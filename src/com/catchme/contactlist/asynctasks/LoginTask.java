@@ -65,12 +65,13 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			    String json = gsonUser.toJson(user);
 			    e.putString(ItemListActivity.USER, json);
 			    e.commit();
+			    listener.onTaskCompleted(null);
 			} else {
 				Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),
 						Toast.LENGTH_SHORT).show();
+				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 			}
 		}
-		listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 	}
 }
