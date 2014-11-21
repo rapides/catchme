@@ -12,11 +12,13 @@ public class ServerConst {
 	public static final String URL_CONTACTS_ALL = SERVER_IP+ "/api/v1/contacts/all";
 	public static final String URL_CONTACTS_SENT = SERVER_IP+ "/api/v1/contacts/invited_by_user";
 	public static final String URL_CONTACTS_RECEIVED = SERVER_IP+ "/api/v1/contacts/invited_by_others";
+	public static final String URL_CONTACTS_UPDATE_STATE_PART1 = SERVER_IP+"/api/v1/contact/";
+	public static final String URL_CONTACTS_UPDATE_STATE_PART2 = "/update";
 	public static final String URL_MESSAGES_SEND = SERVER_IP+"/api/v1/conversations/create_message";
-	public static final String URL_MESSAGES_GET = SERVER_IP+"/api/v1/conversations/";
+	public static final String URL_MESSAGES_GET_PART1 = SERVER_IP+"/api/v1/conversations/";
 	public static final String URL_MESSAGES_TYPE_NEWER = "current/";
 	public static final String URL_MESSAGES_TYPE_OLDER = "older/";
-	public static final String URL_MESSAGES= "/messages/";
+	public static final String URL_MESSAGES_GET_PART2= "/messages/";
 	//People stuff
 	public static final String USER_EMAIL = "email";
 	public static final String USER_PASSWORD = "password";

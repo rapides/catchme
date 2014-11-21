@@ -44,11 +44,6 @@ public class ExampleContent {
 	 * ExampleItem.STATE_TYPE[2])); }
 	 */
 
-	private static void addItem(ExampleItem item) {
-		ITEM_MAP.put(item.getId(), item);
-		ITEMS.add(item);
-	}
-
 	public static void updateItems(ArrayList<ExampleItem> itemList) {
 		if (itemList != null && itemList.size() > 0) {
 			ITEMS = itemList;
@@ -157,7 +152,7 @@ public class ExampleContent {
 
 		@Override
 		public String toString() {
-			return name + " " + surname + " " + email + " "
+			return "Id: "+id+", "+name + " " + surname + ", " + email + ", ConvId"
 					+ conversationIds.get(0);
 		}
 
