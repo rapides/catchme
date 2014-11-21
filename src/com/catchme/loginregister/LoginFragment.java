@@ -1,10 +1,10 @@
-package com.catchme.contactlist;
+package com.catchme.loginregister;
 
 import java.util.ArrayList;
 
 import com.catchme.R;
-import com.catchme.contactlist.asynctasks.LoginTask;
-import com.catchme.contactlist.asynctasks.OnTaskCompleted;
+import com.catchme.contactlist.ItemListActivity;
+import com.catchme.contactlist.ItemListFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;

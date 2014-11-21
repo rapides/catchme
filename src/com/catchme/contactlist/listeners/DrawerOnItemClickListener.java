@@ -18,11 +18,11 @@ import com.catchme.R;
 import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
-import com.catchme.contactlist.LoginFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.loginregister.LoginFragment;
 import com.catchme.profile.ItemProfileFragment;
 
 public class DrawerOnItemClickListener implements OnItemClickListener {

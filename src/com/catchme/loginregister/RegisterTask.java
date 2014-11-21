@@ -1,4 +1,4 @@
-package com.catchme.contactlist.asynctasks;
+package com.catchme.loginregister;
 
 import org.json.JSONObject;
 
@@ -16,11 +16,11 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.google.gson.Gson;
 
-public class LoginTask extends AsyncTask<String, Void, JSONObject> {
+public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnTaskCompleted listener;
 	private LoggedUser user;
-	public LoginTask(Context context, OnTaskCompleted listener) {
+	public RegisterTask(Context context, OnTaskCompleted listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
@@ -34,9 +34,12 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	protected JSONObject doInBackground(String... params) {
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			String login = params[0];
-			String password = params[1];
-			result = ServerRequests.getTokenRequest(login, password);
+			String name = params[0];
+			String surname = params[1];
+			String email = params[2];
+			String password = params[3];
+			String confirmationPassword = params[5];
+			result = ServerRequests.addUserRequest(name, surname, email, password, confirmationPassword);
 			user = ReadServerResponse.getLoggedUser(result);
 		} else {
 			result = null;
@@ -55,7 +58,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			if (ReadServerResponse.isSuccess(result)) {
 				Toast.makeText(
 						context,
-						"Success! Logged user: "
+						"Success! Registered user: "
 								+ user.getFullName(),
 						Toast.LENGTH_SHORT).show();
 				SharedPreferences preferences = context.getSharedPreferences(
@@ -68,7 +71,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			    listener.onTaskCompleted(null);
 			} else {
 				Toast.makeText(context,
-						"Fail! " + ReadServerResponse.getErrors(result),
+						"Register fail! " + ReadServerResponse.getErrors(result),
 						Toast.LENGTH_SHORT).show();
 				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 			}

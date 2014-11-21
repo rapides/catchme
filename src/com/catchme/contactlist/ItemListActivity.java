@@ -19,6 +19,7 @@ import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
+import com.catchme.loginregister.LoginFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
