@@ -52,8 +52,8 @@ public class ItemMapFragment extends Fragment {
 		mapView = (MapView) rootView.findViewById(R.id.mapview);
 		mapView.onCreate(savedInstanceState);
 		map = mapView.getMap();
-		map.getUiSettings().setMyLocationButtonEnabled(true);
-		map.setMyLocationEnabled(true);
+		//map.getUiSettings().setMyLocationButtonEnabled(true);
+		//map.setMyLocationEnabled(true);
 
 		MapsInitializer.initialize(this.getActivity());
 

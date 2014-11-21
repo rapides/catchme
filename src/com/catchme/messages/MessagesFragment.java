@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 public class MessagesFragment extends Fragment implements OnClickListener {
 
 	public static int timesClicked = 0;
-	private ExampleItem mItem;
+	private ExampleItem item;
 	ListView listView;
 	View rootView;
 	EditText textBox;
@@ -44,12 +44,13 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mItem = ExampleContent.ITEM_MAP.get(getArguments().getLong(
+		item = ExampleContent.ITEM_MAP.get(getArguments().getLong(
 				ItemDetailsFragment.ARG_ITEM_ID));
-		SharedPreferences preferences = getActivity().getSharedPreferences(ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		SharedPreferences preferences = getActivity().getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		String json = preferences.getString(ItemListActivity.USER, "");
-	    user = new Gson().fromJson(json, LoggedUser.class);
-	    setListnerToRootView();
+		user = new Gson().fromJson(json, LoggedUser.class);
+		setListnerToRootView();
 	}
 
 	@Override
@@ -76,13 +77,13 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
 		swipeLayout = (SwipeRefreshLayout) rootView
 				.findViewById(R.id.message_swipe_container);
-		t.setText("" + mItem.getFullName());
+		t.setText("" + item.getFullName());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
-				mItem, user);
+				item, user);
 		listView.setAdapter(adapter);
-		listView.setSelection(mItem.getMessages().size() - 1);
+		listView.setSelection(item.getMessages(item.getFirstConversationId()).size() - 1);
 		listView.setOnScrollListener(new MessagesScrollListener(listView,
-				mItem, swipeLayout));
+				item, swipeLayout));
 
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
@@ -102,7 +103,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 200) { // TODO different resolutions
-							listView.setSelection(mItem.getMessages().size() - 1);
+							listView.setSelection(item.getMessages(item.getFirstConversationId()).size() - 1);
 							isOpened = true;
 						} else if (isOpened == true) {
 							isOpened = false;
@@ -130,12 +131,9 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		note.defaults |= Notification.DEFAULT_VIBRATE;
 		note.defaults |= Notification.DEFAULT_SOUND;
 		mNotificationManager.notify(notifyID, note);
-		// (new
-		// ConnectTask()).execute("http://192.168.43.19:3000/api/v1/contacts/all");
-		(new SendMessageTask(getActivity(),
-				(MessagesListAdapter) listView.getAdapter())).execute(
-				user.getToken(), textBox.getText()
-						.toString());
+		new SendMessageTask(getActivity(),
+				(MessagesListAdapter) listView.getAdapter()).execute(
+				user.getToken(), ""+item.getFirstConversationId(), textBox.getText().toString());
 	}
 
 }

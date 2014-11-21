@@ -32,17 +32,18 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return item.getMessages().size();
+		return item.getMessages(item.getFirstConversationId()).size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return item.getMessages().get(position);
+		return item.getMessages(item.getFirstConversationId()).get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return item.getMessages().get(position).hashCode();
+		return item.getMessages(item.getFirstConversationId()).get(position)
+				.hashCode();
 	}
 
 	@SuppressLint("InflateParams")
@@ -60,8 +61,10 @@ public class MessagesListAdapter extends BaseAdapter {
 		TextView message = (TextView) convertView
 				.findViewById(R.id.single_message_content);
 
-		message.setText(item.getMessages().get(position).getContent());
-		messageTime.setText(item.getMessages().get(position).getTime());
+		message.setText(item.getMessages(item.getFirstConversationId())
+				.get(position).getContent());
+		messageTime.setText(item.getMessages(item.getFirstConversationId())
+				.get(position).getTime());
 
 		LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
@@ -71,7 +74,8 @@ public class MessagesListAdapter extends BaseAdapter {
 		timeParams.addRule(RelativeLayout.BELOW, R.id.single_message_content);
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.single_message_image);
-		if (item.getMessages().get(position).getSenderId() % 2 != 0) {
+		if (item.getMessages(item.getFirstConversationId()).get(position)
+				.getSenderId() % 2 != 0) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			imageParams.addRule(RelativeLayout.ALIGN_TOP,
 					R.id.single_message_content);

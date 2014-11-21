@@ -27,8 +27,23 @@ public class ServerRequests {
 
 	}
 
+	public static JSONObject getMessagesNewer(String token,
+			long conversationId, long newestMessageId) {
+		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET
+				+ conversationId + ServerConst.URL_MESSAGES
+				+ ServerConst.URL_MESSAGES_TYPE_NEWER + newestMessageId,
+				getHeader(token));
+	}
+	public static JSONObject getMessagesOlder(String token,
+			long conversationId, long oldestMessageId) {
+		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET
+				+ conversationId + ServerConst.URL_MESSAGES
+				+ ServerConst.URL_MESSAGES_TYPE_OLDER + oldestMessageId,
+				getHeader(token));
+	}
+
 	public static JSONObject setUserLogOutRequest(String token, long userId) {
-		return ServerConnection.DELETE(ServerConst.URL_USER_LOGOUT + "/"+userId,
+		return ServerConnection.DELETE(ServerConst.URL_USER_LOGOUT + userId,
 				getHeader(token));
 	}
 
@@ -59,7 +74,7 @@ public class ServerRequests {
 
 	public static JSONObject sendMessageRequest(String token, long convId,
 			String message) {
-		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES,
+		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES_SEND,
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
 
@@ -73,7 +88,7 @@ public class ServerRequests {
 		JSONObject o = new JSONObject();
 		JSONObject mes = new JSONObject();
 		try {
-			mes.put(ServerConst.MESSAGE_ID, conversationId);
+			mes.put(ServerConst.MESSAGE_CONVERSATION_ID, conversationId);
 			mes.put(ServerConst.MESSAGE_CONTENT, message);
 			o.put(ServerConst.MESSAGE, mes);
 		} catch (JSONException e) {

@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 
 public class Message {
 	private int senderId;
+	private long messageId;
 	private String content;
 	private long time;
 
@@ -16,12 +17,14 @@ public class Message {
 				+ 10 * Math.random() + "" + 10 * Math.random() + "" + 10
 				* Math.random();
 		time = System.currentTimeMillis();
+		messageId = time;
 	}
 
 	public Message(String string) {
 		senderId = (int) (Math.random() * 2);
 		time = System.currentTimeMillis();
 		content = string;
+		messageId = time;
 	}
 
 	public int getSenderId() {
@@ -49,6 +52,10 @@ public class Message {
 		return formatter.format(calendar.getTime());
 	}
 	
+	public long getMessageId() {
+		return messageId;
+	}
+
 	public String toString(){
 		return content;
 	}

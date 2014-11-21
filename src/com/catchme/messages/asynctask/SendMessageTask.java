@@ -9,6 +9,8 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
+import com.catchme.connections.ServerRequests;
+import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.messages.MessagesListAdapter;
 
 public class SendMessageTask extends AsyncTask<String, Void, JSONObject> {
@@ -24,10 +26,11 @@ public class SendMessageTask extends AsyncTask<String, Void, JSONObject> {
 	@Override
 	protected JSONObject doInBackground(String... params) {
 		String token = params[0];
-		String message = params[1];
+		long convId = Long.parseLong(params[1]);
+		String message = params[2];
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			// result = ServerRequests.sendMessageRequest(token, message);
+			result = ServerRequests.sendMessageRequest(token,convId, message);
 		} else {
 			result = null;
 		}
@@ -47,7 +50,7 @@ public class SendMessageTask extends AsyncTask<String, Void, JSONObject> {
 			Toast.makeText(context, "sent", Toast.LENGTH_SHORT).show();
 		} else {
 			setMessageSent(false);
-			Toast.makeText(context, "sending problem", Toast.LENGTH_SHORT)
+			Toast.makeText(context, "Message sending problem", Toast.LENGTH_SHORT)
 					.show();
 		}
 		adapter.notifyDataSetChanged();

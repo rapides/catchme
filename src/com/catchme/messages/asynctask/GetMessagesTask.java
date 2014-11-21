@@ -46,14 +46,14 @@ public class GetMessagesTask extends AsyncTask<String, Void, JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		adapter.notifyDataSetChanged();
-		listView.setSelection(10);
+		listView.setSelection(listView.getFirstVisiblePosition() +10);
 		swipeLatout.setRefreshing(false);
 	}
 
 	private void loadMoreMessages() {
 		for (int i = 0; i < 10; i++) {
-			item.addFirstMessage(new Message("Nowa wiadomosc:  "
-					+ messagesCount));
+			item.addOlderMessage(item.getFirstConversationId(), new Message(
+					"Nowa wiadomosc:  " + messagesCount));
 		}
 		messagesCount++;
 	}

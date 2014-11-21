@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
@@ -14,34 +15,34 @@ public class ExampleContent {
 	public static ArrayList<ExampleItem> ITEMS = new ArrayList<ExampleItem>();
 	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
-	static {
-		// Add 3 sample items.
-		/*
-		 * addItem(new ExampleItem(6, "Weronika Grodecka 2",
-		 * "http://i.imgur.com/fK76n1p.jpg", "Poznan")); addItem(new
-		 * ExampleItem(1, "Evilish EviLeenda", "http://i.imgur.com/KfpkaMQ.jpg",
-		 * "Lublin")); addItem(new ExampleItem(2, "Jarek Maksymiuk",
-		 * "http://i.imgur.com/eOxT2wO.jpg", "Chlebczyn")); addItem(new
-		 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
-		 * "Frankfurt"));
-		 */
-		addItem(new ExampleItem(1, "Weronika", "Grodecka 2",
-				"rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-		addItem(new ExampleItem(2, "Evilish", "EviLeenda",
-				"rapides+2@gmail.com", R.drawable.o1, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(3, "Jarek", "Maksymiuk", "rapides+3@gmail.com",
-				R.drawable.o2, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(4, "Joachim", "Pflaume", "rapides+5@gmail.com",
-				R.drawable.o3, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(5, "Mayak", "Balop", "rapides+6@gmail.com",
-				R.drawable.o4, ExampleItem.STATE_TYPE[0]));
-		addItem(new ExampleItem(6, "Mayak", "STAN1", "rapides+7@gmail.com",
-				R.drawable.o4, ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem(7, "Janusz", "STAN1", "rapides+7@gmail.com",
-				-1, ExampleItem.STATE_TYPE[1]));
-		addItem(new ExampleItem(8, "Weronika", "STAN2", "rapides+8@gmail.com",
-				R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-	}
+
+	/*
+	 * static { // Add 3 sample items.
+	 * 
+	 * addItem(new ExampleItem(6, "Weronika Grodecka 2",
+	 * "http://i.imgur.com/fK76n1p.jpg", "Poznan")); addItem(new ExampleItem(1,
+	 * "Evilish EviLeenda", "http://i.imgur.com/KfpkaMQ.jpg", "Lublin"));
+	 * addItem(new ExampleItem(2, "Jarek Maksymiuk",
+	 * "http://i.imgur.com/eOxT2wO.jpg", "Chlebczyn")); addItem(new
+	 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
+	 * "Frankfurt"));
+	 * 
+	 * addItem(new ExampleItem(1, "Weronika", "Grodecka 2",
+	 * "rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
+	 * addItem(new ExampleItem(2, "Evilish", "EviLeenda", "rapides+2@gmail.com",
+	 * R.drawable.o1, ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(3,
+	 * "Jarek", "Maksymiuk", "rapides+3@gmail.com", R.drawable.o2,
+	 * ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(4, "Joachim",
+	 * "Pflaume", "rapides+5@gmail.com", R.drawable.o3,
+	 * ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(5, "Mayak", "Balop",
+	 * "rapides+6@gmail.com", R.drawable.o4, ExampleItem.STATE_TYPE[0]));
+	 * addItem(new ExampleItem(6, "Mayak", "STAN1", "rapides+7@gmail.com",
+	 * R.drawable.o4, ExampleItem.STATE_TYPE[1])); addItem(new ExampleItem(7,
+	 * "Janusz", "STAN1", "rapides+7@gmail.com", -1,
+	 * ExampleItem.STATE_TYPE[1])); addItem(new ExampleItem(8, "Weronika",
+	 * "STAN2", "rapides+8@gmail.com", R.drawable.o5,
+	 * ExampleItem.STATE_TYPE[2])); }
+	 */
 
 	private static void addItem(ExampleItem item) {
 		ITEM_MAP.put(item.getId(), item);
@@ -49,14 +50,14 @@ public class ExampleContent {
 	}
 
 	public static void updateItems(ArrayList<ExampleItem> itemList) {
-		if(itemList!=null && itemList.size()>0){
+		if (itemList != null && itemList.size() > 0) {
 			ITEMS = itemList;
 			ITEM_MAP.clear();
-			for(ExampleItem item: itemList){
+			for (ExampleItem item : itemList) {
 				ITEM_MAP.put(item.getId(), item);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -78,23 +79,25 @@ public class ExampleContent {
 		private int photoId;
 		private String photoUrl;
 
-		private LinkedList<Message> messages;
+		private Map<Long, List<Message>> messages;
+		private List<Long> conversationIds;
 
 		public ExampleItem(long id, String name, String surname, String email,
-				int photoId, int state) {
+				int photoId, int state, List<Long> conv_ids) {
 			this.id = id;
 			this.name = name;
 			this.photoId = photoId;
 			this.email = email;
 			this.surname = surname;
 			this.photoUrl = null;
-			this.messages = new LinkedList<Message>();
+			this.messages = new HashMap<Long, List<Message>>();
 			this.state = state;
+			this.conversationIds = conv_ids;
 			addRandomMessages();
 		}
 
 		public ExampleItem(long id, String name, String surname, String email,
-				String photoUrl, int state) {
+				String photoUrl, int state, List<Long> conv_ids) {
 			this.id = id;
 			this.name = name;
 			this.photoUrl = photoUrl;
@@ -102,7 +105,8 @@ public class ExampleContent {
 			this.surname = surname;
 			this.photoId = -1;
 			this.state = state;
-			this.messages = new LinkedList<Message>();
+			this.messages = new HashMap<Long, List<Message>>();
+			this.conversationIds = conv_ids;
 			addRandomMessages();
 		}
 
@@ -118,10 +122,11 @@ public class ExampleContent {
 		}
 
 		private void addRandomMessages() {
+			LinkedList<Message> messageList = new LinkedList<Message>();
 			for (int i = 0; i < 20; i++) {
-				messages.add(new Message());
+				messageList.add(new Message());
 			}
-			messages.add(new Message("Poszukiwanie gor¹cej linii z Niebem "
+			messageList.add(new Message("Poszukiwanie gor¹cej linii z Niebem "
 					+ "w tym œwiecie pozorów stanowi wyprawê "
 					+ "z góry skazan¹ na niepowodzenie. "
 					+ "Poszukiwanie nie zepsutej instytucji, "
@@ -130,29 +135,44 @@ public class ExampleContent {
 					+ "który odpowie na wszelkie pytania "
 					+ "jest œlep¹ uliczk¹, prowadz¹c¹ na "
 					+ "manowce istnienia. "));
-			messages.add(new Message("ok"));
-			messages.add(new Message("cycki"));
+			messageList.add(new Message("ok"));
+			messageList.add(new Message("cycki"));
 			if (Math.random() < 0.5) {
-				messages.add(new Message(
-						"Ostatnia dluga wiadomosc, na tyle dluga zeby sie nie miescila "
-								+ ""
-								+ "w widoku na glownej stornie. Jednak musi byc"
-								+ " dlu¿sza bo to co napiaslem wczesniej nie "
-								+ "wystarczylo i sie nie skracalo, a ja chce "
-								+ "sprawdziæ czy elipsize dziala."));
+				messageList
+						.add(new Message(
+								"Ostatnia dluga wiadomosc, na tyle dluga zeby sie nie miescila "
+										+ ""
+										+ "w widoku na glownej stornie. Jednak musi byc"
+										+ " dlu¿sza bo to co napiaslem wczesniej nie "
+										+ "wystarczylo i sie nie skracalo, a ja chce "
+										+ "sprawdziæ czy elipsize dziala."));
 			} else {
-				messages.add(new Message("Ostatnia krótka wiadomosc"));
+				messageList.add(new Message("Ostatnia krótka wiadomosc"));
+			}
+			if (conversationIds != null) {
+				messages.put(conversationIds.get(0), messageList);
 			}
 
 		}
 
 		@Override
 		public String toString() {
-			return name + " " + surname + " " + email;
+			return name + " " + surname + " " + email + " "
+					+ conversationIds.get(0);
 		}
 
-		public LinkedList<Message> getMessages() {
-			return messages;
+		public List<Message> getMessages(long conversationId) {
+			return messages.get(conversationId);
+		}
+
+		public long getNewestMessage(long conversationId) {
+			return messages.get(conversationId)
+					.get(messages.get(conversationIds).size() - 1)
+					.getMessageId();
+		}
+
+		public long getOldestMessage(long conversationId) {
+			return messages.get(conversationId).get(0 - 1).getMessageId();
 		}
 
 		public int getImageResource() {
@@ -191,10 +211,31 @@ public class ExampleContent {
 			return email;
 		}
 
-		public void addFirstMessage(Message message) {
-			Collections.reverse(messages);
-			messages.add(message);
-			Collections.reverse(messages);
+		public void addOlderMessage(long conversationId, Message message) {
+			List<Message> temp = messages.get(conversationId);
+			Collections.reverse(temp);
+			temp.add(message);
+			Collections.reverse(temp);
+			messages.put(conversationId, temp);
+		}
+
+		public void addOlderMessages(long conversationId,
+				List<Message> messageList) {
+			List<Message> temp = messages.get(conversationId);
+			Collections.reverse(temp);
+			temp.addAll(messageList);
+			Collections.reverse(temp);
+			messages.put(conversationId, temp);
+		}
+
+		/**
+		 * Returns first conversation id. Used in conversations between 2
+		 * people.
+		 * 
+		 * @return Conversation id;
+		 */
+		public Long getFirstConversationId() {
+			return conversationIds.get(0);
 		}
 	}
 
@@ -203,7 +244,8 @@ public class ExampleContent {
 
 		public LoggedUser(long id, String name, String surname, String email,
 				int photoId, String token) {
-			super(id, name, surname, email, photoId, ExampleItem.STATE_TYPE[0]);
+			super(id, name, surname, email, photoId, ExampleItem.STATE_TYPE[0],
+					null);
 			this.token = token;
 		}
 
@@ -219,8 +261,6 @@ public class ExampleContent {
 		public void setToken(String token) {
 			this.token = token;
 		}
-
-		
 
 	}
 

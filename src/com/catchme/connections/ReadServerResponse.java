@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.google.gson.JsonObject;
 
 public class ReadServerResponse {
 	public static ArrayList<String> getErrors(JSONObject fullResponse) {
@@ -94,15 +95,20 @@ public class ReadServerResponse {
 	}
 
 	private static ExampleItem getContact(JSONObject o) throws JSONException {
-		int state = o.getInt(ServerConst.USER_STATE);
+		int state = o.getInt(ServerConst.USER_STATE)-1;
 		JSONObject user = o.getJSONObject(ServerConst.USER);
 
 		long id = user.getLong(ServerConst.USER_ID);
 		String name = user.getString(ServerConst.USER_NAME);
 		String surname = user.getString(ServerConst.USER_SURNAME);
 		String email = user.getString(ServerConst.USER_EMAIL);
+		JSONArray jsonArray = o.getJSONArray(ServerConst.USER_CONVERSATIONS);
+		ArrayList<Long> conv_ids = new ArrayList<Long>();
+		for(int i=0;i<jsonArray.length();i++){
+			conv_ids.add(jsonArray.getLong(i));
+		}
 		ExampleItem contact = new ExampleItem(id, name, surname, email,
-				ExampleItem.IMAGE_INVALID, state);
+				ExampleItem.IMAGE_INVALID, state, conv_ids);
 		return contact;
 	}
 

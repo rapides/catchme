@@ -4,16 +4,19 @@ public class ServerConst {
 	//URLs
 	public static final String SERVER_IP = "http://156.17.130.202:3003";
 	public static final String URL_AUTH = SERVER_IP + "/api/v1/auth";
-	public static final String URL_POSITION_CREATE = SERVER_IP+"/api/v1/position/create/";
+	public static final String URL_POSITION_CREATE = SERVER_IP+"/api/v1/position/create";
 	public static final String URL_USER_UPDATE = SERVER_IP+"/api/v1/user/update";
 	public static final String URL_USER_CREATE = SERVER_IP+"/api/v1/user/create";
-	public static final String URL_USER_LOGOUT = SERVER_IP+"/api/v1/auth";//+ userID
+	public static final String URL_USER_LOGOUT = SERVER_IP+"/api/v1/auth/";//+ userID
 	public static final String URL_CONTACTS_CREATE = SERVER_IP+"/api/v1/contact/create";
 	public static final String URL_CONTACTS_ALL = SERVER_IP+ "/api/v1/contacts/all";
 	public static final String URL_CONTACTS_SENT = SERVER_IP+ "/api/v1/contacts/invited_by_user";
 	public static final String URL_CONTACTS_RECEIVED = SERVER_IP+ "/api/v1/contacts/invited_by_others";
-	public static final String URL_MESSAGES = SERVER_IP+"/api/v1/conversations/create_message";
-	
+	public static final String URL_MESSAGES_SEND = SERVER_IP+"/api/v1/conversations/create_message";
+	public static final String URL_MESSAGES_GET = SERVER_IP+"/api/v1/conversations/";
+	public static final String URL_MESSAGES_TYPE_NEWER = "current/";
+	public static final String URL_MESSAGES_TYPE_OLDER = "older/";
+	public static final String URL_MESSAGES= "/messages/";
 	//People stuff
 	public static final String USER_EMAIL = "email";
 	public static final String USER_PASSWORD = "password";
@@ -24,6 +27,7 @@ public class ServerConst {
 	public static final String USER_ID = "id";
 	public static final String USER_STATE = "state";
 	public static final String CONTACTS = "contacts";
+	public static final String USER_CONVERSATIONS = "conversation_ids";
 	
 	//Connection stuff
 	public static final String TOKEN_GET = "Auth-Token";
@@ -40,7 +44,10 @@ public class ServerConst {
 	
 	//Messages stuff
 	public static final String MESSAGE = "message";
-	public static final String MESSAGE_ID = "conversation_id";
+	public static final String MESSAGE_CONVERSATION_ID = "conversation_id";
 	public static final String MESSAGE_CONTENT = "content";
+	public static final String MESSAGE_DATE = "created_at";
+	public static final String MESSAGE_CONTAINER = "chat_data";
+	
 	
 }

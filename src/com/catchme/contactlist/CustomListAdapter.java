@@ -79,11 +79,12 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
 		name.setText(item.getFullName());
 		// city.setText(item.getCity());
-		Message m = item.getMessages().get(item.getMessages().size() - 1);
+		Message m = item.getMessages(item.getFirstConversationId()).get(
+				item.getMessages(item.getFirstConversationId()).size() - 1);
 		if (m.getSenderId() % 2 == 0) {
 			lastMsg.setText("> " + m.getContent());
 		} else {
-			lastMsg.setText("Ty: " + m.getContent());
+			lastMsg.setText("You: " + m.getContent());
 		}
 		int maxLength = activity.getResources()
 				.getInteger(R.integer.max_length);
@@ -97,8 +98,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			public void onClick(View v) {
 				ListView parentListView = (ListView) v.getParent().getParent();
-				//parentListView.setItemChecked(position, true);
-				//todo image checking
+				// parentListView.setItemChecked(position, true);
+				// todo image checking
 			}
 		});
 		return convertView;
@@ -162,8 +163,9 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		};
 		return filter;
 	}
+
 	public void swapItems(ArrayList<ExampleItem> items) {
-	    this.items = items;
-	    notifyDataSetChanged();
+		this.items = items;
+		notifyDataSetChanged();
 	}
 }
