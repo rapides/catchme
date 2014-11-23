@@ -10,6 +10,30 @@ import android.util.Log;
 
 public class ServerRequests {
 
+	public static JSONObject getMessagesInit(String token, long conversationId) {
+		return ServerConnection.GET(
+				ServerConst.URL_MESSAGES_GET_PART1 + conversationId
+						+ ServerConst.URL_MESSAGES_GET_PART2_TYPE_INIT,
+				getHeader(token));
+	}
+
+	public static JSONObject getMessagesNewer(String token,
+			long conversationId, long newestMessageId) {
+		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET_PART1
+				+ conversationId
+				+ ServerConst.URL_MESSAGES_GET_PART2_TYPE_NEWER
+				+ ServerConst.MESSAGE_LAST_ID + newestMessageId, getHeader(token));
+	}
+
+	public static JSONObject getMessagesOlder(String token,
+			long conversationId, long oldestMessageId) {
+		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET_PART1
+				+ conversationId
+				+ ServerConst.URL_MESSAGES_GET_PART2_TYPE_OLDER
+				+ ServerConst.MESSAGE_LAST_ID + oldestMessageId,
+				getHeader(token));
+	}
+
 	public static JSONObject getAcceptedContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_ALL,
 				getHeader(token));
@@ -19,7 +43,7 @@ public class ServerRequests {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_SENT,
 				getHeader(token));
 	}
-	
+
 	public static JSONObject getReceivedContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_RECEIVED,
 				getHeader(token));
@@ -30,22 +54,6 @@ public class ServerRequests {
 				ServerRequests.buildTokenRequest(login, password),
 				getHeader(null));
 
-	}
-
-	public static JSONObject getMessagesNewer(String token,
-			long conversationId, long newestMessageId) {
-		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET_PART1
-				+ conversationId + ServerConst.URL_MESSAGES_GET_PART2
-				+ ServerConst.URL_MESSAGES_TYPE_NEWER + newestMessageId,
-				getHeader(token));
-	}
-
-	public static JSONObject getMessagesOlder(String token,
-			long conversationId, long oldestMessageId) {
-		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET_PART1
-				+ conversationId + ServerConst.URL_MESSAGES_GET_PART2
-				+ ServerConst.URL_MESSAGES_TYPE_OLDER + oldestMessageId,
-				getHeader(token));
 	}
 
 	public static JSONObject setUserLogOutRequest(String token, long userId) {
@@ -61,15 +69,13 @@ public class ServerRequests {
 
 	public static JSONObject setContactStateRequest(String token,
 			long contactId, int state) {
-		System.out.println(ServerConst.URL_CONTACTS_UPDATE_STATE_PART1 + contactId
-				+ ServerConst.URL_CONTACTS_UPDATE_STATE_PART2);
+		System.out.println(ServerConst.URL_CONTACTS_UPDATE_STATE_PART1
+				+ contactId + ServerConst.URL_CONTACTS_UPDATE_STATE_PART2);
 		return ServerConnection.JsonPOST(
 				ServerConst.URL_CONTACTS_UPDATE_STATE_PART1 + contactId
 						+ ServerConst.URL_CONTACTS_UPDATE_STATE_PART2,
 				buildSetContactStateRequest(state), getHeader(token));
 	}
-
-	
 
 	public static JSONObject addContactRequest(String token, String email) {
 		return ServerConnection.JsonPOST(ServerConst.URL_CONTACTS_CREATE,
@@ -96,15 +102,14 @@ public class ServerRequests {
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
 
-	
+
 	private static JSONObject buildSetContactStateRequest(long state) {
 		JSONObject data = new JSONObject();
 		try {
-			data.put(ServerConst.USER_STATE, ""+state);
+			data.put(ServerConst.USER_STATE, "" + state);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
 		}
-		System.out.println(data);
 		return data;
 	}
 

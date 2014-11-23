@@ -64,11 +64,6 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(
-						context,
-						"Refresh succeded. Contact count: "
-								+ ReadServerResponse.getContactList(result)
-										.size(), Toast.LENGTH_SHORT).show();
 				addItemsToDatabase(ReadServerResponse.getContactList(result));
 			} else {
 				Toast.makeText(

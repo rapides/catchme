@@ -53,16 +53,23 @@ public class ServerConnection {
 					httpost.setHeader(s, header.get(s));
 				}
 			}
+			System.out.println("URL:\n" + url);
+			System.out.println("Header:");
+			for (Header h : httpost.getAllHeaders()) {
+				System.out.println(h);
+			}
+			System.out.println("Data:");
+			System.out.println(data);
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
 			result = new JSONObject(response);
-			
+
 		} catch (UnsupportedEncodingException e) {
 			Log.e("JSON Parse error", e.getMessage());
 		} catch (ClientProtocolException e) {
-			Log.e("ConnectionError", "Error: "+response);
+			Log.e("ConnectionError", "Error: " + response);
 		} catch (IOException e) {
-			Log.e("ConnectionError", "Error: "+e.getMessage());
+			Log.e("ConnectionError", "Error: " + e.getMessage());
 		} catch (ParseException e) {
 			Log.e("JSON Parse error", e.getMessage());
 		} catch (JSONException e) {
@@ -90,7 +97,7 @@ public class ServerConnection {
 			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 			HttpClient client = new DefaultHttpClient(httpParameters);
 			HttpGet get = new HttpGet(url);
-			
+
 			if (header != null) {
 				for (String s : header.keySet()) {
 					get.setHeader(s, header.get(s));
@@ -99,13 +106,13 @@ public class ServerConnection {
 			responseGet = client.execute(get);
 			return new JSONObject(EntityUtils.toString(responseGet.getEntity()));
 		} catch (Exception e) {
-			Log.e("ConnectionError", responseGet+"\n"+e.getMessage());
-			//e.printStackTrace();
+			Log.e("ConnectionError", responseGet + "\n" + e.getMessage());
+			// e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static JSONObject DELETE(String url, Map<String, String> header ){
+	public static JSONObject DELETE(String url, Map<String, String> header) {
 		HttpResponse responseDelete = null;
 		try {
 			HttpParams httpParameters = new BasicHttpParams();
@@ -116,22 +123,23 @@ public class ServerConnection {
 			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 			HttpClient client = new DefaultHttpClient(httpParameters);
 			HttpDelete delete = new HttpDelete(url);
-			
+
 			if (header != null) {
 				for (String s : header.keySet()) {
 					delete.setHeader(s, header.get(s));
 				}
 			}
 			System.out.println("\nHeader: ");
-			for(Header h: delete.getAllHeaders()){
+			for (Header h : delete.getAllHeaders()) {
 				System.out.println(h);
 			}
 			System.out.println();
 			responseDelete = client.execute(delete);
-			return new JSONObject(EntityUtils.toString(responseDelete.getEntity()));
+			return new JSONObject(EntityUtils.toString(responseDelete
+					.getEntity()));
 		} catch (Exception e) {
-			Log.e("ConnectionError", responseDelete+"\n"+e.getMessage());
-			//e.printStackTrace();
+			Log.e("ConnectionError", responseDelete + "\n" + e.getMessage());
+			// e.printStackTrace();
 		}
 		return null;
 	}

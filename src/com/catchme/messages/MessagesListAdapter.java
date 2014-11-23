@@ -32,7 +32,10 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return item.getMessages(item.getFirstConversationId()).size();
+		if (item.getMessages(item.getFirstConversationId()) != null) {
+			return item.getMessages(item.getFirstConversationId()).size();
+		}
+		return 0;
 	}
 
 	@Override
@@ -42,8 +45,7 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return item.getMessages(item.getFirstConversationId()).get(position)
-				.hashCode();
+		return item.getMessages(item.getFirstConversationId()).get(position).getMessageId();
 	}
 
 	@SuppressLint("InflateParams")

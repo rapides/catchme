@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.Message;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -79,20 +78,20 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
 		name.setText(item.getFullName());
 		// city.setText(item.getCity());
-		Message m = item.getMessages(item.getFirstConversationId()).get(
+		/*Message m = item.getMessages(item.getFirstConversationId()).get(
 				item.getMessages(item.getFirstConversationId()).size() - 1);
 		if (m.getSenderId() % 2 == 0) {
 			lastMsg.setText("> " + m.getContent());
 		} else {
 			lastMsg.setText("You: " + m.getContent());
-		}
+		}*/
 		int maxLength = activity.getResources()
 				.getInteger(R.integer.max_length);
-		if (m.getContent().length() > maxLength) {
+		/*if (m.getContent().length() > maxLength) {
 
 			lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3)
 					+ "...");
-		}
+		}*/
 		img.setOnClickListener(new OnClickListener() {
 
 			@Override

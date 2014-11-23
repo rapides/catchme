@@ -16,9 +16,9 @@ public class ServerConst {
 	public static final String URL_CONTACTS_UPDATE_STATE_PART2 = "/update";
 	public static final String URL_MESSAGES_SEND = SERVER_IP+"/api/v1/conversations/create_message";
 	public static final String URL_MESSAGES_GET_PART1 = SERVER_IP+"/api/v1/conversations/";
-	public static final String URL_MESSAGES_TYPE_NEWER = "current/";
-	public static final String URL_MESSAGES_TYPE_OLDER = "older/";
-	public static final String URL_MESSAGES_GET_PART2= "/messages/";
+	public static final String URL_MESSAGES_GET_PART2_TYPE_NEWER = "/messages/recent/";
+	public static final String URL_MESSAGES_GET_PART2_TYPE_OLDER = "/messages/older/";
+	public static final String URL_MESSAGES_GET_PART2_TYPE_INIT = "/messages/init";
 	//People stuff
 	public static final String USER_EMAIL = "email";
 	public static final String USER_PASSWORD = "password";
@@ -46,10 +46,14 @@ public class ServerConst {
 	
 	//Messages stuff
 	public static final String MESSAGE = "message";
+	public static final String MESSAGES = "messages";
 	public static final String MESSAGE_CONVERSATION_ID = "conversation_id";
 	public static final String MESSAGE_CONTENT = "content";
-	public static final String MESSAGE_DATE = "created_at";
 	public static final String MESSAGE_CONTAINER = "chat_data";
+	public static final String MESSAGE_READ_FEEDS = "read_feeds";
+	public static final String MESSAGE_CREATED_AT= "created_at";
+	public static final String MESSAGE_LAST_ID = "?last_message_id=";
+	public static final String MESSAGE_ID = "id";
 	
 	
 }

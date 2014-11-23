@@ -3,7 +3,6 @@ package com.catchme.exampleObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,33 +15,7 @@ public class ExampleContent {
 	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
 
-	/*
-	 * static { // Add 3 sample items.
-	 * 
-	 * addItem(new ExampleItem(6, "Weronika Grodecka 2",
-	 * "http://i.imgur.com/fK76n1p.jpg", "Poznan")); addItem(new ExampleItem(1,
-	 * "Evilish EviLeenda", "http://i.imgur.com/KfpkaMQ.jpg", "Lublin"));
-	 * addItem(new ExampleItem(2, "Jarek Maksymiuk",
-	 * "http://i.imgur.com/eOxT2wO.jpg", "Chlebczyn")); addItem(new
-	 * ExampleItem(3, "Joachim Pflaume", "http://i.imgur.com/X1u2HP5.jpg",
-	 * "Frankfurt"));
-	 * 
-	 * addItem(new ExampleItem(1, "Weronika", "Grodecka 2",
-	 * "rapides+1@gmail.com", R.drawable.o5, ExampleItem.STATE_TYPE[2]));
-	 * addItem(new ExampleItem(2, "Evilish", "EviLeenda", "rapides+2@gmail.com",
-	 * R.drawable.o1, ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(3,
-	 * "Jarek", "Maksymiuk", "rapides+3@gmail.com", R.drawable.o2,
-	 * ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(4, "Joachim",
-	 * "Pflaume", "rapides+5@gmail.com", R.drawable.o3,
-	 * ExampleItem.STATE_TYPE[0])); addItem(new ExampleItem(5, "Mayak", "Balop",
-	 * "rapides+6@gmail.com", R.drawable.o4, ExampleItem.STATE_TYPE[0]));
-	 * addItem(new ExampleItem(6, "Mayak", "STAN1", "rapides+7@gmail.com",
-	 * R.drawable.o4, ExampleItem.STATE_TYPE[1])); addItem(new ExampleItem(7,
-	 * "Janusz", "STAN1", "rapides+7@gmail.com", -1,
-	 * ExampleItem.STATE_TYPE[1])); addItem(new ExampleItem(8, "Weronika",
-	 * "STAN2", "rapides+8@gmail.com", R.drawable.o5,
-	 * ExampleItem.STATE_TYPE[2])); }
-	 */
+
 
 	public static void updateItems(ArrayList<ExampleItem> itemList) {
 		if (itemList != null && itemList.size() > 0) {
@@ -107,7 +80,7 @@ public class ExampleContent {
 			this.messages = new HashMap<Long, List<Message>>();
 			this.state = state;
 			this.conversationIds = conv_ids;
-			addRandomMessages();
+			//addRandomMessages();
 		}
 
 		public ExampleItem(long id, String name, String surname, String email,
@@ -121,7 +94,7 @@ public class ExampleContent {
 			this.state = state;
 			this.messages = new HashMap<Long, List<Message>>();
 			this.conversationIds = conv_ids;
-			addRandomMessages();
+			//addRandomMessages();
 		}
 
 		public ExampleItem(ExampleItem item) {
@@ -135,10 +108,10 @@ public class ExampleContent {
 			this.messages = item.messages;
 		}
 
-		private void addRandomMessages() {
+		/*private void addRandomMessages() {
 			LinkedList<Message> messageList = new LinkedList<Message>();
 			for (int i = 0; i < 20; i++) {
-				messageList.add(new Message());
+				//messageList.add(new Message());
 			}
 			messageList.add(new Message("Poszukiwanie gor¹cej linii z Niebem "
 					+ "w tym œwiecie pozorów stanowi wyprawê "
@@ -167,7 +140,7 @@ public class ExampleContent {
 				messages.put(conversationIds.get(0), messageList);
 			}
 
-		}
+		}*/
 
 		@Override
 		public String toString() {
@@ -236,9 +209,22 @@ public class ExampleContent {
 		public void addOlderMessages(long conversationId,
 				List<Message> messageList) {
 			List<Message> temp = messages.get(conversationId);
-			Collections.reverse(temp);
+			if(temp!=null){
+				Collections.reverse(temp);
+			}else{
+				temp = new ArrayList<Message>();
+			}
+			Collections.reverse(messageList);
 			temp.addAll(messageList);
 			Collections.reverse(temp);
+			messages.put(conversationId, temp);
+		}
+		public void addNewerMessages(long conversationId, ArrayList<Message> newerMessages) {
+			List<Message> temp = messages.get(conversationId);
+			if(temp==null){	
+				temp = new ArrayList<Message>();
+			}
+			temp.addAll(newerMessages);
 			messages.put(conversationId, temp);
 		}
 
@@ -251,6 +237,8 @@ public class ExampleContent {
 		public Long getFirstConversationId() {
 			return conversationIds.get(0);
 		}
+
+		
 	}
 
 	public static class LoggedUser extends ExampleItem {

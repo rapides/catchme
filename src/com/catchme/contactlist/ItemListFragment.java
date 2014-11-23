@@ -17,16 +17,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -113,7 +109,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), user));
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
-		
+
 		drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -129,12 +125,12 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			}
 
 		};
-		
+
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				getActivity(), drawerLayout, drawerToggle, drawerList, listView, swipeLayout,
-				user));
+				getActivity(), drawerLayout, drawerToggle, drawerList,
+				listView, swipeLayout, user));
 		listView.setOnItemClickListener(new ItemListOnItemClickListener(
 				drawerToggle, mCallbacks));
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
@@ -143,8 +139,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
 
 		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter(), ContactStateType.ACCEPTED).execute(user
-				.getToken());
+				(CustomListAdapter) listView.getAdapter(),
+				ContactStateType.ACCEPTED).execute(user.getToken());
 		return rootView;
 	}
 
@@ -323,12 +319,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 			popup.setOnMenuItemClickListener(this);
 			popup.getMenu().getItem(1).setChecked(true);
+		} else {
+			popup.getMenu()
+					.getItem(sharedpreferences.getInt(SELECTED_FILTER, 1) + 1)
+					.setChecked(true);// +1 because model doesn't handle ALL
+										// filter
 		}
-		else{
-			popup.getMenu().getItem(sharedpreferences.getInt(SELECTED_FILTER, 1)+1)
-			.setChecked(true);//+1 because model doesn't handle ALL filter
-		}
-		
+
 		popup.show();
 	}
 
@@ -341,7 +338,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 					(CustomListAdapter) listView.getAdapter(),
 					ContactStateType.ACCEPTED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
+			editor.putInt(SELECTED_FILTER,
+					ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_accepted:
@@ -349,7 +347,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 					(CustomListAdapter) listView.getAdapter(),
 					ContactStateType.ACCEPTED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
+			editor.putInt(SELECTED_FILTER,
+					ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_sent:
@@ -357,7 +356,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 					(CustomListAdapter) listView.getAdapter(),
 					ContactStateType.SENT).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, ContactStateType.SENT.getIntegerValue());
+			editor.putInt(SELECTED_FILTER,
+					ContactStateType.SENT.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_received:
@@ -365,7 +365,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 					(CustomListAdapter) listView.getAdapter(),
 					ContactStateType.RECEIVED).execute(user.getToken());
 			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER, ContactStateType.RECEIVED.getIntegerValue());
+			editor.putInt(SELECTED_FILTER,
+					ContactStateType.RECEIVED.getIntegerValue());
 			editor.commit();
 			return true;
 		}
@@ -400,7 +401,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		filterList(newText);
 		if (sharedpreferences != null) {
 			Editor e = sharedpreferences.edit();
-			e.putInt(SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue());
+			e.putInt(SELECTED_FILTER,
+					ContactStateType.ACCEPTED.getIntegerValue());
 			e.commit();
 		}
 		return true;

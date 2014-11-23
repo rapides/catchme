@@ -1,33 +1,26 @@
 package com.catchme.exampleObjects;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import android.annotation.SuppressLint;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class Message {
-	private int senderId;
+	private long senderId;
 	private long messageId;
 	private String content;
-	private long time;
-
-	public Message() {
-		senderId = (int) (Math.random() * 2);
-		content = "" + 10 * Math.random() + "" + "" + 10 * Math.random() + ""
-				+ 10 * Math.random() + "" + 10 * Math.random() + "" + 10
-				* Math.random();
-		time = System.currentTimeMillis();
-		messageId = time;
+	private Date time;
+	private ArrayList<Object> readFeeds;
+	
+	public Message(long messageId, String content, Date createdAt, long userId, ArrayList<Object> readFeeds) {
+		this.messageId = messageId;
+		this.content = content;
+		this.time = createdAt;
+		this.senderId = userId;
+		this.readFeeds = readFeeds;
 	}
 
-	public Message(String string) {
-		senderId = (int) (Math.random() * 2);
-		time = System.currentTimeMillis();
-		content = string;
-		messageId = time;
-	}
-
-	public int getSenderId() {
+	public long getSenderId() {
 		return senderId;
 	}
 
@@ -36,20 +29,7 @@ public class Message {
 	}
 
 	public String getTime() {
-		return getDate(time, "dd/MM/yyyy HH:mm");
-	}
-
-	@SuppressLint("SimpleDateFormat")
-	public static String getDate(long milliSeconds, String dateFormat) {
-		// Create a DateFormatter object for displaying date in specified
-		// format.
-		SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-
-		// Create a calendar object that will convert the date and time value in
-		// milliseconds to date.
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(milliSeconds);
-		return formatter.format(calendar.getTime());
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(time);
 	}
 	
 	public long getMessageId() {
@@ -57,6 +37,6 @@ public class Message {
 	}
 
 	public String toString(){
-		return content;
+		return getTime()+", "+content + ", id:"+messageId+", user:"+senderId;
 	}
 }

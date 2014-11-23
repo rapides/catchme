@@ -1,17 +1,12 @@
 package com.catchme.messages;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.telephony.gsm.GsmCellLocation;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.EditText;
@@ -25,10 +20,15 @@ import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.messages.asynctask.SendMessageTask;
+import com.catchme.messages.asynctask.GetMessagesInitTask;
+import com.catchme.messages.asynctask.GetNewerMessagesTask;
+import com.catchme.messages.listeners.MessagesRefreshListener;
+import com.catchme.messages.listeners.MessagesScrollListener;
+import com.catchme.messages.listeners.OnMessageSent;
+import com.catchme.messages.listeners.SendButtonOnClickListener;
 import com.google.gson.Gson;
 
-public class MessagesFragment extends Fragment implements OnClickListener {
+public class MessagesFragment extends Fragment implements OnMessageSent {
 
 	public static int timesClicked = 0;
 	private ExampleItem item;
@@ -61,8 +61,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		loadData();
 		ImageButton sendBtn = (ImageButton) rootView
 				.findViewById(R.id.message_send);
-		sendBtn.setOnClickListener(this);
-
+		sendBtn.setOnClickListener(new SendButtonOnClickListener(getActivity(),
+				user, item, textBox, this));
+		new GetMessagesInitTask(listView, swipeLayout, item).execute(
+				user.getToken(), "" + item.getFirstConversationId());
 		/*
 		 * getActivity() .startService( new Intent(rootView.getContext(),
 		 * MessagesRefreshService.class));
@@ -81,13 +83,19 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
 				item, user);
 		listView.setAdapter(adapter);
-		listView.setSelection(item.getMessages(item.getFirstConversationId()).size() - 1);
-		listView.setOnScrollListener(new MessagesScrollListener(listView,
-				item, swipeLayout));
+		if (item.getMessages(item.getFirstConversationId()) != null) {
+			listView.setSelection(item.getMessages(
+					item.getFirstConversationId()).size() - 1);
+		}
+		listView.setOnScrollListener(new MessagesScrollListener(listView, item,
+				swipeLayout));
 
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
+
+		swipeLayout.setOnRefreshListener(new MessagesRefreshListener(
+				swipeLayout));
 	}
 
 	boolean isOpened = false;
@@ -103,7 +111,8 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 200) { // TODO different resolutions
-							listView.setSelection(item.getMessages(item.getFirstConversationId()).size() - 1);
+							listView.setSelection(item.getMessages(
+									item.getFirstConversationId()).size() - 1);
 							isOpened = true;
 						} else if (isOpened == true) {
 							isOpened = false;
@@ -113,27 +122,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	}
 
 	@Override
-	public void onClick(View v) {
-		int notifyID = 1;
-		timesClicked++;
-		NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(
-				v.getContext()).setSmallIcon(R.drawable.o2)
-				.setContentTitle("My notification")
-				.setContentText("Hello World!");
-		NotificationManager mNotificationManager = (NotificationManager) v
-				.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-		if (timesClicked > 3) {
-			mNotifyBuilder.setContentText(timesClicked + " text").setNumber(
-					timesClicked);
-		}
-		Notification note = mNotifyBuilder.build();
-		note.defaults |= Notification.DEFAULT_VIBRATE;
-		note.defaults |= Notification.DEFAULT_SOUND;
-		mNotificationManager.notify(notifyID, note);
-		new SendMessageTask(getActivity(),
-				(MessagesListAdapter) listView.getAdapter()).execute(
-				user.getToken(), ""+item.getFirstConversationId(), textBox.getText().toString());
+	public void onMessageSent(boolean b) {
+		new GetNewerMessagesTask(listView, item).execute(listView
+				.getItemIdAtPosition(listView.getCount() - 1));
+		textBox.setText("");
+		textBox.setEnabled(true);
 	}
-
 }
