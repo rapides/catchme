@@ -32,7 +32,7 @@ public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	public void onRefresh() {
 		SharedPreferences prefs = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, -1);
+		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, 1);
 		new GetContactsTask(swipeLayout,
 				(CustomListAdapter) listView.getAdapter(),
 				ContactStateType.getStateType(val)).execute(user.getToken());

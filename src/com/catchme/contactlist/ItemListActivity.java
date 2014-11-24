@@ -22,6 +22,7 @@ import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
+import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -138,10 +139,20 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.commit();
 
 				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
-			} else if (item.getState() == ContactStateType.RECEIVED) {
-				Toast.makeText(this, "state 1", 0).show();
-			} else if (item.getState() == ContactStateType.SENT) {
-				Toast.makeText(this, "state 2", 0).show();
+			} else if(item.getState() == ContactStateType.RECEIVED){
+				Bundle arguments = new Bundle();
+				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
+				ItemProfileFragment frag = new ItemProfileFragment();
+				frag.setArguments(arguments);
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.setCustomAnimations(android.R.anim.fade_in,
+						android.R.anim.fade_out);
+				transaction.replace(R.id.main_fragment_container, frag);
+				transaction.addToBackStack(null);
+				transaction.commit();
+			}else if(item.getState() == ContactStateType.SENT){
+				Toast.makeText(getApplicationContext(), "This type of contact? Not yet", 0).show();
 			}
 
 		}

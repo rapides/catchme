@@ -53,13 +53,6 @@ public class ServerConnection {
 					httpost.setHeader(s, header.get(s));
 				}
 			}
-			System.out.println("URL:\n" + url);
-			System.out.println("Header:");
-			for (Header h : httpost.getAllHeaders()) {
-				System.out.println(h);
-			}
-			System.out.println("Data:");
-			System.out.println(data);
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
 			result = new JSONObject(response);

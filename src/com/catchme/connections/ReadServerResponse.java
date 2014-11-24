@@ -54,11 +54,11 @@ public class ReadServerResponse {
 		return logged;
 	}
 
-	public static ArrayList<ExampleItem> getContactList(JSONObject fullResponse) {
+	public static ArrayList<ExampleItem> getContactList(JSONObject fullResponse, ContactStateType state) {
 		ArrayList<ExampleItem> contactList = null;
 		try {
 			if (isSuccess(fullResponse)) {
-				contactList = getContactList(getContactsArray(fullResponse));
+				contactList = getContactList(getContactsArray(fullResponse), state);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -81,11 +81,11 @@ public class ReadServerResponse {
 		return isSuccess;
 	}
 
-	private static ArrayList<ExampleItem> getContactList(JSONArray contactsArray)
+	private static ArrayList<ExampleItem> getContactList(JSONArray contactsArray, ContactStateType state)
 			throws JSONException {
 		ArrayList<ExampleItem> contactList = new ArrayList<ExampleItem>();
 		for (int i = 0; i < contactsArray.length(); i++) {
-			contactList.add(getContact(contactsArray.getJSONObject(i)));
+			contactList.add(getContact(contactsArray.getJSONObject(i), state));
 		}
 		return contactList;
 	}
@@ -97,8 +97,8 @@ public class ReadServerResponse {
 
 	}
 
-	private static ExampleItem getContact(JSONObject o) throws JSONException {
-		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE));
+	private static ExampleItem getContact(JSONObject o, ContactStateType stateGlobal) throws JSONException {
+		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE), stateGlobal);
 		JSONObject user = o.getJSONObject(ServerConst.USER);
 		long id = o.getLong(ServerConst.USER_ID);
 		String name = user.getString(ServerConst.USER_NAME);
@@ -115,17 +115,17 @@ public class ReadServerResponse {
 	}
 	
 
-	private static ContactStateType adjustState(int oldState) {
+	private static ContactStateType adjustState(int oldState, ContactStateType stateGlobal) {
 		ContactStateType state = null;
 		switch (oldState) {
 		case 0:
-			state = ContactStateType.RECEIVED;
+			state = stateGlobal;
 			break;
 		case 1:
 			state = ContactStateType.ACCEPTED;
 			break;
 		case 2:
-			state = ContactStateType.SENT;
+			state = ContactStateType.REJECTED;
 			break;
 		}
 		return state;

@@ -15,8 +15,6 @@ public class ExampleContent {
 	@SuppressLint("UseSparseArrays")
 	public static Map<Long, ExampleItem> ITEM_MAP = new HashMap<Long, ExampleItem>();
 
-
-
 	public static void updateItems(ArrayList<ExampleItem> itemList) {
 		if (itemList != null && itemList.size() > 0) {
 			ITEMS = itemList;
@@ -35,7 +33,7 @@ public class ExampleContent {
 		public static final int IMAGE_INVALID = -1;
 
 		public enum ContactStateType {
-			ACCEPTED(0), SENT(1), RECEIVED(2);
+			INVITED(0), ACCEPTED(1), REJECTED(2), SENT(3), RECEIVED(4);
 			int intValue;
 
 			ContactStateType(int val) {
@@ -48,11 +46,23 @@ public class ExampleContent {
 
 			public static ContactStateType getStateType(int integerValue) {
 				for (int i = 0; i < values().length; i++) {
-					if(values()[i].getIntegerValue() == integerValue){
+					if (values()[i].getIntegerValue() == integerValue) {
 						return values()[i];
 					}
 				}
 				return null;
+			}
+
+			public int getMenuPosition() {
+				if(this == ACCEPTED){
+					return 1;
+				}else if(this == SENT){
+					return 2;
+				}else if(this == RECEIVED){
+					return 3;
+				}else {
+					return 0;
+				}
 			}
 		}
 
@@ -80,7 +90,7 @@ public class ExampleContent {
 			this.messages = new HashMap<Long, List<Message>>();
 			this.state = state;
 			this.conversationIds = conv_ids;
-			//addRandomMessages();
+			// addRandomMessages();
 		}
 
 		public ExampleItem(long id, String name, String surname, String email,
@@ -94,7 +104,7 @@ public class ExampleContent {
 			this.state = state;
 			this.messages = new HashMap<Long, List<Message>>();
 			this.conversationIds = conv_ids;
-			//addRandomMessages();
+			// addRandomMessages();
 		}
 
 		public ExampleItem(ExampleItem item) {
@@ -108,39 +118,31 @@ public class ExampleContent {
 			this.messages = item.messages;
 		}
 
-		/*private void addRandomMessages() {
-			LinkedList<Message> messageList = new LinkedList<Message>();
-			for (int i = 0; i < 20; i++) {
-				//messageList.add(new Message());
-			}
-			messageList.add(new Message("Poszukiwanie gor¹cej linii z Niebem "
-					+ "w tym œwiecie pozorów stanowi wyprawê "
-					+ "z góry skazan¹ na niepowodzenie. "
-					+ "Poszukiwanie nie zepsutej instytucji, "
-					+ "osoby ucieleœniaj¹cej dobro i prawdê, "
-					+ "ksi¹¿ki, nauk, miejsca, sposobu ¿ycia, "
-					+ "który odpowie na wszelkie pytania "
-					+ "jest œlep¹ uliczk¹, prowadz¹c¹ na "
-					+ "manowce istnienia. "));
-			messageList.add(new Message("ok"));
-			messageList.add(new Message("cycki"));
-			if (Math.random() < 0.5) {
-				messageList
-						.add(new Message(
-								"Ostatnia dluga wiadomosc, na tyle dluga zeby sie nie miescila "
-										+ ""
-										+ "w widoku na glownej stornie. Jednak musi byc"
-										+ " dlu¿sza bo to co napiaslem wczesniej nie "
-										+ "wystarczylo i sie nie skracalo, a ja chce "
-										+ "sprawdziæ czy elipsize dziala."));
-			} else {
-				messageList.add(new Message("Ostatnia krótka wiadomosc"));
-			}
-			if (conversationIds != null) {
-				messages.put(conversationIds.get(0), messageList);
-			}
-
-		}*/
+		/*
+		 * private void addRandomMessages() { LinkedList<Message> messageList =
+		 * new LinkedList<Message>(); for (int i = 0; i < 20; i++) {
+		 * //messageList.add(new Message()); } messageList.add(new
+		 * Message("Poszukiwanie gor¹cej linii z Niebem " +
+		 * "w tym œwiecie pozorów stanowi wyprawê " +
+		 * "z góry skazan¹ na niepowodzenie. " +
+		 * "Poszukiwanie nie zepsutej instytucji, " +
+		 * "osoby ucieleœniaj¹cej dobro i prawdê, " +
+		 * "ksi¹¿ki, nauk, miejsca, sposobu ¿ycia, " +
+		 * "który odpowie na wszelkie pytania " +
+		 * "jest œlep¹ uliczk¹, prowadz¹c¹ na " + "manowce istnienia. "));
+		 * messageList.add(new Message("ok")); messageList.add(new
+		 * Message("cycki")); if (Math.random() < 0.5) { messageList .add(new
+		 * Message(
+		 * "Ostatnia dluga wiadomosc, na tyle dluga zeby sie nie miescila " + ""
+		 * + "w widoku na glownej stornie. Jednak musi byc" +
+		 * " dlu¿sza bo to co napiaslem wczesniej nie " +
+		 * "wystarczylo i sie nie skracalo, a ja chce " +
+		 * "sprawdziæ czy elipsize dziala.")); } else { messageList.add(new
+		 * Message("Ostatnia krótka wiadomosc")); } if (conversationIds != null)
+		 * { messages.put(conversationIds.get(0), messageList); }
+		 * 
+		 * }
+		 */
 
 		@Override
 		public String toString() {
@@ -209,9 +211,9 @@ public class ExampleContent {
 		public void addOlderMessages(long conversationId,
 				List<Message> messageList) {
 			List<Message> temp = messages.get(conversationId);
-			if(temp!=null){
+			if (temp != null) {
 				Collections.reverse(temp);
-			}else{
+			} else {
 				temp = new ArrayList<Message>();
 			}
 			Collections.reverse(messageList);
@@ -219,9 +221,11 @@ public class ExampleContent {
 			Collections.reverse(temp);
 			messages.put(conversationId, temp);
 		}
-		public void addNewerMessages(long conversationId, ArrayList<Message> newerMessages) {
+
+		public void addNewerMessages(long conversationId,
+				ArrayList<Message> newerMessages) {
 			List<Message> temp = messages.get(conversationId);
-			if(temp==null){	
+			if (temp == null) {
 				temp = new ArrayList<Message>();
 			}
 			temp.addAll(newerMessages);
@@ -238,7 +242,6 @@ public class ExampleContent {
 			return conversationIds.get(0);
 		}
 
-		
 	}
 
 	public static class LoggedUser extends ExampleItem {

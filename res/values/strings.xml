@@ -30,6 +30,8 @@
     <string name="new_contact_add_button">Add contact</string>
     <string name="cancel">Cancel</string>
     <string name="bad_email">Wrong email format</string>
+    <string name="profile_accept">Accept</string>
+    <string name="profile_reject">Reject</string>
      
 
 </resources>

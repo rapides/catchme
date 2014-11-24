@@ -6,6 +6,8 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+
 import android.util.Log;
 
 public class ServerRequests {
@@ -68,9 +70,7 @@ public class ServerRequests {
 	}
 
 	public static JSONObject setContactStateRequest(String token,
-			long contactId, int state) {
-		System.out.println(ServerConst.URL_CONTACTS_UPDATE_STATE_PART1
-				+ contactId + ServerConst.URL_CONTACTS_UPDATE_STATE_PART2);
+			long contactId, ContactStateType state) {
 		return ServerConnection.JsonPOST(
 				ServerConst.URL_CONTACTS_UPDATE_STATE_PART1 + contactId
 						+ ServerConst.URL_CONTACTS_UPDATE_STATE_PART2,
@@ -103,10 +103,10 @@ public class ServerRequests {
 	}
 
 
-	private static JSONObject buildSetContactStateRequest(long state) {
+	private static JSONObject buildSetContactStateRequest(ContactStateType state) {
 		JSONObject data = new JSONObject();
 		try {
-			data.put(ServerConst.USER_STATE, "" + state);
+			data.put(ServerConst.USER_STATE, "" + state.getIntegerValue());
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
 		}

@@ -24,8 +24,7 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	private CustomListAdapter adapter;
 	private Context context;
 	private ContactStateType state;
-	
-	
+
 	public GetContactsTask(SwipeRefreshLayout swipeLayout,
 			CustomListAdapter listAdapter, ContactStateType state) {
 		super();
@@ -45,11 +44,11 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 		String token = params[0];
 		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
-			if(state == ContactStateType.ACCEPTED){
+			if (state == ContactStateType.ACCEPTED) {
 				result = ServerRequests.getAcceptedContactsRequest(token);
-			}else if(state == ContactStateType.SENT){
+			} else if (state == ContactStateType.SENT) {
 				result = ServerRequests.getSentContactsRequest(token);
-			}else if(state == ContactStateType.RECEIVED){
+			} else if (state == ContactStateType.RECEIVED) {
 				result = ServerRequests.getReceivedContactsRequest(token);
 			}
 		}
@@ -64,7 +63,8 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				addItemsToDatabase(ReadServerResponse.getContactList(result));
+				addItemsToDatabase(ReadServerResponse.getContactList(result,
+						state));
 			} else {
 				Toast.makeText(
 						context,

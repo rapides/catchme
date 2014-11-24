@@ -20,7 +20,7 @@
             android:src="@drawable/o1" />
     </RelativeLayout>
 
-    <LinearLayout
+    <LinearLayout 
         android:id="@+id/profile_name_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_below="@+id/profile_background"
         android:paddingTop="20dp" >
 
-        <TextView
+        <TextView  
             android:id="@+id/profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,12 +56,43 @@
         android:id="@+id/profile_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/profile_background"
         android:layout_marginTop="-35dp"
-        android:layout_alignParentRight="true"
-        android:visible="false"
+        android:visibility="gone"
         fab:fab_colorNormal="@color/profile_floating_button_base"
         fab:fab_colorPressed="@color/profile_floating_button_pressed"
         fab:fab_icon="@drawable/ic_action_edit" />
+
+    <RelativeLayout
+        android:id="@+id/profile_state_buttons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_email"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" >
+
+        <Button
+            android:id="@+id/profile_reject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:background="@drawable/selector_reject_button"
+            android:text="@string/profile_reject"
+            android:textColor="@color/profile_reject_text" />
+
+        <Button
+            android:id="@+id/profile_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profile_reject"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:background="@drawable/selector_accept_button"
+            android:text="@string/profile_accept"
+            android:textColor="@color/profile_accept_text" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -140,7 +140,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 
 		new GetContactsTask(swipeLayout,
 				(CustomListAdapter) listView.getAdapter(),
-				ContactStateType.ACCEPTED).execute(user.getToken());
+				ContactStateType.getStateType(sharedpreferences.getInt(
+						SELECTED_FILTER, 0))).execute(user.getToken());
 		return rootView;
 	}
 
@@ -320,10 +321,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			popup.setOnMenuItemClickListener(this);
 			popup.getMenu().getItem(1).setChecked(true);
 		} else {
-			popup.getMenu()
-					.getItem(sharedpreferences.getInt(SELECTED_FILTER, 1) + 1)
-					.setChecked(true);// +1 because model doesn't handle ALL
-										// filter
+			ContactStateType state = ContactStateType
+					.getStateType(sharedpreferences.getInt(SELECTED_FILTER, 1));
+			popup.getMenu().getItem(state.getMenuPosition()).setChecked(true);// +1
+																				// because
+																				// model
+			// doesn't handle ALL
+			// filter
 		}
 
 		popup.show();
