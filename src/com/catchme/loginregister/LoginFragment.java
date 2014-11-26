@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginFragment extends Fragment implements OnClickListener,
 		OnTaskCompleted {
@@ -29,16 +31,29 @@ public class LoginFragment extends Fragment implements OnClickListener,
 		// inflate layout from xml
 		rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
-		// set behaviour after click
-		Button b = (Button) rootView.findViewById(R.id.button1);
+		// set behavior after click
+		Button b = (Button) rootView.findViewById(R.id.login);
+		Button register = (Button) rootView.findViewById(R.id.goto_register);
+		register.setOnClickListener(Reg);
 		b.setOnClickListener(this);
 		return rootView;
 	}
-
+	
+	View.OnClickListener Reg = new View.OnClickListener() {
+	    public void onClick(View v) {
+	      // it was the 1st button
+	    }
+	
 	@Override
 	public void onClick(View v) {
-		new LoginTask(getActivity(), this).execute("mailCzeslawa@cycki.pl",
-				"appleseed");
+		
+		EditText login = (EditText) rootView.findViewById(R.id.login_email);
+		EditText pass = (EditText) rootView.findViewById(R.id.login_pass);
+		
+		Toast.makeText(rootView.getContext(), login.getText().toString()+ " ---- "+pass.getText().toString(), Toast.LENGTH_LONG).show();
+		//new LoginTask(getActivity(), this).execute(login.toString(),pass.toString());
+		//new LoginTask(getActivity(), this).execute("mailCzeslawa@cycki.pl",
+		//		"appleseed");
 		// TODO show animation or something else
 	}
 
