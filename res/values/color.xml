@@ -68,5 +68,11 @@
     <color name="blue600">#FF039be5</color>
     <color name="blue700">#FF0288d1</color>
     <color name="blue800">#FF0277bd</color>
+    
+    
+    <!--  Test fomratki login i register -->
+     <color name="bluee">#60CEFD</color>
+     <color name="blue">#00f</color>
+     <color name="red">#f00</color>
 
 </resources>

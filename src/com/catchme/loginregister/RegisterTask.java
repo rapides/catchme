@@ -20,6 +20,7 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnTaskCompleted listener;
 	private LoggedUser user;
+
 	public RegisterTask(Context context, OnTaskCompleted listener) {
 		super();
 		this.context = context;
@@ -38,8 +39,9 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 			String surname = params[1];
 			String email = params[2];
 			String password = params[3];
-			String confirmationPassword = params[5];
-			result = ServerRequests.addUserRequest(name, surname, email, password, confirmationPassword);
+			String confirmationPassword = params[4];
+			result = ServerRequests.addUserRequest(name, surname, email,
+					password, confirmationPassword);
 			user = ReadServerResponse.getLoggedUser(result);
 		} else {
 			result = null;
@@ -56,23 +58,22 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(
-						context,
-						"Success! Registered user: "
-								+ user.getFullName(),
+				Toast.makeText(context,
+						"Success! Registered user: " + user.getFullName(),
 						Toast.LENGTH_SHORT).show();
 				SharedPreferences preferences = context.getSharedPreferences(
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
 				Gson gsonUser = new Gson();
-			    String json = gsonUser.toJson(user);
-			    e.putString(ItemListActivity.USER, json);
-			    e.commit();
-			    listener.onTaskCompleted(null);
-			} else {
-				Toast.makeText(context,
-						"Register fail! " + ReadServerResponse.getErrors(result),
-						Toast.LENGTH_SHORT).show();
+				String json = gsonUser.toJson(user);
+				e.putString(ItemListActivity.USER, json);
+				e.commit();
+				listener.onTaskCompleted(null);
+			} else {/*
+					 * Toast.makeText(context, "Register fail! " +
+					 * ReadServerResponse.getErrors(result),
+					 * Toast.LENGTH_SHORT).show();
+					 */
 				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 			}
 		}

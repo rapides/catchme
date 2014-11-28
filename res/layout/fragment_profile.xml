@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profile_name_container"
         android:layout_centerHorizontal="true"
-        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
         android:text="Email@email.com" />
 
     <com.catchme.utils.FloatingActionButton

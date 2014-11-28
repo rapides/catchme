@@ -28,6 +28,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected void onPreExecute() {
+		//animaton.setVisible(VIw.Visible);
 	}
 
 	@Override
@@ -67,9 +68,9 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			    e.commit();
 			    listener.onTaskCompleted(null);
 			} else {
-				Toast.makeText(context,
+				/*Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),
-						Toast.LENGTH_SHORT).show();
+						Toast.LENGTH_SHORT).show();*/
 				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 			}
 		}
