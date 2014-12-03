@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent;
@@ -25,8 +24,10 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;/*
-	public static final String[] SEARCHTYPES = { "0", "1" };
-	public static final String SEARCHCHAR = ";";*/
+										 * public static final String[]
+										 * SEARCHTYPES = { "0", "1" }; public
+										 * static final String SEARCHCHAR = ";";
+										 */
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.items = items;
@@ -67,36 +68,32 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		// TextView city = (TextView)
 		// convertView.findViewById(R.id.item_city);
 
-		TextView lastMsg = (TextView) convertView
-				.findViewById(R.id.item_last_message);
+		/*TextView lastMsg = (TextView) convertView
+				.findViewById(R.id.item_last_message);*/
 
-		if (item.getImageUrl() != null) {
-			ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
-		} else {
-			img.setImageResource(item.getImageResource());
-		}
+		ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
 
 		name.setText(item.getFullName());
 		// city.setText(item.getCity());
-		/*Message m = item.getMessages(item.getFirstConversationId()).get(
-				item.getMessages(item.getFirstConversationId()).size() - 1);
-		if (m.getSenderId() % 2 == 0) {
-			lastMsg.setText("> " + m.getContent());
-		} else {
-			lastMsg.setText("You: " + m.getContent());
-		}*/
-		int maxLength = activity.getResources()
-				.getInteger(R.integer.max_length);
-		/*if (m.getContent().length() > maxLength) {
-
-			lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3)
-					+ "...");
-		}*/
+		/*
+		 * Message m = item.getMessages(item.getFirstConversationId()).get(
+		 * item.getMessages(item.getFirstConversationId()).size() - 1); if
+		 * (m.getSenderId() % 2 == 0) { lastMsg.setText("> " + m.getContent());
+		 * } else { lastMsg.setText("You: " + m.getContent()); }
+		 */
+		/*int maxLength = activity.getResources()
+				.getInteger(R.integer.max_length);*/
+		/*
+		 * if (m.getContent().length() > maxLength) {
+		 * 
+		 * lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3) +
+		 * "..."); }
+		 */
 		img.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				ListView parentListView = (ListView) v.getParent().getParent();
+				//ListView parentListView = (ListView) v.getParent().getParent();
 				// parentListView.setItemChecked(position, true);
 				// todo image checking
 			}
@@ -120,40 +117,39 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults results = new FilterResults();
-				
+
 				if (constraint == null || constraint.length() == 0) {
 					results.values = ExampleContent.ITEMS;
 					results.count = ExampleContent.ITEMS.size();
 				} else {
 
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
-					/*String searchType = constraint.toString().substring(0,
-							constraint.toString().indexOf(SEARCHCHAR));
-					String searchQuery = constraint.toString().substring(
-							constraint.toString().indexOf(SEARCHCHAR) + 1);
-
-					if (searchType.equals(SEARCHTYPES[0])) {
-						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
-
-							if (searchQuery
-									.startsWith("" + dataItem.getState())) {
-								filteredArrayNames.add(dataItem);
-							}
+					/*
+					 * String searchType = constraint.toString().substring(0,
+					 * constraint.toString().indexOf(SEARCHCHAR)); String
+					 * searchQuery = constraint.toString().substring(
+					 * constraint.toString().indexOf(SEARCHCHAR) + 1);
+					 * 
+					 * if (searchType.equals(SEARCHTYPES[0])) { for (int i = 0;
+					 * i < ExampleContent.ITEMS.size(); i++) { ExampleItem
+					 * dataItem = ExampleContent.ITEMS.get(i);
+					 * 
+					 * if (searchQuery .startsWith("" + dataItem.getState())) {
+					 * filteredArrayNames.add(dataItem); } } } else if
+					 * (searchType.equals(SEARCHTYPES[1])) {
+					 */
+					for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
+						ExampleItem dataItem = ExampleContent.ITEMS.get(i);
+						if (dataItem
+								.getFullName()
+								.toLowerCase(Locale.getDefault())
+								.contains(
+										constraint.toString().toLowerCase(
+												Locale.getDefault()))) {
+							filteredArrayNames.add(dataItem);
 						}
-					} else if (searchType.equals(SEARCHTYPES[1])) {*/
-						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
-							if (dataItem
-									.getFullName()
-									.toLowerCase(Locale.getDefault())
-									.contains(
-											constraint.toString().toLowerCase(Locale
-													.getDefault()))) {
-								filteredArrayNames.add(dataItem);
-							}
-						}
-					//}
+					}
+					// }
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}

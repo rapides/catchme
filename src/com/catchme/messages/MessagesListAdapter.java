@@ -45,6 +45,7 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
+		
 		return item.getMessages(item.getFirstConversationId()).get(position).getMessageId();
 	}
 
@@ -83,8 +84,8 @@ public class MessagesListAdapter extends BaseAdapter {
 					R.id.single_message_content);
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_right);
-
-			img.setImageResource(user.getImageResource());
+			ImageLoader.getInstance().displayImage(user.getMediumImage(), img);
+			
 			timeParams.addRule(RelativeLayout.ALIGN_RIGHT,
 					R.id.single_message_content);
 		} else {
@@ -93,11 +94,7 @@ public class MessagesListAdapter extends BaseAdapter {
 					R.id.single_message_content);
 			lp.addRule(RelativeLayout.RIGHT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_left);
-			if (item.getImageUrl() != null) {
-				ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
-			} else {
-				img.setImageResource(item.getImageResource());
-			}
+			ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
 			timeParams.addRule(RelativeLayout.ALIGN_LEFT,
 					R.id.single_message_content);
 		}

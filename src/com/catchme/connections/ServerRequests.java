@@ -12,6 +12,12 @@ import android.util.Log;
 
 public class ServerRequests {
 
+	public static JSONObject uploadAvatar(String token, String filepath) {
+
+		return ServerConnection.uploadImage(ServerConst.URL_USER_UPDATE_AVATAR,
+				filepath, getImageUploadHeader(token));
+	}
+
 	public static JSONObject getMessagesInit(String token, long conversationId) {
 		return ServerConnection.GET(
 				ServerConst.URL_MESSAGES_GET_PART1 + conversationId
@@ -24,7 +30,8 @@ public class ServerRequests {
 		return ServerConnection.GET(ServerConst.URL_MESSAGES_GET_PART1
 				+ conversationId
 				+ ServerConst.URL_MESSAGES_GET_PART2_TYPE_NEWER
-				+ ServerConst.MESSAGE_LAST_ID + newestMessageId, getHeader(token));
+				+ ServerConst.MESSAGE_LAST_ID + newestMessageId,
+				getHeader(token));
 	}
 
 	public static JSONObject getMessagesOlder(String token,
@@ -101,7 +108,6 @@ public class ServerRequests {
 		return ServerConnection.JsonPOST(ServerConst.URL_MESSAGES_SEND,
 				buildSendMessageRequest(convId, message), getHeader(token));
 	}
-
 
 	private static JSONObject buildSetContactStateRequest(ContactStateType state) {
 		JSONObject data = new JSONObject();
@@ -200,6 +206,24 @@ public class ServerRequests {
 		header.put("Accept", "application/json");
 		header.put("Content-Type", "application/json");
 		header.put("Encoding", "UTF-8");
+		if (token != null) {
+			header.put(ServerConst.TOKEN_GET, token);
+		}
+		return header;
+	}
+
+	private static Map<String, String> getImageUploadHeader(String token) {
+		Map<String, String> header = new HashMap<String, String>();
+		header.put("Accept", "application/json");
+		//header.put("Content-type", "text/plain");
+		//header.put("Content-type", "application/json");
+		//header.put("Connection", "Keep-alive");
+		header.put("Content-type", "multipart/form-data");//
+		//header.put("Encoding", "UTF-8");
+
+		//header.put("Accept-Encoding", "gzip, deflate");
+		//header.put("Accept-Language", "pl,en-us;q=0.7,en;q=0.3");
+
 		if (token != null) {
 			header.put(ServerConst.TOKEN_GET, token);
 		}

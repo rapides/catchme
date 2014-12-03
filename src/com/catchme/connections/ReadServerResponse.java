@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -45,8 +46,10 @@ public class ReadServerResponse {
 				String name = user.getString(ServerConst.USER_NAME);
 				String surname = user.getString(ServerConst.USER_SURNAME);
 				String email = user.getString(ServerConst.USER_EMAIL);
+				HashMap<String, String> avatars = getAvatarsFromArray(user
+						.getJSONObject(ServerConst.USER_AVATAR));
 				logged = new LoggedUser(id, name, surname, email,
-						ExampleItem.IMAGE_INVALID, getToken(fullResponse));
+						getToken(fullResponse), avatars);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -54,11 +57,13 @@ public class ReadServerResponse {
 		return logged;
 	}
 
-	public static ArrayList<ExampleItem> getContactList(JSONObject fullResponse, ContactStateType state) {
+	public static ArrayList<ExampleItem> getContactList(
+			JSONObject fullResponse, ContactStateType state) {
 		ArrayList<ExampleItem> contactList = null;
 		try {
 			if (isSuccess(fullResponse)) {
-				contactList = getContactList(getContactsArray(fullResponse), state);
+				contactList = getContactList(getContactsArray(fullResponse),
+						state);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -81,7 +86,8 @@ public class ReadServerResponse {
 		return isSuccess;
 	}
 
-	private static ArrayList<ExampleItem> getContactList(JSONArray contactsArray, ContactStateType state)
+	private static ArrayList<ExampleItem> getContactList(
+			JSONArray contactsArray, ContactStateType state)
 			throws JSONException {
 		ArrayList<ExampleItem> contactList = new ArrayList<ExampleItem>();
 		for (int i = 0; i < contactsArray.length(); i++) {
@@ -97,8 +103,10 @@ public class ReadServerResponse {
 
 	}
 
-	private static ExampleItem getContact(JSONObject o, ContactStateType stateGlobal) throws JSONException {
-		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE), stateGlobal);
+	private static ExampleItem getContact(JSONObject o,
+			ContactStateType stateGlobal) throws JSONException {
+		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE),
+				stateGlobal);
 		JSONObject user = o.getJSONObject(ServerConst.USER);
 		long id = o.getLong(ServerConst.USER_ID);
 		String name = user.getString(ServerConst.USER_NAME);
@@ -109,13 +117,33 @@ public class ReadServerResponse {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			conv_ids.add(jsonArray.getLong(i));
 		}
-		ExampleItem contact = new ExampleItem(id, name, surname, email,
-				ExampleItem.IMAGE_INVALID, state, conv_ids);
+		HashMap<String, String> avatars = getAvatarsFromArray(user
+				.getJSONObject(ServerConst.USER_AVATAR));
+
+		ExampleItem contact = new ExampleItem(id, name, surname, email, state,
+				conv_ids, avatars);
 		return contact;
 	}
-	
 
-	private static ContactStateType adjustState(int oldState, ContactStateType stateGlobal) {
+	private static HashMap<String, String> getAvatarsFromArray(
+			JSONObject avatars) throws JSONException {
+		JSONObject small = avatars.getJSONObject(ServerConst.USER_AVATAR_SMALL);
+		JSONObject medium = avatars.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
+		JSONObject big = avatars.getJSONObject(ServerConst.USER_AVATAR_BIG);
+		String url = avatars.optString(ServerConst.USER_AVATAR_URL);
+		String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
+		String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
+		String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
+		HashMap<String , String> result = new HashMap<String, String>();
+		result.put(ExampleItem.AVATAR_SMALL, smallUrl);
+		result.put(ExampleItem.AVATAR_MEDIUM, mediumUrl);
+		result.put(ExampleItem.AVATAR_BIG, bigUrl);
+		result.put(ExampleItem.AVATAR_URL, url);
+		return result;
+	}
+
+	private static ContactStateType adjustState(int oldState,
+			ContactStateType stateGlobal) {
 		ContactStateType state = null;
 		switch (oldState) {
 		case 0:
@@ -159,30 +187,35 @@ public class ReadServerResponse {
 		return fullResponse.getJSONArray(ServerConst.MESSAGES);
 	}
 
-	private static ArrayList<Message> getMessageList(JSONArray messageArray) throws JSONException {
+	private static ArrayList<Message> getMessageList(JSONArray messageArray)
+			throws JSONException {
 		ArrayList<Message> messageList = new ArrayList<Message>();
-		for(int i=0;i<messageArray.length();i++){
+		for (int i = 0; i < messageArray.length(); i++) {
 			messageList.add(getMessage(messageArray.getJSONObject(i)));
 		}
 		return messageList;
 	}
 
-	private static Message getMessage(JSONObject messageFull) throws JSONException {
+	private static Message getMessage(JSONObject messageFull)
+			throws JSONException {
 		JSONObject message = messageFull.getJSONObject(ServerConst.MESSAGE);
 		JSONObject user = messageFull.getJSONObject(ServerConst.USER);
 		ArrayList<Object> read_feeds = null;
-		Date createdAt = getDateFromString(message.getString(ServerConst.MESSAGE_CREATED_AT));
+		Date createdAt = getDateFromString(message
+				.getString(ServerConst.MESSAGE_CREATED_AT));
 		long messageId = message.getLong(ServerConst.MESSAGE_ID);
 		String content = message.getString(ServerConst.MESSAGE_CONTENT);
-		long userId = user.getLong("id"); 
-		Message m = new Message(messageId, content, createdAt, userId, read_feeds);
+		long userId = user.getLong("id");
+		Message m = new Message(messageId, content, createdAt, userId,
+				read_feeds);
 		return m;
 	}
 
 	private static Date getDateFromString(String string) {
 		Date date = null;
 		try {
-			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH).parse(string);
+			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+					Locale.ENGLISH).parse(string);
 		} catch (ParseException e) {
 			Log.e("ParseError", e.getMessage());
 		}

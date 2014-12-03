@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 
 import com.catchme.R;
+import com.catchme.connections.ServerConst;
 
 public class ExampleContent {
 	public static ArrayList<ExampleItem> ITEMS = new ArrayList<ExampleItem>();
@@ -31,6 +33,10 @@ public class ExampleContent {
 	 */
 	public static class ExampleItem {
 		public static final int IMAGE_INVALID = -1;
+		public static final String AVATAR_SMALL = "avatar_small";
+		public static final String AVATAR_BIG = "avatar_big";
+		public static final String AVATAR_MEDIUM = "avatar_medium";
+		public static final String AVATAR_URL = "avatar_url";
 
 		public enum ContactStateType {
 			INVITED(0), ACCEPTED(1), REJECTED(2), SENT(3), RECEIVED(4);
@@ -54,13 +60,13 @@ public class ExampleContent {
 			}
 
 			public int getMenuPosition() {
-				if(this == ACCEPTED){
+				if (this == ACCEPTED) {
 					return 1;
-				}else if(this == SENT){
+				} else if (this == SENT) {
 					return 2;
-				}else if(this == RECEIVED){
+				} else if (this == RECEIVED) {
 					return 3;
-				}else {
+				} else {
 					return 0;
 				}
 			}
@@ -73,47 +79,30 @@ public class ExampleContent {
 		private String surname;
 		private String email;
 
-		private int photoId;
-		private String photoUrl;
-
 		private Map<Long, List<Message>> messages;
 		private List<Long> conversationIds;
+		public HashMap<String, String> avatars;
 
 		public ExampleItem(long id, String name, String surname, String email,
-				int photoId, ContactStateType state, List<Long> conv_ids) {
+				ContactStateType state, List<Long> conv_ids,
+				HashMap<String, String> avatars) {
 			this.id = id;
 			this.name = name;
-			this.photoId = photoId;
 			this.email = email;
 			this.surname = surname;
-			this.photoUrl = null;
 			this.messages = new HashMap<Long, List<Message>>();
 			this.state = state;
 			this.conversationIds = conv_ids;
-			// addRandomMessages();
-		}
-
-		public ExampleItem(long id, String name, String surname, String email,
-				String photoUrl, ContactStateType state, List<Long> conv_ids) {
-			this.id = id;
-			this.name = name;
-			this.photoUrl = photoUrl;
-			this.email = email;
-			this.surname = surname;
-			this.photoId = -1;
-			this.state = state;
-			this.messages = new HashMap<Long, List<Message>>();
-			this.conversationIds = conv_ids;
+			this.avatars = avatars;
 			// addRandomMessages();
 		}
 
 		public ExampleItem(ExampleItem item) {
 			this.id = item.id;
 			this.name = item.name;
-			this.photoUrl = item.photoUrl;
+			this.avatars = item.avatars;
 			this.email = item.email;
 			this.surname = item.surname;
-			this.photoId = item.photoId;
 			this.state = item.state;
 			this.messages = item.messages;
 		}
@@ -162,18 +151,6 @@ public class ExampleContent {
 
 		public long getOldestMessage(long conversationId) {
 			return messages.get(conversationId).get(0 - 1).getMessageId();
-		}
-
-		public int getImageResource() {
-			if (photoId == IMAGE_INVALID) {
-				return R.drawable.loader;
-			} else {
-				return photoId;
-			}
-		}
-
-		public String getImageUrl() {
-			return photoUrl;
 		}
 
 		public String getName() {
@@ -242,15 +219,44 @@ public class ExampleContent {
 			return conversationIds.get(0);
 		}
 
+		public String getSmallImageUrl() {
+			if (avatars.get(AVATAR_SMALL).length() > 4) {//no idea why if null it return string "null"
+				return ServerConst.SERVER_IP + avatars.get(AVATAR_SMALL);
+			} else {
+				return getDefaultImage();
+			}
+		}
+
+		public String getMediumImage() {
+			if (avatars != null && avatars.get(AVATAR_MEDIUM) != null
+					&& avatars.get(AVATAR_MEDIUM).length() > 4) {
+				return ServerConst.SERVER_IP + avatars.get(AVATAR_MEDIUM);
+			} else {
+				return getDefaultImage();
+			}
+		}
+
+		public String getLargeImage() {
+			if (avatars.get(AVATAR_BIG).length() > 4) {
+				return ServerConst.SERVER_IP + avatars.get(AVATAR_BIG);
+			} else {
+				return getDefaultImage();
+			}
+		}
+
+		private String getDefaultImage() {
+			return "drawable://" + R.drawable.loader;
+		}
+
 	}
 
 	public static class LoggedUser extends ExampleItem {
 		private String token;
 
 		public LoggedUser(long id, String name, String surname, String email,
-				int photoId, String token) {
-			super(id, name, surname, email, photoId, ContactStateType.ACCEPTED,
-					null);
+				String token, HashMap<String, String> avatars) {
+			super(id, name, surname, email, ContactStateType.ACCEPTED, null,
+					avatars);
 			this.token = token;
 		}
 

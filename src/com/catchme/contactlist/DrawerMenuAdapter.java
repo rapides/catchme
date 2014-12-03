@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.catchme.R;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
 import com.catchme.utils.RoundedImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class DrawerMenuAdapter extends BaseAdapter {
 	private String[] array = { "Refresh", "Settings", "Help", "TEST_Login",
@@ -41,7 +42,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		if (position == 0) {
-			return user==null?0:user.hashCode();
+			return user == null ? 0 : user.hashCode();
 		} else {
 			return array[position - 1].hashCode();
 		}
@@ -65,16 +66,12 @@ public class DrawerMenuAdapter extends BaseAdapter {
 					.findViewById(R.id.drawer_title_email);
 			RoundedImageView avatar = (RoundedImageView) convertView
 					.findViewById(R.id.drawer_title_avatar);
-			if (user != null) {
-				name.setText(user.getFullName());
-				email.setText(user.getEmail());
-				avatar.setImageResource(user
-						.getImageResource());
-			} else {
-				name.setText("");
-				email.setText("");
-				avatar.setImageResource(-1);	
-			}
+
+			name.setText(user.getFullName());
+			email.setText(user.getEmail());
+			ImageLoader.getInstance().displayImage(user.getMediumImage(),
+					avatar);
+
 			convertView.setClickable(false);
 		} else {
 			if (inflater == null) {
@@ -91,9 +88,9 @@ public class DrawerMenuAdapter extends BaseAdapter {
 
 		return convertView;
 	}
-	
+
 	public void swapItems(LoggedUser user) {
-	    this.user = user;
-	    notifyDataSetChanged();
+		this.user = user;
+		notifyDataSetChanged();
 	}
 }

@@ -2,11 +2,12 @@ package com.catchme.connections;
 
 public class ServerConst {
 	//URLs
-	public static final String SERVER_IP = "http://156.17.130.202:3003";
+	public static final String SERVER_IP ="http://156.17.130.202:3003";
 	public static final String URL_AUTH = SERVER_IP + "/api/v1/auth";
 	public static final String URL_POSITION_CREATE = SERVER_IP+"/api/v1/position/create";
 	public static final String URL_USER_UPDATE = SERVER_IP+"/api/v1/user/update";
 	public static final String URL_USER_CREATE = SERVER_IP+"/api/v1/user/create";
+	public static final String URL_USER_UPDATE_AVATAR = SERVER_IP+"/api/v1/user/upload_avatar";
 	public static final String URL_USER_LOGOUT = SERVER_IP+"/api/v1/auth/";//+ userID
 	public static final String URL_CONTACTS_CREATE = SERVER_IP+"/api/v1/contact/create";
 	public static final String URL_CONTACTS_ALL = SERVER_IP+ "/api/v1/contacts/all";
@@ -54,6 +55,11 @@ public class ServerConst {
 	public static final String MESSAGE_CREATED_AT= "created_at";
 	public static final String MESSAGE_LAST_ID = "?last_message_id=";
 	public static final String MESSAGE_ID = "id";
+	public static final String USER_AVATAR = "avatar";
+	public static final String USER_AVATAR_SMALL = "small";
+	public static final String USER_AVATAR_MEDIUM = "big";
+	public static final String USER_AVATAR_BIG = "medium";
+	public static final String USER_AVATAR_URL = "url";
 	
 	
 }

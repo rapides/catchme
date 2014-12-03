@@ -24,6 +24,7 @@ import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemProfileFragment extends Fragment implements
 		ContactChangedState {
@@ -69,7 +70,7 @@ public class ItemProfileFragment extends Fragment implements
 		txtName.setText(item.getName());
 		txtSurname.setText(item.getSurname());
 		txtEmail.setText(item.getEmail());
-		image.setImageResource(item.getImageResource());
+		ImageLoader.getInstance().displayImage(item.getLargeImage(), image);
 		if (isLoggedUser) {
 			fab.setVisibility(View.VISIBLE);
 			buttonsContainer.setVisibility(View.GONE);

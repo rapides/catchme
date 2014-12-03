@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.contactlist.ItemListFragment;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
