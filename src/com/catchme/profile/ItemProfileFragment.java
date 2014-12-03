@@ -1,6 +1,11 @@
 package com.catchme.profile;
 
+import java.util.ArrayList;
+
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -15,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.catchme.R;
+import com.catchme.connections.ServerConnection;
+import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
@@ -27,10 +35,11 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemProfileFragment extends Fragment implements
-		ContactChangedState {
+		ContactChangedState, ImageUploadingListener {
 	private View rootView;
 	private ExampleItem item;
 	private boolean isLoggedUser;
+	public static final int PICK_IMAGE = 0;
 
 	public ItemProfileFragment() {
 	}
@@ -73,6 +82,18 @@ public class ItemProfileFragment extends Fragment implements
 		ImageLoader.getInstance().displayImage(item.getLargeImage(), image);
 		if (isLoggedUser) {
 			fab.setVisibility(View.VISIBLE);
+			fab.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent();
+					intent.setType("image/*");
+					intent.setAction(Intent.ACTION_GET_CONTENT);
+					startActivityForResult(
+							Intent.createChooser(intent, "Select Picture"),
+							PICK_IMAGE);
+				}
+			});
 			buttonsContainer.setVisibility(View.GONE);
 			setHasOptionsMenu(true);
 		} else {
@@ -131,5 +152,48 @@ public class ItemProfileFragment extends Fragment implements
 					Toast.LENGTH_SHORT).show();
 		}
 
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == PICK_IMAGE && data != null && data.getData() != null) {
+			Uri _uri = data.getData();
+			
+			// User had pick an image.
+			Cursor cursor = getActivity()
+					.getContentResolver()
+					.query(_uri,
+							new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+							null, null, null);
+			cursor.moveToFirst();
+
+			// Link to the image
+			final String imageFilePath = cursor.getString(0);
+			cursor.close();
+			new UpdateAvatarTask(this.getActivity(), this).execute(
+					((LoggedUser) item).getToken(), imageFilePath);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onPreUpdate() {
+		Toast.makeText(getActivity(), "Started", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onProgressUpdate(int value) {
+		// TODO no idea how it work
+	}
+
+	@Override
+	public void onImageUploaded() {
+		// TODO refreshImages in navigation drawer and main image
+		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onImageUploadError(ArrayList<String> errors) {
+		Toast.makeText(getActivity(), errors.toString(), Toast.LENGTH_SHORT).show();
 	}
 }

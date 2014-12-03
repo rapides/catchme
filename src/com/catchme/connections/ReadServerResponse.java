@@ -31,7 +31,7 @@ public class ReadServerResponse {
 				}
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.e("JSONException", e.getMessage());
 		}
 		return errors;
 
@@ -128,13 +128,14 @@ public class ReadServerResponse {
 	private static HashMap<String, String> getAvatarsFromArray(
 			JSONObject avatars) throws JSONException {
 		JSONObject small = avatars.getJSONObject(ServerConst.USER_AVATAR_SMALL);
-		JSONObject medium = avatars.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
+		JSONObject medium = avatars
+				.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
 		JSONObject big = avatars.getJSONObject(ServerConst.USER_AVATAR_BIG);
 		String url = avatars.optString(ServerConst.USER_AVATAR_URL);
 		String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
 		String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
 		String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
-		HashMap<String , String> result = new HashMap<String, String>();
+		HashMap<String, String> result = new HashMap<String, String>();
 		result.put(ExampleItem.AVATAR_SMALL, smallUrl);
 		result.put(ExampleItem.AVATAR_MEDIUM, mediumUrl);
 		result.put(ExampleItem.AVATAR_BIG, bigUrl);

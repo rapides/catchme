@@ -69,8 +69,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 
 			name.setText(user.getFullName());
 			email.setText(user.getEmail());
-			ImageLoader.getInstance().displayImage(user.getMediumImage(),
-					avatar);
+			ImageLoader.getInstance().displayImage(user.getMediumImage(),avatar);
 
 			convertView.setClickable(false);
 		} else {

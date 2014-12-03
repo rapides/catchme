@@ -1,5 +1,6 @@
 package com.catchme.connections;
 
+
 public class ServerConst {
 	//URLs
 	public static final String SERVER_IP ="http://156.17.130.202:3003";
@@ -20,6 +21,7 @@ public class ServerConst {
 	public static final String URL_MESSAGES_GET_PART2_TYPE_NEWER = "/messages/recent/";
 	public static final String URL_MESSAGES_GET_PART2_TYPE_OLDER = "/messages/older/";
 	public static final String URL_MESSAGES_GET_PART2_TYPE_INIT = "/messages/init";
+	public static final String URL_POSITIONS_GET = SERVER_IP+"/api/v1/position/list";
 	//People stuff
 	public static final String USER_EMAIL = "email";
 	public static final String USER_PASSWORD = "password";
@@ -44,6 +46,9 @@ public class ServerConst {
 	public static final String POSITION = "user_position";
 	public static final String POSITION_LATITUDE = "latitude";
 	public static final String POSITION_LONGITUDE = "longitude";
+	public static final String POSITION_KEY = "for_positions";
+	public static final String POSITION_CONTACTS = "contact_ids";
+	public static final String POSITION_NUMBER = "number";
 	
 	//Messages stuff
 	public static final String MESSAGE = "message";
