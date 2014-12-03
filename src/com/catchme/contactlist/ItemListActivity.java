@@ -25,6 +25,7 @@ import com.catchme.messages.MessagesFragment;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -47,6 +48,12 @@ public class ItemListActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+				.cacheInMemory(true).cacheOnDisk(true).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				this).build();
+		ImageLoader.getInstance().init(config);
+
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
 				// The detail container view will be present only in the
@@ -59,9 +66,6 @@ public class ItemListActivity extends FragmentActivity implements
 						.findFragmentById(R.id.item_list))
 						.setActivateOnItemClick(true);
 			}
-			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-					this).build();
-			ImageLoader.getInstance().init(config);
 
 			ItemListFragment firstFragment = new ItemListFragment();
 			getSupportFragmentManager().beginTransaction()
@@ -139,7 +143,7 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.commit();
 
 				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
-			} else if(item.getState() == ContactStateType.RECEIVED){
+			} else if (item.getState() == ContactStateType.RECEIVED) {
 				Bundle arguments = new Bundle();
 				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
 				ItemProfileFragment frag = new ItemProfileFragment();
@@ -151,8 +155,9 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.replace(R.id.main_fragment_container, frag);
 				transaction.addToBackStack(null);
 				transaction.commit();
-			}else if(item.getState() == ContactStateType.SENT){
-				Toast.makeText(getApplicationContext(), "This type of contact? Not yet", 0).show();
+			} else if (item.getState() == ContactStateType.SENT) {
+				Toast.makeText(getApplicationContext(),
+						"This type of contact? Not yet", 0).show();
 			}
 
 		}
