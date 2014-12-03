@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
-import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.profile.ItemProfileFragment;
+
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,11 +18,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class LoginFragment extends Fragment implements OnClickListener,
 		OnTaskCompleted {
 	private View rootView;
+	private ProgressBar login_loading;
 
 	public LoginFragment() {
 	}
@@ -36,7 +37,11 @@ public class LoginFragment extends Fragment implements OnClickListener,
 
 		// set behavior after click
 		Button login_btn = (Button) rootView.findViewById(R.id.login);
-		Button register_btn = (Button) rootView.findViewById(R.id.goto_register);
+		Button register_btn = (Button) rootView
+				.findViewById(R.id.goto_register);
+		ProgressBar login_loading = (ProgressBar) rootView
+				.findViewById(R.id.login_spinner);
+		login_loading.setVisibility(View.GONE);
 		register_btn.setOnClickListener(this);
 		login_btn.setOnClickListener(this);
 		return rootView;
@@ -46,12 +51,12 @@ public class LoginFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		EditText login = (EditText) rootView.findViewById(R.id.login_email);
 		if (v.getId() == R.id.login) {
+			ProgressBar login_loading = (ProgressBar) rootView
+					.findViewById(R.id.login_spinner);
 			EditText pass = (EditText) rootView.findViewById(R.id.login_pass);
 
-			// Toast.makeText(rootView.getContext(), login.getText().toString()+
-			// " ---- "+pass.getText().toString(), Toast.LENGTH_LONG).show();
-			new LoginTask(getActivity(), this).execute(login.getText()
-					.toString(), pass.getText().toString());
+			new LoginTask(getActivity(), this, login_loading).execute(login
+					.getText().toString(), pass.getText().toString());
 		}
 		if (v.getId() == R.id.goto_register) {
 			// replace old view
@@ -94,15 +99,23 @@ public class LoginFragment extends Fragment implements OnClickListener,
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActivity().getActionBar().setHomeButtonEnabled(true);
 		} else {
-			if (errors == null ) {
+			if (errors == null) {
 				// not known error
 			} else {
 				String errorsSring = "";
-				for(int i=0;i<errors.size();i++){
-					errorsSring += errors.get(i)+"\n";
+				for (int i = 0; i < errors.size(); i++) {
+					errorsSring += errors.get(i) + "\n";
 				}
+				EditText login = (EditText) rootView
+						.findViewById(R.id.login_email);
+				EditText pass = (EditText) rootView
+						.findViewById(R.id.login_pass);
+				login.setBackgroundResource(R.drawable.error_frame);
+				login.setError("Login is required!!!");
+				pass.setError("Password is Required!!!");
+				pass.setBackgroundResource(R.drawable.error_frame);
 				Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT)
-				.show();
+						.show();
 			}
 			// Here you can handle errors.
 			// error messages returned by server are stored in errors

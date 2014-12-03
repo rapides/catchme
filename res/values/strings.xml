@@ -31,11 +31,16 @@
     <string name="cancel">Cancel</string>
     <string name="bad_email">Wrong email format</string>
     <string name="profile_accept">Accept</string>
-    <string name="login">Login</string><string name="register_accept"> Register </string><string name="register_reject">Back</string><string name="goto_register"> Register </string><string name="profile_reject">Reject</string>
+    <string name="login">Login</string>
+    <string name="register_accept">Register</string>
+    <string name="reg_title">Register Form</string>
+    <string name="hint_email">E-Mail Address</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_conf_pass">Confirm Password</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_surname">Surname</string>
     
-    
-    
-    
-     
+    <string name="goto_register">Register</string>
+    <string name="profile_reject">Reject</string>
 
 </resources>
