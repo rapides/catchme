@@ -10,7 +10,7 @@
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name"
         android:scaleType="center"
-        android:src="@color/colorA200" />
+        android:src="@color/redA100" />
 
     <EditText
         android:id="@+id/new_contact_email"
