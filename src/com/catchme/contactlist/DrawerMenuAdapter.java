@@ -61,7 +61,6 @@ public class DrawerMenuAdapter extends BaseAdapter {
 			}
 			TextView name = (TextView) convertView
 					.findViewById(R.id.drawer_title_user);
-
 			TextView email = (TextView) convertView
 					.findViewById(R.id.drawer_title_email);
 			RoundedImageView avatar = (RoundedImageView) convertView

@@ -1,14 +1,11 @@
 package com.catchme.exampleObjects;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
-import com.catchme.R;
-import com.catchme.connections.ServerConst;
 
 public class ExampleContent {
 	@SuppressLint("UseSparseArrays")

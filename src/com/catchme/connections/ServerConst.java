@@ -65,6 +65,8 @@ public class ServerConst {
 	public static final String USER_AVATAR_MEDIUM = "medium";
 	public static final String USER_AVATAR_BIG = "big";
 	public static final String USER_AVATAR_URL = "url";
+	public static final String POSITION_ACCURACY = "accuracy";
+	public static final String POSITION_FIX_TIME = "fix_time";
 	
 	
 }

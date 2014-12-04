@@ -1,16 +1,19 @@
 package com.catchme.connections;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.google.android.gms.internal.fi;
 
 import android.util.Log;
 
@@ -79,9 +82,10 @@ public class ServerRequests {
 	}
 
 	public static JSONObject setUserLocationRequest(String token, double lat,
-			double lng) {
+			double lng, float accuracy, long fixTime) {
 		return ServerConnection.JsonPOST(ServerConst.URL_POSITION_CREATE,
-				buildAddPositionRequest(lat, lng), getHeader(token));
+				buildAddPositionRequest(lat, lng, accuracy, fixTime),
+				getHeader(token));
 	}
 
 	public static JSONObject setContactStateRequest(String token,
@@ -164,17 +168,25 @@ public class ServerRequests {
 		return contact;
 	}
 
-	private static JSONObject buildAddPositionRequest(double lat, double lng) {
+	private static JSONObject buildAddPositionRequest(double lat, double lng,
+			float accuracy, long fixTime) {
 		JSONObject o = new JSONObject();
 		JSONObject pos = new JSONObject();
 		try {
 			pos.put(ServerConst.POSITION_LATITUDE, lat);
 			pos.put(ServerConst.POSITION_LONGITUDE, lng);
+			pos.put(ServerConst.POSITION_ACCURACY, accuracy);
+			pos.put(ServerConst.POSITION_FIX_TIME, getFormatedTime(fixTime));
 			o.put(ServerConst.POSITION, pos);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
 		}
 		return o;
+	}
+
+	private static String getFormatedTime(long fixTime) {
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZZ", Locale.getDefault());
+		return date.format(new Date(fixTime));
 	}
 
 	private static JSONObject buildRegistationRequest(String name,
@@ -243,8 +255,9 @@ public class ServerRequests {
 		JSONObject request = new JSONObject();
 		JSONObject detailParams = new JSONObject();
 		try {
-			detailParams.put(ServerConst.POSITION_CONTACTS, new JSONArray(contactIds));
-			detailParams.put(ServerConst.POSITION_NUMBER, ""+number);
+			detailParams.put(ServerConst.POSITION_CONTACTS, new JSONArray(
+					contactIds));
+			detailParams.put(ServerConst.POSITION_NUMBER, "" + number);
 			request.put(ServerConst.POSITION_KEY, detailParams);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());

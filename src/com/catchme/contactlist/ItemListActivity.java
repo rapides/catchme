@@ -89,7 +89,7 @@ public class ItemListActivity extends FragmentActivity implements
 			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime(), INTERVAL, pi);
-
+			
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
 		} else {

@@ -1,7 +1,5 @@
 package com.catchme.exampleObjects;
 
-import java.util.Date;
-
 import android.location.Location;
 
 public class UserLocation {

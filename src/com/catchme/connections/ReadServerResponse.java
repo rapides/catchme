@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.exampleObjects.Message;
+import com.catchme.exampleObjects.UserLocation;
 
 public class ReadServerResponse {
 	public static ArrayList<String> getErrors(JSONObject fullResponse) {
@@ -129,16 +132,16 @@ public class ReadServerResponse {
 
 		HashMap<String, String> result = new HashMap<String, String>();
 		try {
-			JSONObject mainAvatarArray = avatars
-					.getJSONObject(ServerConst.USER_AVATAR).getJSONObject(ServerConst.USER_AVATAR);
+			JSONObject mainAvatarArray = avatars.getJSONObject(
+					ServerConst.USER_AVATAR).getJSONObject(
+					ServerConst.USER_AVATAR);
 			JSONObject small = mainAvatarArray
 					.getJSONObject(ServerConst.USER_AVATAR_SMALL);
 			JSONObject medium = mainAvatarArray
 					.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
 			JSONObject big = mainAvatarArray
 					.getJSONObject(ServerConst.USER_AVATAR_BIG);
-			String url = mainAvatarArray
-					.optString(ServerConst.USER_AVATAR_URL);
+			String url = mainAvatarArray.optString(ServerConst.USER_AVATAR_URL);
 			String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
 			String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
 			String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
@@ -246,14 +249,26 @@ public class ReadServerResponse {
 		Date date = null;
 		try {
 			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-					Locale.ENGLISH).parse(string);
+					Locale.getDefault()).parse(string);
+			
 		} catch (ParseException e) {
 			Log.e("ParseError", e.getMessage());
 		}
 		return date;
 	}
 
-	public static void getPositions(JSONObject positions) {
-		
+	public static List<UserLocation> getLoggedUserLocation(
+			JSONObject fullResponse) {
+		LinkedList<UserLocation> locationList = null;
+		try {
+			if (isSuccess(fullResponse)) {
+				//locationList = null;//TODO import form request
+				throw new JSONException("");
+			}
+		} catch (JSONException e) {
+			Log.e("JSONParseException", e.getMessage());
+			e.printStackTrace();
+		}
+		return locationList;
 	}
 }

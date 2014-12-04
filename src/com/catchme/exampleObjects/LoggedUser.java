@@ -2,8 +2,6 @@ package com.catchme.exampleObjects;
 
 import java.util.HashMap;
 
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-
 public class LoggedUser extends ExampleItem {
 	private String token;
 
