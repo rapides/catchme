@@ -13,7 +13,7 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.LoggedUser;
 import com.google.gson.Gson;
 
 public class LoginTask extends AsyncTask<String, Void, JSONObject> {

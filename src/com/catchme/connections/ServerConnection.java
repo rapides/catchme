@@ -58,7 +58,6 @@ public class ServerConnection {
 			}
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
-			System.out.println("Response: "+response);
 			result = new JSONObject(response);
 		}catch(Exception e){
 			e.printStackTrace();

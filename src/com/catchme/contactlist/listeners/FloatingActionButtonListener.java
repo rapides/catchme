@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.catchme.contactlist.NoticeDialogFragment;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.*;
 
 public class FloatingActionButtonListener implements OnClickListener {
 	FragmentActivity activity;

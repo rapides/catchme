@@ -14,7 +14,7 @@ import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.Message;
 import com.catchme.messages.MessagesListAdapter;
 

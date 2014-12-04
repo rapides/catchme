@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.LoggedUser;
 import com.commonsware.cwac.locpoll.LocationPollerResult;
 import com.google.gson.Gson;
 

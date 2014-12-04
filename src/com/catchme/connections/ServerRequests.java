@@ -8,7 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+
+
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 
 import android.util.Log;
 

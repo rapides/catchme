@@ -1,6 +1,5 @@
 package com.catchme.profile;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -23,13 +22,12 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
-import com.google.android.gms.common.api.d;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

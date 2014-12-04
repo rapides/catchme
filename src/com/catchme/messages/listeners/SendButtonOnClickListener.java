@@ -1,13 +1,13 @@
 package com.catchme.messages.listeners;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.catchme.messages.asynctask.SendMessageTask;
-
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.messages.asynctask.SendMessageTask;
 
 public class SendButtonOnClickListener implements OnClickListener {
 	private Context context;

@@ -6,7 +6,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.messages.asynctask.GetOlderMessagesTask;
 import com.catchme.messages.asynctask.GetOlderMessagesTaskCompleted;
 

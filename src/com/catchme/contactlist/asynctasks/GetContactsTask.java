@@ -14,9 +14,8 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 

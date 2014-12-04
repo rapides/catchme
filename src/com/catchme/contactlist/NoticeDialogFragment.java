@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.catchme.R;
 import com.catchme.contactlist.listeners.DialogAddContactClickListener;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.*;
 
 public class NoticeDialogFragment extends DialogFragment {
 

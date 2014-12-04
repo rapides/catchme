@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.catchme.R;
 import com.catchme.connections.ServerConnection;
 import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

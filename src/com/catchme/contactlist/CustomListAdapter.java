@@ -14,9 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.exampleObjects.*;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -68,8 +68,10 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		// TextView city = (TextView)
 		// convertView.findViewById(R.id.item_city);
 
-		/*TextView lastMsg = (TextView) convertView
-				.findViewById(R.id.item_last_message);*/
+		/*
+		 * TextView lastMsg = (TextView) convertView
+		 * .findViewById(R.id.item_last_message);
+		 */
 
 		ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
 
@@ -81,8 +83,10 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		 * (m.getSenderId() % 2 == 0) { lastMsg.setText("> " + m.getContent());
 		 * } else { lastMsg.setText("You: " + m.getContent()); }
 		 */
-		/*int maxLength = activity.getResources()
-				.getInteger(R.integer.max_length);*/
+		/*
+		 * int maxLength = activity.getResources()
+		 * .getInteger(R.integer.max_length);
+		 */
 		/*
 		 * if (m.getContent().length() > maxLength) {
 		 * 
@@ -93,7 +97,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
 			@Override
 			public void onClick(View v) {
-				//ListView parentListView = (ListView) v.getParent().getParent();
+				// ListView parentListView = (ListView)
+				// v.getParent().getParent();
 				// parentListView.setItemChecked(position, true);
 				// todo image checking
 			}
@@ -119,8 +124,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				FilterResults results = new FilterResults();
 
 				if (constraint == null || constraint.length() == 0) {
-					results.values = ExampleContent.ITEMS;
-					results.count = ExampleContent.ITEMS.size();
+					results.values = new ArrayList<ExampleItem>(ExampleContent.ITEM_MAP.values());
+					results.count = ExampleContent.ITEM_MAP.size();
 				} else {
 
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
@@ -138,8 +143,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 					 * filteredArrayNames.add(dataItem); } } } else if
 					 * (searchType.equals(SEARCHTYPES[1])) {
 					 */
-					for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-						ExampleItem dataItem = ExampleContent.ITEMS.get(i);
+					for(Long key:ExampleContent.ITEM_MAP.keySet()){
+						ExampleItem dataItem = ExampleContent.ITEM_MAP.get(key);
 						if (dataItem
 								.getFullName()
 								.toLowerCase(Locale.getDefault())
@@ -149,7 +154,6 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 							filteredArrayNames.add(dataItem);
 						}
 					}
-					// }
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}

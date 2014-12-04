@@ -32,9 +32,8 @@ import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 import com.catchme.utils.FloatingActionButton;
 import com.google.gson.Gson;
 

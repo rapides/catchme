@@ -19,9 +19,8 @@ import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.*;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.profile.ItemProfileFragment;
 

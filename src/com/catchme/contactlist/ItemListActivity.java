@@ -14,9 +14,8 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;

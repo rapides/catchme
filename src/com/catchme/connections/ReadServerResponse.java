@@ -13,9 +13,9 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.exampleObjects.Message;
 
 public class ReadServerResponse {
@@ -251,5 +251,9 @@ public class ReadServerResponse {
 			Log.e("ParseError", e.getMessage());
 		}
 		return date;
+	}
+
+	public static void getPositions(JSONObject positions) {
+		
 	}
 }

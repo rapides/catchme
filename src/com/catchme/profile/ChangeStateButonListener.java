@@ -1,16 +1,16 @@
 package com.catchme.profile;
 
-import com.catchme.R;
-import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.google.gson.Gson;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import com.catchme.R;
+import com.catchme.contactlist.ItemListActivity;
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.LoggedUser;
+import com.google.gson.Gson;
 
 public class ChangeStateButonListener implements OnClickListener {
 

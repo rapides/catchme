@@ -4,22 +4,22 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
-import com.catchme.R;
-import com.catchme.connections.ReadServerResponse;
-import com.catchme.connections.ServerConnection;
-import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.catchme.exampleObjects.Message;
-import com.catchme.messages.MessagesListAdapter;
-import com.google.gson.Gson;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.catchme.R;
+import com.catchme.connections.ReadServerResponse;
+import com.catchme.connections.ServerConnection;
+import com.catchme.connections.ServerRequests;
+import com.catchme.contactlist.ItemListActivity;
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.exampleObjects.Message;
+import com.catchme.messages.MessagesListAdapter;
+import com.google.gson.Gson;
 
 public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 
