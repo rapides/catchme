@@ -125,8 +125,38 @@ public class ReadServerResponse {
 		return contact;
 	}
 
+	public static HashMap<String, String> updateAvatars(JSONObject avatars) {
+
+		HashMap<String, String> result = new HashMap<String, String>();
+		try {
+			JSONObject mainAvatarArray = avatars
+					.getJSONObject(ServerConst.USER_AVATAR).getJSONObject(ServerConst.USER_AVATAR);
+			JSONObject small = mainAvatarArray
+					.getJSONObject(ServerConst.USER_AVATAR_SMALL);
+			JSONObject medium = mainAvatarArray
+					.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
+			JSONObject big = mainAvatarArray
+					.getJSONObject(ServerConst.USER_AVATAR_BIG);
+			String url = mainAvatarArray
+					.optString(ServerConst.USER_AVATAR_URL);
+			String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
+			String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
+			String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
+			result.put(ExampleItem.AVATAR_SMALL, smallUrl);
+			result.put(ExampleItem.AVATAR_MEDIUM, mediumUrl);
+			result.put(ExampleItem.AVATAR_BIG, bigUrl);
+			result.put(ExampleItem.AVATAR_URL, url);
+		} catch (JSONException e) {
+			Log.e("JSONParseException", e.getMessage());
+		}
+
+		return result;
+	}
+
 	private static HashMap<String, String> getAvatarsFromArray(
 			JSONObject avatars) throws JSONException {
+
+		HashMap<String, String> result = new HashMap<String, String>();
 		JSONObject small = avatars.getJSONObject(ServerConst.USER_AVATAR_SMALL);
 		JSONObject medium = avatars
 				.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
@@ -135,11 +165,11 @@ public class ReadServerResponse {
 		String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
 		String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
 		String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
-		HashMap<String, String> result = new HashMap<String, String>();
 		result.put(ExampleItem.AVATAR_SMALL, smallUrl);
 		result.put(ExampleItem.AVATAR_MEDIUM, mediumUrl);
 		result.put(ExampleItem.AVATAR_BIG, bigUrl);
 		result.put(ExampleItem.AVATAR_URL, url);
+
 		return result;
 	}
 
