@@ -1,5 +1,6 @@
 package com.catchme.profile;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -28,6 +29,7 @@ import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
+import com.google.android.gms.common.api.d;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -38,6 +40,7 @@ public class ItemProfileFragment extends Fragment implements
 	private boolean isLoggedUser;
 	public static final int PICK_IMAGE = 0;
 	private RoundedImageView itemImage;
+
 	public ItemProfileFragment() {
 	}
 
@@ -112,8 +115,8 @@ public class ItemProfileFragment extends Fragment implements
 	private LoggedUser readLoggedUser() {
 		Gson gson = new Gson();
 		String json = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE)
-				.getString(ItemListActivity.USER, "");
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE).getString(
+				ItemListActivity.USER, "");
 		return gson.fromJson(json, LoggedUser.class);
 	}
 
@@ -158,19 +161,24 @@ public class ItemProfileFragment extends Fragment implements
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == PICK_IMAGE && data != null && data.getData() != null) {
-			Uri _uri = data.getData();
-			
-			// User had pick an image.
-			Cursor cursor = getActivity()
-					.getContentResolver()
-					.query(_uri,
-							new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
-							null, null, null);
-			cursor.moveToFirst();
+			Uri uri = data.getData();
+			String imageFilePath = null;
+			if (uri.getScheme().equals("content")) {// fromGallery
+				
+				// User had pick an image.
+				Cursor cursor = getActivity()
+						.getContentResolver()
+						.query(uri,
+								new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+								null, null, null);
+				cursor.moveToFirst();
 
-			// Link to the image
-			final String imageFilePath = cursor.getString(0);
-			cursor.close();
+				// Link to the image
+				imageFilePath = cursor.getString(0);
+				cursor.close();
+			} else {
+				imageFilePath = uri.getSchemeSpecificPart();
+			}
 			new UpdateAvatarTask(this.getActivity(), this).execute(
 					((LoggedUser) item).getToken(), imageFilePath);
 		}
@@ -197,6 +205,7 @@ public class ItemProfileFragment extends Fragment implements
 
 	@Override
 	public void onImageUploadError(ArrayList<String> errors) {
-		Toast.makeText(getActivity(), errors.toString(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(), "UPLOAD FAIL:\n" + errors.toString(),
+				Toast.LENGTH_SHORT).show();
 	}
 }

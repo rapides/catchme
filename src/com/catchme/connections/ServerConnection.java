@@ -148,7 +148,7 @@ public class ServerConnection {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpPost postMethod = new HttpPost(url);
 
-		JSONObject result = null;
+		JSONObject result = new JSONObject();
 		try {
 			JSONObject jsonObject = constructPictureJson(filePath);
 			postMethod.setEntity(new StringEntity(jsonObject.toString()));

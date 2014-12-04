@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
+import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent.LoggedUser;
@@ -34,7 +35,13 @@ public class UpdateAvatarTask extends AsyncTask<String, Integer, JSONObject> {
 		String token = params[0];
 		String imagePath = params[1];
 		// publishProgress(3);
-		return ServerRequests.uploadAvatar(token, imagePath);
+
+		JSONObject result = null;
+		if (ServerConnection.isOnline(context)) {
+			result = ServerRequests.uploadAvatar(token, imagePath);
+		} 
+		
+		return result;
 
 	}
 
