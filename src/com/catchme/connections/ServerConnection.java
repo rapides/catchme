@@ -2,20 +2,16 @@ package com.catchme.connections;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -44,9 +40,7 @@ public class ServerConnection {
 		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 		
 		
-		HttpHost proxy = new HttpHost("127.0.0.1", 8888);
 		DefaultHttpClient httpclient = new DefaultHttpClient(httpParameters);
-		 httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		HttpPost httpost = new HttpPost(url);
 		
 		HttpResponse responsePost = null;

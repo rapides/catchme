@@ -242,12 +242,11 @@ public class ServerRequests {
 		JSONObject detailParams = new JSONObject();
 		try {
 			detailParams.put(ServerConst.POSITION_CONTACTS, new JSONArray(contactIds));
-			detailParams.put(ServerConst.POSITION_NUMBER, number);
+			detailParams.put(ServerConst.POSITION_NUMBER, ""+number);
 			request.put(ServerConst.POSITION_KEY, detailParams);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
 		}
-
 		return request;
 	}
 

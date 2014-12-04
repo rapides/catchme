@@ -25,7 +25,6 @@ import com.catchme.messages.MessagesFragment;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -48,8 +47,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-				.cacheInMemory(true).cacheOnDisk(true).build();
+		
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				this).build();
 		ImageLoader.getInstance().init(config);

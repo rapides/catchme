@@ -62,8 +62,8 @@ public class ServerConst {
 	public static final String MESSAGE_ID = "id";
 	public static final String USER_AVATAR = "avatar";
 	public static final String USER_AVATAR_SMALL = "small";
-	public static final String USER_AVATAR_MEDIUM = "big";
-	public static final String USER_AVATAR_BIG = "medium";
+	public static final String USER_AVATAR_MEDIUM = "medium";
+	public static final String USER_AVATAR_BIG = "big";
 	public static final String USER_AVATAR_URL = "url";
 	
 	

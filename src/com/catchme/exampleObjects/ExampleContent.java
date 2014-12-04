@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
-
 import com.catchme.R;
 import com.catchme.connections.ServerConst;
 
@@ -271,6 +269,10 @@ public class ExampleContent {
 
 		public void setToken(String token) {
 			this.token = token;
+		}
+
+		public void setAvatars(HashMap<String, String> avatars) {
+			this.avatars = avatars;
 		}
 
 	}

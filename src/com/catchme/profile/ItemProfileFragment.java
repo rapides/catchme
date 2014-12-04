@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,8 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.connections.ServerConnection;
-import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleContent.ExampleItem;
@@ -40,7 +37,7 @@ public class ItemProfileFragment extends Fragment implements
 	private ExampleItem item;
 	private boolean isLoggedUser;
 	public static final int PICK_IMAGE = 0;
-
+	private RoundedImageView itemImage;
 	public ItemProfileFragment() {
 	}
 
@@ -52,11 +49,7 @@ public class ItemProfileFragment extends Fragment implements
 
 		if (getArguments() == null) {
 			isLoggedUser = true;
-			Gson gson = new Gson();
-			String json = getActivity().getSharedPreferences(
-					ItemListActivity.PREFERENCES, Context.MODE_PRIVATE)
-					.getString(ItemListActivity.USER, "");
-			item = gson.fromJson(json, LoggedUser.class);
+			item = readLoggedUser();
 		} else {
 			isLoggedUser = false;
 			long itemId = getArguments().getLong(
@@ -69,7 +62,7 @@ public class ItemProfileFragment extends Fragment implements
 				.findViewById(R.id.profile_surname);
 		TextView txtEmail = (TextView) rootView
 				.findViewById(R.id.profile_email);
-		RoundedImageView image = (RoundedImageView) rootView
+		itemImage = (RoundedImageView) rootView
 				.findViewById(R.id.profile_image);
 		FloatingActionButton fab = (FloatingActionButton) rootView
 				.findViewById(R.id.profile_floating_action_button);
@@ -79,7 +72,7 @@ public class ItemProfileFragment extends Fragment implements
 		txtName.setText(item.getName());
 		txtSurname.setText(item.getSurname());
 		txtEmail.setText(item.getEmail());
-		ImageLoader.getInstance().displayImage(item.getLargeImage(), image);
+		ImageLoader.getInstance().displayImage(item.getLargeImage(), itemImage);
 		if (isLoggedUser) {
 			fab.setVisibility(View.VISIBLE);
 			fab.setOnClickListener(new OnClickListener() {
@@ -114,6 +107,14 @@ public class ItemProfileFragment extends Fragment implements
 			}
 		}
 		return rootView;
+	}
+
+	private LoggedUser readLoggedUser() {
+		Gson gson = new Gson();
+		String json = getActivity().getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE)
+				.getString(ItemListActivity.USER, "");
+		return gson.fromJson(json, LoggedUser.class);
 	}
 
 	@Override
@@ -189,6 +190,8 @@ public class ItemProfileFragment extends Fragment implements
 	@Override
 	public void onImageUploaded() {
 		// TODO refreshImages in navigation drawer and main image
+		item = readLoggedUser();
+		ImageLoader.getInstance().displayImage(item.getLargeImage(), itemImage);
 		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
 	}
 

@@ -42,7 +42,6 @@ public class LocationReceiver extends BroadcastReceiver {
 			    String json = preferences.getString(ItemListActivity.USER, "");
 			    LoggedUser user = gson.fromJson(json, LoggedUser.class);
 				String token = user.getToken();
-				System.out.println("Cycki: " + token);
 				new SendLocationTask(context, token).execute(loc);
 			}
 			Log.d("Location", msg);
