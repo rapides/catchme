@@ -43,6 +43,7 @@
     <color name="message_received_background">#AAeeff41</color>
     <color name="message_sent_background">#AAb2ff59</color>
     <color name="message_received_stroke">#20000000</color>
+    <color name="message_timestamp">#7F000000</color>
     <color name="message_sent_stroke">#20000000</color>
     
     <color name="color_base">@color/color600</color>
