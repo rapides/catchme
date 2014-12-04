@@ -248,7 +248,7 @@ public class ReadServerResponse {
 	private static Date getDateFromString(String string) {
 		Date date = null;
 		try {
-			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSzzzz",
 					Locale.getDefault()).parse(string);
 			
 		} catch (ParseException e) {

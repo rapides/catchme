@@ -29,7 +29,7 @@ public class Message {
 	}
 
 	public String getTime() {
-		return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(time);
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(time);
 	}
 	
 	public long getMessageId() {
