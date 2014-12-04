@@ -24,6 +24,7 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 	public static final String EMAIL = "useremail";
 	private View rootView;
 	private ProgressBar register_loading;
+	private EditText email, name, surname, pass, conf_pass;
 
 	public RegisterFragment() {
 	}
@@ -34,14 +35,19 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 		// inflate layout from xml
 		rootView = inflater.inflate(R.layout.fragment_register, container,
 				false);
+		name = (EditText) rootView.findViewById(R.id.reg_name);
+		surname = (EditText) rootView.findViewById(R.id.reg_surname);
+		email = (EditText) rootView.findViewById(R.id.reg_email);
+		pass = (EditText) rootView.findViewById(R.id.reg_pass);
+		conf_pass = (EditText) rootView.findViewById(R.id.reg_pass_conf);
 
 		Bundle arguments = getArguments();
 		String email_arg = arguments.getString(EMAIL);
 		if (email_arg != null) {
-			EditText email = (EditText) rootView.findViewById(R.id.reg_email);
+
 			email.setText(email_arg, EditText.BufferType.EDITABLE);
 		}
-		ProgressBar register_loading = (ProgressBar) rootView
+		register_loading = (ProgressBar) rootView
 				.findViewById(R.id.register_spinner);
 		register_loading.setVisibility(View.GONE);
 		Button reg = (Button) rootView.findViewById(R.id.register);
@@ -51,15 +57,6 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		ProgressBar register_loading = (ProgressBar) rootView
-				.findViewById(R.id.register_spinner);
-		EditText name = (EditText) rootView.findViewById(R.id.reg_name);
-		EditText surname = (EditText) rootView.findViewById(R.id.reg_surname);
-		EditText email = (EditText) rootView.findViewById(R.id.reg_email);
-
-		EditText pass = (EditText) rootView.findViewById(R.id.reg_pass);
-		EditText conf_pass = (EditText) rootView
-				.findViewById(R.id.reg_pass_conf);
 
 		/*
 		 * Toast.makeText(rootView.getContext(), name.toString()+

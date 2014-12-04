@@ -25,6 +25,7 @@ public class LoginFragment extends Fragment implements OnClickListener,
 		OnTaskCompleted {
 	private View rootView;
 	private ProgressBar login_loading;
+	private EditText login,pass;
 
 	public LoginFragment() {
 	}
@@ -35,11 +36,13 @@ public class LoginFragment extends Fragment implements OnClickListener,
 		// inflate layout from xml
 		rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
-		// set behavior after click
+		
+		login = (EditText) rootView.findViewById(R.id.login_email);
+		pass = (EditText) rootView.findViewById(R.id.login_pass);
 		Button login_btn = (Button) rootView.findViewById(R.id.login);
 		Button register_btn = (Button) rootView
 				.findViewById(R.id.goto_register);
-		ProgressBar login_loading = (ProgressBar) rootView
+		login_loading = (ProgressBar) rootView
 				.findViewById(R.id.login_spinner);
 		login_loading.setVisibility(View.GONE);
 		register_btn.setOnClickListener(this);
@@ -49,11 +52,9 @@ public class LoginFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		EditText login = (EditText) rootView.findViewById(R.id.login_email);
+		
 		if (v.getId() == R.id.login) {
-			ProgressBar login_loading = (ProgressBar) rootView
-					.findViewById(R.id.login_spinner);
-			EditText pass = (EditText) rootView.findViewById(R.id.login_pass);
+			
 
 			new LoginTask(getActivity(), this, login_loading).execute(login
 					.getText().toString(), pass.getText().toString());
@@ -106,10 +107,7 @@ public class LoginFragment extends Fragment implements OnClickListener,
 				for (int i = 0; i < errors.size(); i++) {
 					errorsSring += errors.get(i) + "\n";
 				}
-				EditText login = (EditText) rootView
-						.findViewById(R.id.login_email);
-				EditText pass = (EditText) rootView
-						.findViewById(R.id.login_pass);
+
 				login.setBackgroundResource(R.drawable.error_frame);
 				login.setError("Login is required!!!");
 				pass.setError("Password is Required!!!");
