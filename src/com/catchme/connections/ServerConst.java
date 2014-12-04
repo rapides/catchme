@@ -49,7 +49,11 @@ public class ServerConst {
 	public static final String POSITION_KEY = "for_positions";
 	public static final String POSITION_CONTACTS = "contact_ids";
 	public static final String POSITION_NUMBER = "number";
-	
+	public static final String POSITION_ACCURACY = "accuracy";
+	public static final String POSITION_FIX_TIME = "fix_time";
+	public static final String POSITION_RESPONSE_ARRAY_NAME = "positions";
+	public static final String POSITION_RESPONSE_COORDINATES = "coordinates";
+
 	//Messages stuff
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
@@ -65,8 +69,9 @@ public class ServerConst {
 	public static final String USER_AVATAR_MEDIUM = "medium";
 	public static final String USER_AVATAR_BIG = "big";
 	public static final String USER_AVATAR_URL = "url";
-	public static final String POSITION_ACCURACY = "accuracy";
-	public static final String POSITION_FIX_TIME = "fix_time";
+	
+	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz";
+	public static final String SERVER_NAME = "C@tchme";
 	
 	
 }

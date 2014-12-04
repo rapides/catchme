@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.catchme.exampleObjects.ExampleItem;
@@ -248,27 +249,50 @@ public class ReadServerResponse {
 	private static Date getDateFromString(String string) {
 		Date date = null;
 		try {
-			date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSzzzz",
+			date = new SimpleDateFormat(ServerConst.DATE_FORMAT,
 					Locale.getDefault()).parse(string);
-			
+
 		} catch (ParseException e) {
 			Log.e("ParseError", e.getMessage());
 		}
 		return date;
 	}
 
-	public static List<UserLocation> getLoggedUserLocation(
+	public static HashMap<Long, ArrayList<UserLocation>> getPositions(
 			JSONObject fullResponse) {
-		LinkedList<UserLocation> locationList = null;
+		HashMap<Long, ArrayList<UserLocation>> locationList = new HashMap<Long, ArrayList<UserLocation>>();
 		try {
 			if (isSuccess(fullResponse)) {
-				//locationList = null;//TODO import form request
-				throw new JSONException("");
+				JSONArray positionsArray = fullResponse
+						.getJSONArray(ServerConst.POSITION_RESPONSE_ARRAY_NAME);
+				for (int i = 0; i < positionsArray.length(); i++) {
+					JSONArray coordinates = positionsArray.getJSONObject(i)
+							.getJSONArray(
+									ServerConst.POSITION_RESPONSE_COORDINATES);
+
+					// long contacId = positionsArray.getInt("user");
+					ArrayList<UserLocation> userLocations = new ArrayList<UserLocation>();
+					for (int j = 0; j < coordinates.length(); j++) {
+						UserLocation location = getLocationFromJSONObject(coordinates
+								.getJSONObject(j));
+						userLocations.add(location);
+					}
+					locationList.put((long) i, userLocations);
+				}
 			}
 		} catch (JSONException e) {
-			Log.e("JSONParseException", e.getMessage());
+			// Log.e("JSONParseException", e.getMessage());
 			e.printStackTrace();
 		}
 		return locationList;
+	}
+
+	private static UserLocation getLocationFromJSONObject(JSONObject o)
+			throws JSONException {
+		return new UserLocation(
+				(float) o.getDouble(ServerConst.POSITION_ACCURACY),
+				o.getDouble(ServerConst.POSITION_LATITUDE),
+				o.getDouble(ServerConst.POSITION_LONGITUDE),
+				o.getString(ServerConst.POSITION_FIX_TIME));
 	}
 }
