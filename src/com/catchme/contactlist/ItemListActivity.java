@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory.Options;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -24,8 +25,10 @@ import com.catchme.messages.MessagesFragment;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class ItemListActivity extends FragmentActivity implements
 		ItemListFragment.Callbacks {
@@ -46,11 +49,15 @@ public class ItemListActivity extends FragmentActivity implements
 
 		SharedPreferences preferences = getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		
+		Options decodingOptions = new Options();
+		DisplayImageOptions m_options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.loader)
+				.decodingOptions(decodingOptions).cacheOnDisk(true)
+				.imageScaleType(ImageScaleType.NONE).build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).build();
+				this).defaultDisplayImageOptions(m_options).build();
 		ImageLoader.getInstance().init(config);
-
+		
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
 				// The detail container view will be present only in the
@@ -89,7 +96,7 @@ public class ItemListActivity extends FragmentActivity implements
 			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime(), INTERVAL, pi);
-			
+
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
 		} else {
