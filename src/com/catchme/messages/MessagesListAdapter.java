@@ -78,13 +78,13 @@ public class MessagesListAdapter extends BaseAdapter {
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.single_message_image);
 		if (item.getMessages(item.getFirstConversationId()).get(position)
-				.getSenderId() % 2 != 0) {
+				.getSenderId() == user.getId()) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			imageParams.addRule(RelativeLayout.ALIGN_TOP,
 					R.id.single_message_content);
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
 			message.setBackgroundResource(R.drawable.bubble_right);
-			ImageLoader.getInstance().displayImage(user.getMediumImage(), img);
+			ImageLoader.getInstance().displayImage(user.getSmallImageUrl(), img);
 			
 			timeParams.addRule(RelativeLayout.ALIGN_RIGHT,
 					R.id.single_message_content);
