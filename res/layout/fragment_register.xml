@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LoginScrollView"
+    android:id="@+id/login_scroll_view"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp" >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp" >
 
         <RelativeLayout
             android:id="@+id/register_logo_layout"
@@ -15,132 +16,216 @@
             android:layout_height="50dp" >
 
             <TextView
-                android:id="@+id/RegFormTextView"
+                android:id="@+id/reg_form_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="Register Form"
+                android:text="@string/reg_title"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/register_data_layout"
+            android:id="@+id/register_data_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_logo_layout" >
+            android:layout_below="@+id/register_logo_layout"
+            android:layout_marginBottom="2dp" >
 
-            <TextView
-                android:id="@+id/RegNameTextView"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/reg_email_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:text="Name:" />
+                android:layout_marginBottom="2dp" >
 
-            <EditText
-                android:id="@+id/reg_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/RegNameTextView"
-                android:layout_centerHorizontal="true"
-                android:inputType="text"
-                android:minWidth="200dp" >
-            </EditText>
+                <EditText
+                    android:id="@+id/reg_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:hint="@string/hint_email"
+                    android:inputType="textEmailAddress"
+                    android:minWidth="200dp" >
+                </EditText>
 
-            <TextView
-                android:id="@+id/RegSurnameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/reg_name"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:text="Surname:" />
+                <ImageView
+                    android:id="@+id/reg_icon_email"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_email"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_email"
+                    android:src="@drawable/icon_email" />
+            </RelativeLayout>
 
-            <EditText
-                android:id="@+id/reg_surname"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/reg_pass_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/reg_name"
-                android:layout_alignRight="@+id/reg_name"
-                android:layout_below="@+id/RegSurnameTextView"
-                android:layout_centerHorizontal="true"
-                android:inputType="text" />
+                android:layout_below="@+id/reg_email_container"
+                android:layout_marginBottom="2dp" >
 
-            <TextView
-                android:id="@+id/RegEmailTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/reg_surname"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:text="E-mail:" />
+                <EditText
+                    android:id="@+id/reg_pass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword"
+                    android:minWidth="200dp" >
+                </EditText>
 
-            <EditText
-                android:id="@+id/reg_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/reg_name"
-                android:layout_alignRight="@+id/reg_name"
-                android:layout_below="@+id/RegEmailTextView"
-                android:layout_centerHorizontal="true"
-                android:inputType="textEmailAddress" />
+                <ImageView
+                    android:id="@+id/reg_icon_pass"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_pass"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_pass"
+                    android:src="@drawable/icon_password" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/RegPassTextView"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/reg_pass_conf_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/reg_email"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:text="Password:" />
+                android:layout_below="@+id/reg_pass_container"
+                android:layout_marginBottom="2dp" >
 
-            <EditText
-                android:id="@+id/reg_pass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/reg_name"
-                android:layout_alignRight="@+id/reg_name"
-                android:layout_below="@+id/RegPassTextView"
-                android:layout_centerHorizontal="true"
-                android:inputType="textPassword" />
+                <EditText
+                    android:id="@+id/reg_pass_conf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:hint="@string/hint_conf_pass"
+                    android:inputType="textPassword"
+                    android:minWidth="200dp" />
 
-            <TextView
-                android:id="@+id/RegConfPassTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/reg_pass"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:text="Confirm Password:" />
+                <ImageView
+                    android:id="@+id/reg_icon_conf_pass"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_pass_conf"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_conf_pass"
+                    android:src="@drawable/icon_password" />
+            </RelativeLayout>
+        </RelativeLayout>
 
-            <EditText
-                android:id="@+id/reg_pass_conf"
-                android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/register_data_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_data_email_layout" >
+
+            <RelativeLayout
+                android:id="@+id/reg_name_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/reg_name"
-                android:layout_alignRight="@+id/reg_name"
-                android:layout_below="@+id/RegConfPassTextView"
-                android:layout_centerHorizontal="true"
-                android:inputType="textPassword" />
+                android:layout_marginBottom="2dp" >
+
+                <EditText
+                    android:id="@+id/reg_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:hint="@string/hint_name"
+                    android:inputType="text"
+                    android:minWidth="200dp" />
+
+                <ImageView
+                    android:id="@+id/reg_icon_name"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_name"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_name"
+                    android:src="@drawable/icon_user" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/reg_surname_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/reg_name_container"
+                android:layout_marginBottom="2dp" >
+
+                <EditText
+                    android:id="@+id/reg_surname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:hint="@string/hint_surname"
+                    android:inputType="text"
+                    android:minWidth="200dp" />
+
+                <ImageView
+                    android:id="@+id/reg_icon_surname"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_surname"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_surname"
+                    android:src="@drawable/icon_user" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/reg_upload_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/reg_surname_container"
+                android:layout_marginBottom="2dp" >
+
+                <EditText
+                    android:id="@+id/reg_image_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="3dp"
+                    android:inputType="text"
+                    android:minWidth="200dp" />
+
+                <ImageView
+                    android:id="@+id/reg_icon_upload"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/reg_image_upload"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_upload"
+                    android:src="@drawable/icon_avatar_upload" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <Button
             android:id="@+id/register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_data_layout"
+            android:layout_below="@+id/register_data_name_layout"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/loginbutton_bg"
             android:text="@string/register_accept" />
+
+        <ProgressBar
+            android:id="@+id/register_spinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
 </ScrollView>

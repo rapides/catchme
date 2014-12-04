@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
 
         <RelativeLayout
             android:id="@+id/login_image_layout"
@@ -19,8 +19,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:contentDescription="banner"
+                android:contentDescription="Logo"
                 android:src="@drawable/catch_me" />
+
+           
         </RelativeLayout>
 
         <RelativeLayout
@@ -29,28 +31,58 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/login_image_layout" >
 
-            <EditText
-                android:id="@+id/login_email"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/login_email_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:hint="E-mail Adress"
-                android:inputType="textEmailAddress"
-                android:minWidth="200dp" >
+                android:layout_marginBottom="2dp" >
 
-                <requestFocus />
-            </EditText>
+                <EditText
+                    android:id="@+id/login_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:hint="@string/hint_email"
+                    android:inputType="textEmailAddress"
+                    android:minWidth="200dp" />
 
-            <EditText
-                android:id="@+id/login_pass"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/login_icon_email"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/login_email"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_email"
+                    android:src="@drawable/icon_email" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/login_pass_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/login_email"
-                android:layout_alignRight="@+id/login_email"
-                android:layout_below="@+id/login_email"
-                android:layout_centerHorizontal="true"
-                android:hint="Password"
-                android:inputType="textPassword" />
+                android:layout_below="@+id/login_email_container"
+                android:layout_marginBottom="2dp" >
+
+                <EditText
+                    android:id="@+id/login_pass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword"
+                    android:minWidth="200dp" />
+
+                <ImageView
+                    android:id="@+id/login_icon_pass"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/login_pass"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Icon_password"
+                    android:src="@drawable/icon_password" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <Button
@@ -76,6 +108,13 @@
             android:layout_marginTop="3dp"
             android:background="@drawable/loginbutton_bg"
             android:text="@string/goto_register" />
+         <ProgressBar
+                android:id="@+id/login_spinner"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
     </RelativeLayout>
 
 </ScrollView>

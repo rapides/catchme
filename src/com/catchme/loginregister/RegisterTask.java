@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.catchme.R;
@@ -20,15 +22,19 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnTaskCompleted listener;
 	private LoggedUser user;
+	private ProgressBar register_loading;
 
-	public RegisterTask(Context context, OnTaskCompleted listener) {
+	public RegisterTask(Context context, OnTaskCompleted listener,
+			ProgressBar register_loading) {
 		super();
 		this.context = context;
 		this.listener = listener;
+		this.register_loading = register_loading;
 	}
 
 	@Override
 	protected void onPreExecute() {
+		register_loading.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -52,6 +58,7 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected void onPostExecute(JSONObject result) {
+		register_loading.setVisibility(View.GONE);
 		if (result == null) {
 			Toast.makeText(context,
 					context.getResources().getString(R.string.err_no_internet),

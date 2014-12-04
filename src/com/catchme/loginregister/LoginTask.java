@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.catchme.R;
@@ -20,15 +22,20 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnTaskCompleted listener;
 	private LoggedUser user;
-	public LoginTask(Context context, OnTaskCompleted listener) {
+	private ProgressBar login_loading;
+
+	public LoginTask(Context context, OnTaskCompleted listener,
+			ProgressBar login_loading) {
 		super();
 		this.context = context;
+		this.login_loading = login_loading;
 		this.listener = listener;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		//animaton.setVisible(VIw.Visible);
+		login_loading.setVisibility(View.VISIBLE);
+		// animaton.setVisible(VIw.Visible);
 	}
 
 	@Override
@@ -48,29 +55,30 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected void onPostExecute(JSONObject result) {
+		login_loading.setVisibility(View.GONE);
 		if (result == null) {
 			Toast.makeText(context,
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(
-						context,
-						"Success! Logged user: "
-								+ user.getFullName(),
+				Toast.makeText(context,
+						"Success! Logged user: " + user.getFullName(),
 						Toast.LENGTH_SHORT).show();
 				SharedPreferences preferences = context.getSharedPreferences(
 						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 				Editor e = preferences.edit();
 				Gson gsonUser = new Gson();
-			    String json = gsonUser.toJson(user);
-			    e.putString(ItemListActivity.USER, json);
-			    e.commit();
-			    listener.onTaskCompleted(null);
+				String json = gsonUser.toJson(user);
+				e.putString(ItemListActivity.USER, json);
+				e.commit();
+				listener.onTaskCompleted(null);
 			} else {
-				/*Toast.makeText(context,
-						"Fail! " + ReadServerResponse.getErrors(result),
-						Toast.LENGTH_SHORT).show();*/
+				/*
+				 * Toast.makeText(context, "Fail! " +
+				 * ReadServerResponse.getErrors(result),
+				 * Toast.LENGTH_SHORT).show();
+				 */
 				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
 			}
 		}

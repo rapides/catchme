@@ -14,12 +14,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class RegisterFragment extends Fragment implements OnClickListener,
 		OnTaskCompleted {
 	public static final String EMAIL = "useremail";
 	private View rootView;
+	private ProgressBar register_loading;
 
 	public RegisterFragment() {
 	}
@@ -31,7 +33,15 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 		rootView = inflater.inflate(R.layout.fragment_register, container,
 				false);
 
-		// set behavior after click
+		Bundle arguments = getArguments();
+		String email_arg = arguments.getString(EMAIL);
+		if (email_arg != null) {
+			EditText email = (EditText) rootView.findViewById(R.id.reg_email);
+			email.setText(email_arg, EditText.BufferType.EDITABLE);
+		}
+		ProgressBar register_loading = (ProgressBar) rootView
+				.findViewById(R.id.register_spinner);
+		register_loading.setVisibility(View.GONE);
 		Button reg = (Button) rootView.findViewById(R.id.register);
 		reg.setOnClickListener(this);
 		return rootView;
@@ -39,10 +49,12 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-
+		ProgressBar register_loading = (ProgressBar) rootView
+				.findViewById(R.id.register_spinner);
 		EditText name = (EditText) rootView.findViewById(R.id.reg_name);
 		EditText surname = (EditText) rootView.findViewById(R.id.reg_surname);
 		EditText email = (EditText) rootView.findViewById(R.id.reg_email);
+
 		EditText pass = (EditText) rootView.findViewById(R.id.reg_pass);
 		EditText conf_pass = (EditText) rootView
 				.findViewById(R.id.reg_pass_conf);
@@ -53,10 +65,10 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 		 * " ---"+email.toString()+"--p2--"+conf_pass.toString(),
 		 * Toast.LENGTH_LONG).show();
 		 */
-		new RegisterTask(getActivity(), this).execute(
-				name.getText().toString(), surname.getText().toString(), email
-						.getText().toString(), pass.getText().toString(),
-				conf_pass.getText().toString());
+		new RegisterTask(getActivity(), this, register_loading).execute(name
+				.getText().toString(), surname.getText().toString(), email
+				.getText().toString(), pass.getText().toString(), conf_pass
+				.getText().toString());
 
 		// TODO show animation or something else
 	}
@@ -69,10 +81,11 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 
 		if (preferences.contains(ItemListActivity.USER)) {
 			// prepare new view
-			LoginFragment loginFragment = new LoginFragment();
+
+			ItemListFragment mainFragment = new ItemListFragment();
 			// replace old view
 			getActivity().getSupportFragmentManager().beginTransaction()
-					.replace(R.id.main_fragment_container, loginFragment)
+					.replace(R.id.main_fragment_container, mainFragment)
 					.commit();
 			// adjust actionBar
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
