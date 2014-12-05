@@ -6,16 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.google.android.gms.internal.fi;
-
 import android.util.Log;
+
+import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 
 public class ServerRequests {
 	public static JSONObject getPositions(String token,
@@ -145,12 +143,13 @@ public class ServerRequests {
 		return o;
 	}
 
+	// TODO check
 	private static JSONObject buildUpdateUserRequest(String name, String surname) {
 		JSONObject o = new JSONObject();
 		JSONObject user = new JSONObject();
 		try {
-			user.put(ServerConst.USER_NAME, name);
-			user.put(ServerConst.USER_SURNAME, surname);
+			user.put(ServerConst.USER_FIRST_NAME, name);
+			user.put(ServerConst.USER_LAST_NAME, surname);
 			o.put(ServerConst.USER, user);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
@@ -185,18 +184,20 @@ public class ServerRequests {
 	}
 
 	private static String getFormatedTime(long fixTime) {
-		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZZ", Locale.getDefault());
+		SimpleDateFormat date = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss ZZZZ", Locale.getDefault());
 		return date.format(new Date(fixTime));
 	}
 
+	// TODO check
 	private static JSONObject buildRegistationRequest(String name,
 			String surname, String email, String password,
 			String confirmationPassword) {
 		JSONObject o = new JSONObject();
 		JSONObject user = new JSONObject();
 		try {
-			user.put(ServerConst.USER_NAME, name);
-			user.put(ServerConst.USER_SURNAME, surname);
+			user.put(ServerConst.USER_FIRST_NAME, name);
+			user.put(ServerConst.USER_LAST_NAME, surname);
 			user.put(ServerConst.USER_EMAIL, email);
 			user.put(ServerConst.USER_PASSWORD, password);
 			user.put(ServerConst.USER_PASSWORD_CONFIRMATION, password);

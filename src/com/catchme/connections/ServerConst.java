@@ -27,12 +27,22 @@ public class ServerConst {
 	public static final String USER_PASSWORD = "password";
 	public static final String USER_PASSWORD_CONFIRMATION = "TODOTODO";
 	public static final String USER = "user";
-	public static final String USER_NAME = "name";
-	public static final String USER_SURNAME = "surname";
 	public static final String USER_ID = "id";
+	public static final String USER_CONTACT_ID = "contact_id";
 	public static final String USER_STATE = "state";
 	public static final String CONTACTS = "contacts";
 	public static final String USER_CONVERSATIONS = "conversation_ids";
+	public static final String USER_FIRST_NAME = "first_name";
+	public static final String USER_LAST_NAME = "last_name";
+	public static final String USER_SEX = "sex";
+	public static final String USER_BIRTH_DATE= "dob";
+	public static final String USER_PERSONAL_DATA = "personal_data";
+	public static final String USER_AVATAR = "avatar";
+	public static final String USER_AVATAR_SMALL = "small";
+	public static final String USER_AVATAR_MEDIUM = "medium";
+	public static final String USER_AVATAR_BIG = "big";
+	public static final String USER_AVATAR_URL = "url";
+
 	
 	//Connection stuff
 	public static final String TOKEN_GET = "Auth-Token";
@@ -64,14 +74,9 @@ public class ServerConst {
 	public static final String MESSAGE_CREATED_AT= "created_at";
 	public static final String MESSAGE_LAST_ID = "?last_message_id=";
 	public static final String MESSAGE_ID = "id";
-	public static final String USER_AVATAR = "avatar";
-	public static final String USER_AVATAR_SMALL = "small";
-	public static final String USER_AVATAR_MEDIUM = "medium";
-	public static final String USER_AVATAR_BIG = "big";
-	public static final String USER_AVATAR_URL = "url";
 	
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz";
 	public static final String SERVER_NAME = "C@tchme";
-	
-	
+	public static final String ERROR_ID = "id";
+	public static final String ERROR_CONTENT = "content";
 }

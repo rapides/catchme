@@ -6,9 +6,9 @@ public class LoggedUser extends ExampleItem {
 	private String token;
 
 	public LoggedUser(long id, String name, String surname, String email,
-			String token, HashMap<String, String> avatars) {
+			String token, HashMap<String, String> avatars, String sex, String dob) {
 		super(id, name, surname, email, ContactStateType.ACCEPTED, null,
-				avatars);
+				avatars, sex, dob);
 		this.token = token;
 	}
 

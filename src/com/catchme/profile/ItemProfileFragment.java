@@ -1,6 +1,7 @@
 package com.catchme.profile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -202,7 +203,7 @@ public class ItemProfileFragment extends Fragment implements
 	}
 
 	@Override
-	public void onImageUploadError(ArrayList<String> errors) {
+	public void onImageUploadError(HashMap<Integer, String> errors) {
 		Toast.makeText(getActivity(), "UPLOAD FAIL:\n" + errors.toString(),
 				Toast.LENGTH_SHORT).show();
 	}

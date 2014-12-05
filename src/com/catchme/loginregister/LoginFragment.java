@@ -1,10 +1,12 @@
 package com.catchme.loginregister;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
+
 
 
 import android.content.Context;
@@ -83,7 +85,7 @@ public class LoginFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onTaskCompleted(ArrayList<String> errors) {
+	public void onTaskCompleted(HashMap<Integer, String> errors) {
 		// get storage
 		SharedPreferences preferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
@@ -104,8 +106,8 @@ public class LoginFragment extends Fragment implements OnClickListener,
 				// not known error
 			} else {
 				String errorsSring = "";
-				for (int i = 0; i < errors.size(); i++) {
-					errorsSring += errors.get(i) + "\n";
+				for (int key:errors.keySet()) {
+					errorsSring += errors.get(key) + "\n";
 				}
 
 				login.setBackgroundResource(R.drawable.error_frame);

@@ -2,6 +2,7 @@ package com.catchme.exampleObjects;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,10 @@ public class ExampleItem {
 	public static final String AVATAR_BIG = "avatar_big";
 	public static final String AVATAR_MEDIUM = "avatar_medium";
 	public static final String AVATAR_URL = "avatar_url";
+
+	public enum UserSex {
+		UNKNOWN, MAN, WOMAN
+	}
 
 	public enum ContactStateType {
 		INVITED(0), ACCEPTED(1), REJECTED(2), SENT(3), RECEIVED(4);
@@ -62,11 +67,13 @@ public class ExampleItem {
 	private Map<Long, List<Message>> messages;
 	private List<UserLocation> position;
 	private List<Long> conversationIds;
-	public HashMap<String, String> avatars;
+	protected HashMap<String, String> avatars;
+	private UserSex sex;
+	private Date dateOfBirth;
 
 	public ExampleItem(long id, String name, String surname, String email,
 			ContactStateType state, List<Long> conv_ids,
-			HashMap<String, String> avatars) {
+			HashMap<String, String> avatars, String sex, String dob) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
@@ -75,7 +82,9 @@ public class ExampleItem {
 		this.state = state;
 		this.conversationIds = conv_ids;
 		this.avatars = avatars;
-		// addRandomMessages();
+		this.sex = UserSex.UNKNOWN;// TODO importing sex
+		this.dateOfBirth = new Date();// TODO importing date
+
 	}
 
 	public ExampleItem(ExampleItem item) {
@@ -86,12 +95,13 @@ public class ExampleItem {
 		this.surname = item.surname;
 		this.state = item.state;
 		this.messages = item.messages;
+		this.dateOfBirth = dateOfBirth;
+		this.sex = sex;
 	}
 
 	@Override
 	public String toString() {
-		return "Id: " + id + ", " + name + " " + surname + ", " + email
-				+ ", ConvId: " + conversationIds.get(0);
+		return "Id: " + id + ", " + name + " " + surname + ", " + email;
 	}
 
 	public List<Message> getMessages(long conversationId) {
@@ -130,13 +140,16 @@ public class ExampleItem {
 	public String getEmail() {
 		return email;
 	}
-	public Location getLastLocation(){
+
+	public Location getLastLocation() {
 		return position.get(0).getLocation();
 	}
-	public List<UserLocation> getLocations(){
+
+	public List<UserLocation> getLocations() {
 		return position;
 	}
-	public void setLocations(List<UserLocation> position){
+
+	public void setLocations(List<UserLocation> position) {
 		this.position = position;
 	}
 
@@ -210,5 +223,4 @@ public class ExampleItem {
 		return "drawable://" + R.drawable.loader;
 	}
 
-	
 }

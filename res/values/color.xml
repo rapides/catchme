@@ -2,10 +2,7 @@
 <resources>
 
     <color name="messages_sendBtn_background">@color/background</color>
-    <color name="list_filter_background">@color/color_base </color>
-    <color name="list_filter_underline">#FF33B5E5</color>
-    <color name="list_filter_tab_selected">#AA33B5E5</color>
-    <color name="list_filter_tab_text">#FFEEEEEE</color>
+   
     <color name="item_detail_tab_background">@color/color_base</color>
     <color name="item_detail_tab_underline">@color/color100</color>
     <color name="item_detail_tab_selected">@color/color600</color>

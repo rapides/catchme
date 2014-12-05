@@ -1,10 +1,6 @@
 package com.catchme.loginregister;
 
-import java.util.ArrayList;
-
-import com.catchme.R;
-import com.catchme.contactlist.ItemListActivity;
-import com.catchme.contactlist.ItemListFragment;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.catchme.R;
+import com.catchme.contactlist.ItemListActivity;
+import com.catchme.contactlist.ItemListFragment;
 
 public class RegisterFragment extends Fragment implements OnClickListener,
 		OnTaskCompleted {
@@ -73,7 +73,7 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onTaskCompleted(ArrayList<String> errors) {
+	public void onTaskCompleted(HashMap<Integer, String> errors) {
 		// get storage
 		SharedPreferences preferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
@@ -95,8 +95,8 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 				// not known error
 			} else {
 				String errorsSring = "";
-				for (int i = 0; i < errors.size(); i++) {
-					errorsSring += errors.get(i) + "\n";
+				for (int key:errors.keySet()) {
+					errorsSring += errors.get(key) + "\n";
 				}
 				Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT)
 						.show();

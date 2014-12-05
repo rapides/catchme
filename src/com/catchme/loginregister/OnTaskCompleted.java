@@ -1,7 +1,7 @@
 package com.catchme.loginregister;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface OnTaskCompleted {
-	void onTaskCompleted(ArrayList<String> arrayList);
+	void onTaskCompleted(HashMap<Integer, String> hashMap);
 }

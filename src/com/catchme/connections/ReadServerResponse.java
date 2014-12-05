@@ -5,15 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.catchme.exampleObjects.ExampleItem;
@@ -23,15 +20,18 @@ import com.catchme.exampleObjects.Message;
 import com.catchme.exampleObjects.UserLocation;
 
 public class ReadServerResponse {
-	public static ArrayList<String> getErrors(JSONObject fullResponse) {
-		ArrayList<String> errors = null;
+	public static HashMap<Integer, String> getErrors(JSONObject fullResponse) {
+		HashMap<Integer, String> errors = null;
 		try {
 			if (!isSuccess(fullResponse)) {
-				errors = new ArrayList<String>();
+				errors = new HashMap<Integer, String>();
+				System.out.println(fullResponse);
 				JSONArray a = fullResponse
 						.getJSONArray(ServerConst.ERROR_MESSAGES);
 				for (int i = 0; i < a.length(); i++) {
-					errors.add(a.getString(i));
+					JSONObject error = a.getJSONObject(i);
+					errors.put(error.getInt(ServerConst.ERROR_ID),
+							error.getString(ServerConst.ERROR_CONTENT));
 				}
 			}
 		} catch (JSONException e) {
@@ -46,14 +46,22 @@ public class ReadServerResponse {
 		try {
 			if (isSuccess(fullResponse)) {
 				JSONObject user = fullResponse.getJSONObject(ServerConst.USER);
+				JSONObject personalData = user
+						.getJSONObject(ServerConst.USER_PERSONAL_DATA);
 				long id = user.getLong(ServerConst.USER_ID);
-				String name = user.getString(ServerConst.USER_NAME);
-				String surname = user.getString(ServerConst.USER_SURNAME);
+				String name = personalData
+						.getString(ServerConst.USER_FIRST_NAME);
+				String surname = personalData
+						.getString(ServerConst.USER_LAST_NAME);
+				String dob = personalData
+						.optString(ServerConst.USER_BIRTH_DATE);
+				String sex = personalData.optString(ServerConst.USER_SEX);
 				String email = user.getString(ServerConst.USER_EMAIL);
 				HashMap<String, String> avatars = getAvatarsFromArray(user
 						.getJSONObject(ServerConst.USER_AVATAR));
+
 				logged = new LoggedUser(id, name, surname, email,
-						getToken(fullResponse), avatars);
+						getToken(fullResponse), avatars, sex, dob);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -112,9 +120,11 @@ public class ReadServerResponse {
 		ContactStateType state = adjustState(o.getInt(ServerConst.USER_STATE),
 				stateGlobal);
 		JSONObject user = o.getJSONObject(ServerConst.USER);
+		JSONObject personalData = user
+				.getJSONObject(ServerConst.USER_PERSONAL_DATA);
 		long id = o.getLong(ServerConst.USER_ID);
-		String name = user.getString(ServerConst.USER_NAME);
-		String surname = user.getString(ServerConst.USER_SURNAME);
+		String name = personalData.getString(ServerConst.USER_FIRST_NAME);
+		String surname = personalData.getString(ServerConst.USER_LAST_NAME);
 		String email = user.getString(ServerConst.USER_EMAIL);
 		JSONArray jsonArray = o.getJSONArray(ServerConst.USER_CONVERSATIONS);
 		ArrayList<Long> conv_ids = new ArrayList<Long>();
@@ -123,9 +133,10 @@ public class ReadServerResponse {
 		}
 		HashMap<String, String> avatars = getAvatarsFromArray(user
 				.getJSONObject(ServerConst.USER_AVATAR));
-
+		String dob = personalData.optString(ServerConst.USER_BIRTH_DATE);
+		String sex = personalData.getString(ServerConst.USER_SEX);
 		ExampleItem contact = new ExampleItem(id, name, surname, email, state,
-				conv_ids, avatars);
+				conv_ids, avatars, sex, dob);
 		return contact;
 	}
 
@@ -269,15 +280,15 @@ public class ReadServerResponse {
 					JSONArray coordinates = positionsArray.getJSONObject(i)
 							.getJSONArray(
 									ServerConst.POSITION_RESPONSE_COORDINATES);
-
-					// long contacId = positionsArray.getInt("user");
+					long contacId = positionsArray.getJSONObject(i).optLong(
+							ServerConst.USER_CONTACT_ID);
 					ArrayList<UserLocation> userLocations = new ArrayList<UserLocation>();
 					for (int j = 0; j < coordinates.length(); j++) {
 						UserLocation location = getLocationFromJSONObject(coordinates
 								.getJSONObject(j));
 						userLocations.add(location);
 					}
-					locationList.put((long) i, userLocations);
+					locationList.put(contacId, userLocations);
 				}
 			}
 		} catch (JSONException e) {
