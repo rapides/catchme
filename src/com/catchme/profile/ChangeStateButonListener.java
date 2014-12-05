@@ -1,7 +1,6 @@
 package com.catchme.profile;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -10,7 +9,6 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.LoggedUser;
-import com.google.gson.Gson;
 
 public class ChangeStateButonListener implements OnClickListener {
 
@@ -27,17 +25,12 @@ public class ChangeStateButonListener implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		SharedPreferences preferences = context.getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		Gson gson = new Gson();
-		String json = preferences.getString(ItemListActivity.USER, "");
-		LoggedUser user = gson.fromJson(json, LoggedUser.class);
-		String token = user.getToken();
+		LoggedUser user = ItemListActivity.getLoggedUser(context);
 		if (v == v.getRootView().findViewById(R.id.profile_accept)) {
-			new ChangeContactStateTask(context, listener).execute(token,
+			new ChangeContactStateTask(context, listener).execute(user.getToken(),
 					"" + item.getId(), "" + ContactStateType.ACCEPTED.getIntegerValue());
 		} else if (v == v.getRootView().findViewById(R.id.profile_reject)) {
-			new ChangeContactStateTask(context, listener).execute(token,
+			new ChangeContactStateTask(context, listener).execute(user.getToken(),
 					"" + item.getId(), "" + ContactStateType.REJECTED.getIntegerValue());
 
 		}

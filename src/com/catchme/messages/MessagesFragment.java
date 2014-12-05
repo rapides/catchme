@@ -46,10 +46,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 		super.onCreate(savedInstanceState);
 		item = ExampleContent.ITEM_MAP.get(getArguments().getLong(
 				ItemDetailsFragment.ARG_ITEM_ID));
-		SharedPreferences preferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		String json = preferences.getString(ItemListActivity.USER, "");
-		user = new Gson().fromJson(json, LoggedUser.class);
+		user = ItemListActivity.getLoggedUser(getActivity());
 		setListnerToRootView();
 	}
 

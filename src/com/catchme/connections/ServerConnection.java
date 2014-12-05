@@ -2,10 +2,12 @@ package com.catchme.connections;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -38,11 +40,10 @@ public class ServerConnection {
 				timeoutConnection);
 		int timeoutSocket = 5000;
 		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-		
-		
+
 		DefaultHttpClient httpclient = new DefaultHttpClient(httpParameters);
 		HttpPost httpost = new HttpPost(url);
-		
+
 		HttpResponse responsePost = null;
 		String response = "";
 		try {
@@ -59,20 +60,17 @@ public class ServerConnection {
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
 			result = new JSONObject(response);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		/*} catch (UnsupportedEncodingException e) {
-			Log.e("JSON Parse error", e.getMessage());
+		} catch (UnsupportedEncodingException e) {
+			Log.e("ConnectionError", e.getMessage());
 		} catch (ClientProtocolException e) {
 			Log.e("ConnectionError", e.getMessage());
 		} catch (IOException e) {
 			Log.e("ConnectionError", e.getMessage());
 		} catch (ParseException e) {
-			Log.e("JSON Parse error", e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		} catch (JSONException e) {
-			Log.e("JSON Parse error", e.getMessage());
-		}*/
+			Log.e("ConnectionError", e.getMessage());
+		}
 
 		return result;
 	}
@@ -106,7 +104,6 @@ public class ServerConnection {
 			return new JSONObject(EntityUtils.toString(responseGet.getEntity()));
 		} catch (Exception e) {
 			Log.e("ConnectionError", responseGet + "\n" + e.getMessage());
-			// e.printStackTrace();
 		}
 		return new JSONObject();
 	}
@@ -146,7 +143,6 @@ public class ServerConnection {
 			Map<String, String> header) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpPost postMethod = new HttpPost(url);
-
 		JSONObject result = new JSONObject();
 		try {
 			JSONObject jsonObject = constructPictureJson(filePath);
@@ -181,13 +177,14 @@ public class ServerConnection {
 		JSONObject request = new JSONObject();
 		JSONObject user = new JSONObject();
 		JSONObject avatar = new JSONObject();
-		/*avatar.put("user_id", "1");
-		avatar.put("folder_id", "1"); 
-        avatar.put("picture_name", "picture name");
-        avatar.put("picture_description", "1"); 
-        avatar.put("content_type", "jpg");
-        avatar.put("original_filename", "base64:"+file[file.length-1]);*/
-		avatar.put("filename", file[file.length-1]);
+		/*
+		 * avatar.put("user_id", "1"); avatar.put("folder_id", "1");
+		 * avatar.put("picture_name", "picture name");
+		 * avatar.put("picture_description", "1"); avatar.put("content_type",
+		 * "jpg"); avatar.put("original_filename",
+		 * "base64:"+file[file.length-1]);
+		 */
+		avatar.put("filename", file[file.length - 1]);
 		avatar.put("data", encodePicture(fileName));
 		user.put("avatar", avatar);
 		request.put("user", user);
@@ -196,6 +193,7 @@ public class ServerConnection {
 
 	private static String encodePicture(String fileName) throws IOException {
 		File picture = new File(fileName);
-		return Base64.encodeToString(FileUtils.readFileToByteArray(picture),Base64.DEFAULT);
+		return Base64.encodeToString(FileUtils.readFileToByteArray(picture),
+				Base64.DEFAULT);
 	}
 }

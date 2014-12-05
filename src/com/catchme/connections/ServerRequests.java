@@ -16,7 +16,7 @@ import android.util.Log;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 
 public class ServerRequests {
-	public static JSONObject getPositions(String token,
+	public static JSONObject getLocations(String token,
 			ArrayList<String> contactIds, int number) {
 		return ServerConnection.JsonPOST(ServerConst.URL_POSITIONS_GET,
 				buildGetPositionsRequest(contactIds, number), getHeader(token));

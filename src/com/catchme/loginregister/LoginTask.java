@@ -3,8 +3,6 @@ package com.catchme.loginregister;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -16,7 +14,6 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.LoggedUser;
-import com.google.gson.Gson;
 
 public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
@@ -65,13 +62,7 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 				Toast.makeText(context,
 						"Success! Logged user: " + user.getFullName(),
 						Toast.LENGTH_SHORT).show();
-				SharedPreferences preferences = context.getSharedPreferences(
-						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-				Editor e = preferences.edit();
-				Gson gsonUser = new Gson();
-				String json = gsonUser.toJson(user);
-				e.putString(ItemListActivity.USER, json);
-				e.commit();
+				ItemListActivity.setLoggedUser(context, user);
 				listener.onTaskCompleted(null);
 			} else {
 				/*

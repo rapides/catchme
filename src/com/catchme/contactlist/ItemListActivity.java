@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.BitmapFactory.Options;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.catchme.messages.MessagesFragment;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -96,7 +98,6 @@ public class ItemListActivity extends FragmentActivity implements
 			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime(), INTERVAL, pi);
-
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
 		} else {
@@ -174,6 +175,24 @@ public class ItemListActivity extends FragmentActivity implements
 			// getActionBar().setDisplayHomeAsUpEnabled(false);
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	public static LoggedUser getLoggedUser(Context context) {
+
+		 SharedPreferences sharedpreferences = context.getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		String json = sharedpreferences.getString(ItemListActivity.USER, "");
+		return new Gson().fromJson(json, LoggedUser.class);
+	}
+
+	public static void setLoggedUser(Context context, LoggedUser user) {
+		SharedPreferences preferences = context.getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		Editor e = preferences.edit();
+		Gson gsonUser = new Gson();
+		String json = gsonUser.toJson(user);
+		e.putString(ItemListActivity.USER, json);
+		e.commit();
 	}
 
 }

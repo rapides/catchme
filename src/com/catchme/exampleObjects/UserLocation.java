@@ -2,13 +2,14 @@ package com.catchme.exampleObjects;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Locale;
 
 import com.catchme.connections.ServerConst;
 
 import android.location.Location;
 
-public class UserLocation {
+public class UserLocation implements Comparable<UserLocation>{
 	private float accuracy;
 	private double latitude;
 	private double longitude;
@@ -50,6 +51,15 @@ public class UserLocation {
 	public String toString() {
 		return "[" + latitude + "," + longitude + "], " + accuracy + ", "
 				+ fixTime;
+	}
+
+	
+
+	@Override
+	public int compareTo(UserLocation another) {
+		Long time1 = this.fixTime;
+		Long time2 = another.fixTime;
+		return time2.compareTo(time1);
 	}
 
 }

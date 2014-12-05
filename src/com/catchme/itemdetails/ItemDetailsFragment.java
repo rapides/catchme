@@ -65,8 +65,8 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		btnMapTab.setOnClickListener(this);
 		viewPager.setOnPageChangeListener(this);
 		viewPager.setOffscreenPageLimit(2);
-		viewPager.setCurrentItem(0);
-		setUnderlinePos(0, 0);
+		viewPager.setCurrentItem(2);
+		setUnderlinePos(2, 0);
 		loader.setMovieResource(R.drawable.loader);
 		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		new LoadDetailsTask(loader, loaderContainer).execute();

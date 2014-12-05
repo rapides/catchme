@@ -3,7 +3,6 @@ package com.catchme.profile;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -13,9 +12,8 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.LoggedUser;
-import com.google.gson.Gson;
 
-public class UpdateAvatarTask extends AsyncTask<String, Integer, JSONObject> {
+public class UpdateAvatarTask extends AsyncTask<String, Long, JSONObject> {
 	private Context context;
 	ImageUploadingListener listener;
 
@@ -52,15 +50,10 @@ public class UpdateAvatarTask extends AsyncTask<String, Integer, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else if (ReadServerResponse.isSuccess(result)) {
-			SharedPreferences preferences = context.getSharedPreferences(
-					ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-			Gson gson = new Gson();
-			String json = preferences.getString(ItemListActivity.USER, "");
-			LoggedUser user = gson.fromJson(json, LoggedUser.class);
+			
+			LoggedUser user = ItemListActivity.getLoggedUser(context);
 			user.setAvatars(ReadServerResponse.updateAvatars(result));
-			preferences.edit()
-					.putString(ItemListActivity.USER, new Gson().toJson(user))
-					.commit();
+			ItemListActivity.setLoggedUser(context, user);
 
 			listener.onImageUploaded();
 		} else {
@@ -69,8 +62,9 @@ public class UpdateAvatarTask extends AsyncTask<String, Integer, JSONObject> {
 	}
 
 	@Override
-	protected void onProgressUpdate(Integer... progress) {
-		// TODO Auto-generated method stub
-
+	protected void onProgressUpdate(Long... progress) {
+		listener.onProgressUpdate(progress[0]);
 	}
+
+	
 }

@@ -32,10 +32,10 @@ import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
-import com.google.gson.Gson;
 
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnQueryTextListener,
@@ -49,9 +49,9 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;
 	private ActionBarDrawerToggle drawerToggle;
-	private SharedPreferences sharedpreferences;
 	private FloatingActionButton fab;
 	private LoggedUser user;
+	private SharedPreferences sharedpreferences;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -83,11 +83,10 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
+
+		user = ItemListActivity.getLoggedUser(getActivity());
 		sharedpreferences = getActivity().getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		String json = sharedpreferences.getString(ItemListActivity.USER, "");
-		user = new Gson().fromJson(json, LoggedUser.class);
-
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 
 		swipeLayout = (SwipeRefreshLayout) rootView
@@ -101,7 +100,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				new ArrayList<ExampleItem>()));
 
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				swipeLayout, listView, user));
+				swipeLayout, listView));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);

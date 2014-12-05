@@ -1,9 +1,7 @@
 package com.catchme.profile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -29,7 +27,6 @@ import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
-import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemProfileFragment extends Fragment implements
@@ -51,7 +48,7 @@ public class ItemProfileFragment extends Fragment implements
 
 		if (getArguments() == null) {
 			isLoggedUser = true;
-			item = readLoggedUser();
+			item = ItemListActivity.getLoggedUser(getActivity());
 		} else {
 			isLoggedUser = false;
 			long itemId = getArguments().getLong(
@@ -111,23 +108,15 @@ public class ItemProfileFragment extends Fragment implements
 		return rootView;
 	}
 
-	private LoggedUser readLoggedUser() {
-		Gson gson = new Gson();
-		String json = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE).getString(
-				ItemListActivity.USER, "");
-		return gson.fromJson(json, LoggedUser.class);
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home: {
-			getActivity().dispatchKeyEvent(
-					new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-			getActivity().onBackPressed();
-			return true;
-		}
+			case android.R.id.home: {
+				getActivity().dispatchKeyEvent(
+						new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+				getActivity().onBackPressed();
+				return true;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 
@@ -163,7 +152,7 @@ public class ItemProfileFragment extends Fragment implements
 			Uri uri = data.getData();
 			String imageFilePath = null;
 			if (uri.getScheme().equals("content")) {// fromGallery
-				
+
 				// User had pick an image.
 				Cursor cursor = getActivity()
 						.getContentResolver()
@@ -178,6 +167,7 @@ public class ItemProfileFragment extends Fragment implements
 			} else {
 				imageFilePath = uri.getSchemeSpecificPart();
 			}
+			Toast.makeText(getActivity(), "DEBUG: "+imageFilePath, Toast.LENGTH_SHORT).show();
 			new UpdateAvatarTask(this.getActivity(), this).execute(
 					((LoggedUser) item).getToken(), imageFilePath);
 		}
@@ -190,14 +180,13 @@ public class ItemProfileFragment extends Fragment implements
 	}
 
 	@Override
-	public void onProgressUpdate(int value) {
+	public void onProgressUpdate(long value) {
 		// TODO no idea how it work
 	}
 
 	@Override
 	public void onImageUploaded() {
-		// TODO refreshImages in navigation drawer and main image
-		item = readLoggedUser();
+		item = ItemListActivity.getLoggedUser(getActivity());
 		ImageLoader.getInstance().displayImage(item.getLargeImage(), itemImage);
 		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
 	}

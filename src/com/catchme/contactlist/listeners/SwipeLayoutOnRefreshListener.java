@@ -18,15 +18,13 @@ import com.catchme.exampleObjects.LoggedUser;
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	SwipeRefreshLayout swipeLayout;
 	ListView listView;
-	private LoggedUser user;
 	private Context context;
 
 	public SwipeLayoutOnRefreshListener(SwipeRefreshLayout swipeLayout,
-			ListView listView, LoggedUser user) {
+			ListView listView) {
 		super();
 		this.swipeLayout = swipeLayout;
 		this.listView = listView;
-		this.user = user;
 		this.context = listView.getContext();
 	}
 
@@ -37,6 +35,7 @@ public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, 1);
 		new GetContactsTask(swipeLayout,
 				(CustomListAdapter) listView.getAdapter(),
-				ContactStateType.getStateType(val)).execute(user.getToken());
+				ContactStateType.getStateType(val)).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
 	}
 }

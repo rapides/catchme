@@ -142,7 +142,11 @@ public class ExampleItem {
 	}
 
 	public Location getLastLocation() {
-		return position.get(0).getLocation();
+		if (position != null && position.size() > 0) {
+			return position.get(0).getLocation();
+		}else{
+			return null;
+		}
 	}
 
 	public List<UserLocation> getLocations() {

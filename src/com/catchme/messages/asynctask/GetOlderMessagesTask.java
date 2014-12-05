@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ListView;
@@ -20,7 +19,6 @@ import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.exampleObjects.Message;
 import com.catchme.messages.MessagesListAdapter;
-import com.google.gson.Gson;
 
 public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private MessagesListAdapter adapter;
@@ -54,11 +52,7 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	@Override
 	protected JSONObject doInBackground(Long... params) {
 		long oldestMessageId = params[0];
-		SharedPreferences preferences = context.getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		Gson gson = new Gson();
-		String json = preferences.getString(ItemListActivity.USER, "");
-		LoggedUser user = gson.fromJson(json, LoggedUser.class);
+		LoggedUser user = ItemListActivity.getLoggedUser(context);
 		String token = user.getToken();
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
