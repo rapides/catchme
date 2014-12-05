@@ -140,7 +140,9 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		new GetContactsTask(swipeLayout,
 				(CustomListAdapter) listView.getAdapter(),
 				ContactStateType.getStateType(sharedpreferences.getInt(
-						SELECTED_FILTER, ContactStateType.ACCEPTED.getIntegerValue()))).execute(user.getToken());
+						SELECTED_FILTER,
+						ContactStateType.ACCEPTED.getIntegerValue())))
+				.execute(user.getToken());
 		return rootView;
 	}
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -86,15 +87,12 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	private void setUnderlinePos(int position, float positionOffset) {
 		LayoutParams params = (LayoutParams) tabUnderline.getLayoutParams();
 		int tabCount = viewPager.getAdapter().getCount();
-		int sum = btnProfileTab.getWidth() + btnMessagesTab.getWidth()
-				+ btnMapTab.getWidth() + 2 * tabCount;
-		params.leftMargin = (int) (position * sum / tabCount + positionOffset
-				/ tabCount);
-		if (sum < 100) {
-			params.width = 180;// no idea why getWidth() returns 0
-		} else {
-			params.width = sum / tabCount;
-		}
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay()
+				.getMetrics(displaymetrics);
+		params.leftMargin = (int) (position * displaymetrics.widthPixels
+				/ tabCount + positionOffset / tabCount);
+		params.width = displaymetrics.widthPixels / tabCount;
 		tabUnderline.setLayoutParams(params);
 	}
 
@@ -114,10 +112,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onPageSelected(int position) {
-		if (position == 1) {
-			Toast.makeText(getActivity(), "selected tab 1", Toast.LENGTH_SHORT)
-					.show();
-		}
+
 	}
 
 	@Override
