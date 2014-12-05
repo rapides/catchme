@@ -3,6 +3,7 @@ package com.catchme.connections;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -269,7 +270,7 @@ public class ReadServerResponse {
 		return date;
 	}
 
-	public static HashMap<Long, ArrayList<UserLocation>> getPositions(
+	public static HashMap<Long, ArrayList<UserLocation>> getLocations(
 			JSONObject fullResponse) {
 		HashMap<Long, ArrayList<UserLocation>> locationList = new HashMap<Long, ArrayList<UserLocation>>();
 		try {
@@ -287,6 +288,7 @@ public class ReadServerResponse {
 						UserLocation location = getLocationFromJSONObject(coordinates
 								.getJSONObject(j));
 						userLocations.add(location);
+						Collections.sort(userLocations);
 					}
 					locationList.put(contacId, userLocations);
 				}
