@@ -43,6 +43,10 @@
     <color name="message_timestamp">#7F000000</color>
     <color name="message_sent_stroke">#20000000</color>
     
+    <color name="map_circle_fill">#44cccffe</color>
+    <color name="map_circle_stroke">#66cccffe</color>
+    <color name="map_line">@color/color200</color>
+    
     <color name="color_base">@color/color600</color>
     <color name="color50">#e8eaf6</color>
     <color name="color100">#c5cae9</color>

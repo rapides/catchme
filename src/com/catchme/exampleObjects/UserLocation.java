@@ -2,12 +2,11 @@ package com.catchme.exampleObjects;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Locale;
 
-import com.catchme.connections.ServerConst;
-
 import android.location.Location;
+
+import com.catchme.connections.ServerConst;
 
 public class UserLocation implements Comparable<UserLocation>{
 	private float accuracy;
@@ -22,6 +21,38 @@ public class UserLocation implements Comparable<UserLocation>{
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.fixTime = getTimeFromString(fixTime);
+	}
+
+	public float getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(float accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public long getFixTime() {
+		return fixTime;
+	}
+
+	public void setFixTime(long fixTime) {
+		this.fixTime = fixTime;
 	}
 
 	public Location getLocation() {

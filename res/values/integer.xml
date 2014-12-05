@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="integer" name="max_length">110</item>
+    <item type="integer" name="map_line_width">5</item>
+    <item type="integer" name="map_circle_stroke_width">3</item>
     
 </resources>

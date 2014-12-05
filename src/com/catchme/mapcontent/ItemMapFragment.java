@@ -2,12 +2,7 @@ package com.catchme.mapcontent;
 
 import java.util.HashMap;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,19 +12,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.connections.ServerConnection;
+import com.catchme.R.color;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.exampleObjects.UserLocation;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	MapView mapView;
@@ -89,46 +88,6 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 		mapView.onLowMemory();
 	}
 
-	private class GeocodeTask extends AsyncTask<String, Void, Location> {
-
-		@Override
-		protected Location doInBackground(String... params) {
-			String query = "http://maps.googleapis.com/maps/api/geocode/json?address="
-					+ params[0] + "&sensor=true";
-
-			JSONObject json = ServerConnection.GET(query, null);
-			;
-			Location l = new Location("Google Maps");
-			try {
-				JSONArray articles = json.getJSONArray("results");
-
-				l.setLatitude(articles.getJSONObject(0)
-						.getJSONObject("geometry").getJSONObject("location")
-						.getDouble("lat"));
-				l.setLongitude(articles.getJSONObject(0)
-						.getJSONObject("geometry").getJSONObject("location")
-						.getDouble("lng"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-			return l;
-		}
-
-		@Override
-		protected void onPostExecute(Location address) {
-			LatLng location = new LatLng(address.getLatitude(),
-					address.getLongitude());
-			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-					location, 10);
-			map.clear();
-			map.animateCamera(cameraUpdate);
-			map.addMarker(new MarkerOptions().title(mItem.getFullName())
-					.snippet("Last seen: somewhen").position(location));
-
-		}
-	}
-
 	@Override
 	public void locationsUpdated() {
 		Location lastLocation = mItem.getLastLocation();
@@ -136,18 +95,59 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 			LatLng location = new LatLng(lastLocation.getLatitude(),
 					lastLocation.getLongitude());
 			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-					location, 10);
+					location, 16);
+
 			map.clear();
+			map.addPolyline(getPolilyne());
+			map.addCircle(getCircle());
 			map.animateCamera(cameraUpdate);
-			map.addMarker(new MarkerOptions()
-					.title(mItem.getFullName())
-					.snippet(
-							"Last seen "
-									+ getTimeAgo(System.currentTimeMillis()
-											- lastLocation.getTime()))
-					.position(location));
+			map.addMarker(
+					new MarkerOptions()
+							.title(mItem.getFullName())
+							.snippet(
+									"Last seen "
+											+ getTimeAgo(System
+													.currentTimeMillis()
+													- lastLocation.getTime()))
+							.position(location)).showInfoWindow();
 		}
 
+	}
+
+	private CircleOptions getCircle() {
+		CircleOptions circleOptions = new CircleOptions();
+		return circleOptions
+				.center(new LatLng(mItem.getLastLocation().getLatitude(), mItem
+						.getLastLocation().getLongitude()))
+				.radius(mItem.getLastLocation().getAccuracy())
+				.strokeColor(getResources().getColor(color.map_circle_stroke))
+				.strokeWidth(
+						getResources().getInteger(
+								R.integer.map_circle_stroke_width))
+		.fillColor(getResources().getColor(color.map_circle_fill));
+
+	}
+
+	private PolylineOptions getPolilyne() {
+		PolylineOptions rectOptions = new PolylineOptions();
+		for (UserLocation l : mItem.getLocations()) {
+			LatLng locTemp = new LatLng(l.getLatitude(), l.getLongitude());
+			rectOptions.add(locTemp);
+			map.addMarker(new MarkerOptions()
+					.icon(BitmapDescriptorFactory
+							.fromResource(R.drawable.ic_action_place))
+					.position(locTemp)
+					.flat(false)
+					.title("History")
+					.snippet(
+							"Seen here "
+									+ getTimeAgo(System.currentTimeMillis()
+											- l.getFixTime())));
+
+		}
+		return rectOptions.color(getResources().getColor(color.map_line))
+				.width(getResources().getInteger(R.integer.map_line_width))
+				.geodesic(true);
 	}
 
 	private String getTimeAgo(long l) {
