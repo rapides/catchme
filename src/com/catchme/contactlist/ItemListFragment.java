@@ -314,22 +314,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	}
 
 	private void openSortMenu() {
-		if (popup == null) {
-			popup = new PopupMenu(getActivity(), getActivity().findViewById(
-					R.id.action_filter));
-			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
-			popup.setOnMenuItemClickListener(this);
-			popup.getMenu().getItem(1).setChecked(true);
-		} else {
-			ContactStateType state = ContactStateType
-					.getStateType(sharedpreferences.getInt(SELECTED_FILTER, 1));
-			popup.getMenu().getItem(state.getMenuPosition()).setChecked(true);// +1
-																				// because
-																				// model
-			// doesn't handle ALL
-			// filter
-		}
-
+		popup = new PopupMenu(getActivity(), getActivity().findViewById(
+				R.id.action_filter));
+		popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
+		popup.setOnMenuItemClickListener(this);
+		ContactStateType state = ContactStateType
+				.getStateType(sharedpreferences.getInt(SELECTED_FILTER, 1));
+		popup.getMenu().getItem(state.getMenuPosition()).setChecked(true);
 		popup.show();
 	}
 
