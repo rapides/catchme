@@ -1,5 +1,7 @@
 package com.catchme.mapcontent;
 
+import java.util.HashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,11 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.connections.ServerConnection;
+import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,13 +31,14 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class ItemMapFragment extends Fragment {
+public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	MapView mapView;
 	GoogleMap map;
 	View rootView;
 
 	private long itemId;
 	private ExampleItem mItem;
+	private LoggedUser user;
 
 	public ItemMapFragment() {
 	}
@@ -52,17 +58,16 @@ public class ItemMapFragment extends Fragment {
 		mapView = (MapView) rootView.findViewById(R.id.mapview);
 		mapView.onCreate(savedInstanceState);
 		map = mapView.getMap();
-		//map.getUiSettings().setMyLocationButtonEnabled(true);
-		//map.setMyLocationEnabled(true);
+		user = ItemListActivity.getLoggedUser(getActivity());
+		map.getUiSettings().setMyLocationButtonEnabled(true);
+		map.setMyLocationEnabled(true);
+		MapsInitializer.initialize(getActivity());
 
-		MapsInitializer.initialize(this.getActivity());
-
-		if (mItem != null) {
-			updateView(mItem.getId());
-		} else {
-			updateView(-1);
-		}
-
+		((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
+				.getFullName());
+		ItemListActivity.getLoggedUser(getActivity());
+		new LoadLocationsTask(getActivity(), this).execute(user.getToken(),
+				"" + 10, "" + mItem.getId());
 		return rootView;
 	}
 
@@ -84,20 +89,6 @@ public class ItemMapFragment extends Fragment {
 		mapView.onLowMemory();
 	}
 
-	public void updateView(long id) {
-		if (id < 0) {
-			((TextView) rootView.findViewById(R.id.item_detail))
-					.setText("TODO");
-			new GeocodeTask().execute("Wroclaw");
-		} else {
-			((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
-					.getFullName());
-			// new GeocodeTask().execute(mItem.getCity());
-		}
-	}
-
-	
-
 	private class GeocodeTask extends AsyncTask<String, Void, Location> {
 
 		@Override
@@ -105,8 +96,8 @@ public class ItemMapFragment extends Fragment {
 			String query = "http://maps.googleapis.com/maps/api/geocode/json?address="
 					+ params[0] + "&sensor=true";
 
-			 
-			JSONObject json = ServerConnection.GET(query, null);;
+			JSONObject json = ServerConnection.GET(query, null);
+			;
 			Location l = new Location("Google Maps");
 			try {
 				JSONArray articles = json.getJSONArray("results");
@@ -136,5 +127,48 @@ public class ItemMapFragment extends Fragment {
 					.snippet("Last seen: somewhen").position(location));
 
 		}
+	}
+
+	@Override
+	public void locationsUpdated() {
+		Location lastLocation = mItem.getLastLocation();
+		if (lastLocation != null) {
+			LatLng location = new LatLng(lastLocation.getLatitude(),
+					lastLocation.getLongitude());
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+					location, 10);
+			map.clear();
+			map.animateCamera(cameraUpdate);
+			map.addMarker(new MarkerOptions()
+					.title(mItem.getFullName())
+					.snippet(
+							"Last seen "
+									+ getTimeAgo(System.currentTimeMillis()
+											- lastLocation.getTime()))
+					.position(location));
+		}
+
+	}
+
+	private String getTimeAgo(long l) {
+		int seconds = (int) (l / 1000);
+		int minutes = seconds / 60;
+		int hours = minutes / 60;
+		int days = hours / 24;
+		if (seconds < 60) {
+			return seconds + " seconds ago";
+		} else if (minutes < 60) {
+			return minutes + " minutes ago";
+		} else if (hours < 24) {
+			return hours + " hours ago";
+		} else {
+			return days + " days ago";
+		}
+	}
+
+	@Override
+	public void locationsError(HashMap<Integer, String> errors) {
+		Toast.makeText(getActivity(), errors.toString(), Toast.LENGTH_SHORT)
+				.show();
 	}
 }
