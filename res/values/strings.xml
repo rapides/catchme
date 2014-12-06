@@ -42,5 +42,6 @@
     
     <string name="goto_register">Register</string>
     <string name="profile_reject">Reject</string>
+    <string name="new_messages">new messages</string>
 
 </resources>

@@ -205,6 +205,7 @@ public class ItemListActivity extends FragmentActivity implements
 	}
 
 	public static void removeLoggedUser(Context context) {
+		context.stopService(new Intent(context, MessagesRefreshService.class));
 		SharedPreferences preferences = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		Editor e = preferences.edit();
