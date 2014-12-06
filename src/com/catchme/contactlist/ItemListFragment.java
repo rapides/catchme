@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -32,9 +33,12 @@ import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
+import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.messages.MessagesRefreshService;
 import com.catchme.utils.FloatingActionButton;
 
 @SuppressWarnings("deprecation")
@@ -96,7 +100,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
 
-		
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				new ArrayList<ExampleItem>()));
 
@@ -152,7 +155,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				listView.getCheckedItemPositions().keyAt(position));
 		listView.setItemChecked(position, !isChecked);
 		// View itemView = getViewByPosition(position);
-
 
 		String out = "";
 		for (int i = 0; i < listView.getCheckedItemPositions().size(); i++) {
@@ -274,6 +276,23 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		Bundle data = getActivity().getIntent().getExtras();
+		if (data != null && data.containsKey(MessagesRefreshService.ITEM_ID)) {
+			long itemId = data.getLong(MessagesRefreshService.ITEM_ID);
+			Bundle arguments = new Bundle();
+			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, itemId);
+			ItemDetailsFragment frag = new ItemDetailsFragment();
+			frag.setArguments(arguments);
+			FragmentTransaction transaction = getActivity()
+					.getSupportFragmentManager().beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+			getActivity().setTitle(
+					ExampleContent.ITEM_MAP.get(itemId).getFullName());
+		}
 	}
 
 	@Override

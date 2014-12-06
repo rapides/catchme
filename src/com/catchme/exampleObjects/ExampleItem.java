@@ -3,6 +3,7 @@ package com.catchme.exampleObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.location.Location;
@@ -107,7 +108,7 @@ public class ExampleItem {
 		return messages.get(conversationId);
 	}
 
-	public long getNewestMessage(long conversationId) {
+	public long getNewestMessageId(long conversationId) {
 		if (messages.size() > 0 && messages.get(conversationId).size() > 0) {
 			return messages.get(conversationId)
 					.get(messages.get(conversationId).size() - 1)
@@ -117,7 +118,16 @@ public class ExampleItem {
 		}
 	}
 
-	public long getOldestMessage(long conversationId) {
+	public Message getNewestMessage(long conversationId) {
+		if (messages.size() > 0 && messages.get(conversationId).size() > 0) {
+			return messages.get(conversationId).get(
+					messages.get(conversationId).size() - 1);
+		} else {
+			return null;
+		}
+	}
+
+	public long getOldestMessageId(long conversationId) {
 		if (messages != null && messages.size() > 0) {
 			return messages.get(conversationId).get(0).getMessageId();
 		} else {
@@ -241,6 +251,16 @@ public class ExampleItem {
 
 	public void setMessages(LongSparseArray<List<Message>> allMessages) {
 		this.messages = allMessages;
+	}
+
+	public LinkedList<Message> getLastMessages(long conversationId,
+			int messagesCount) {
+		LinkedList<Message> result = new LinkedList<Message>();
+		for (int i = 1; i <= messagesCount; i++) {
+			result.add(messages.get(conversationId).get(
+					messages.get(conversationId).size() - i));
+		}
+		return result;
 	}
 
 }

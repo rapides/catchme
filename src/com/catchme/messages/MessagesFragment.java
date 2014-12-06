@@ -189,7 +189,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 				&& visibleItemCount > 0) {
 			long conversationId = item.getFirstConversationId();
 			new GetOlderMessagesTask(getActivity(), item, this).execute(
-					conversationId, item.getOldestMessage(conversationId));
+					conversationId, item.getOldestMessageId(conversationId));
 		}
 	}
 

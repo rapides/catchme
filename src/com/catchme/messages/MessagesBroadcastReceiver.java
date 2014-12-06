@@ -14,6 +14,7 @@ public class MessagesBroadcastReceiver extends BroadcastReceiver {
 
 	private NewerMessagesListener messageListener;
 
+	
 	public MessagesBroadcastReceiver(NewerMessagesListener listener) {
 		super();
 		this.messageListener = listener;

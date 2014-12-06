@@ -1,6 +1,7 @@
 package com.catchme.contactlist;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -43,8 +44,7 @@ public class ItemListActivity extends FragmentActivity implements
 	public static final String MODEL_VERSION = "model_version";
 	public static final int CURRENT_VERSION = 1;
 	private static final int GPS_INTERVAL = 300000;// ms
-	private static final int MESSAGES_INTERVAL_SHORT = 5000;// ms
-	private static final int MESSAGES_INTERVAL_LONG = 300000;// ms
+	public static final int NOTIFICATION_ID = 17;
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -106,7 +106,6 @@ public class ItemListActivity extends FragmentActivity implements
 					SystemClock.elapsedRealtime(), GPS_INTERVAL, pi);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
-
 		} else {
 			getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 					.edit()
@@ -220,7 +219,7 @@ public class ItemListActivity extends FragmentActivity implements
 		stopService(new Intent(this, MessagesRefreshService.class));
 		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
 		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-				MESSAGES_INTERVAL_LONG);
+				MessagesRefreshService.MESSAGES_INTERVAL_LONG);
 		startService(messageIntent);
 		super.onPause();
 	}
@@ -230,8 +229,10 @@ public class ItemListActivity extends FragmentActivity implements
 		stopService(new Intent(this, MessagesRefreshService.class));
 		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
 		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-				MESSAGES_INTERVAL_SHORT);
+				MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
 		startService(messageIntent);
+		NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nMgr.cancelAll();
 		super.onResume();
 	}
 
