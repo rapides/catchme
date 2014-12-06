@@ -1,7 +1,5 @@
 package com.catchme.messages.interfaces;
 
-import com.catchme.exampleObjects.Message;
-
 import android.support.v4.util.LongSparseArray;
 
 public interface NewerMessagesListener {

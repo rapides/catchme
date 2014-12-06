@@ -6,7 +6,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleItem;
@@ -29,6 +29,9 @@ public class MessagesRefreshService extends IntentService implements
 	public static final String BROADCAST_ERROR = "error message";
 	public static final String BROADCAST_NEW_MESSAGE = "new message";
 	public static final String ERROR_ARRAY = "errors";
+	public static final String REFRESH_TIME = "refreshTime";
+
+	private static int refreshTime = 5000;
 
 	public MessagesRefreshService() {
 		super(SERVICE_NAME);
@@ -38,12 +41,14 @@ public class MessagesRefreshService extends IntentService implements
 	public void onCreate() {
 		super.onCreate();
 		isDestroyed = false;
-		Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		refreshTime = intent.getIntExtra(REFRESH_TIME, 49000);
 		while (!isDestroyed) {
+			Log.d("MessageService", "Working in bacground. Refresh time: "
+					+ refreshTime);
 			if (ExampleContent.ITEM_MAP != null) {
 				for (int i = 0; i < ExampleContent.ITEM_MAP.size(); i++) {
 					ExampleItem item = ExampleContent.ITEM_MAP.valueAt(i);
@@ -62,9 +67,8 @@ public class MessagesRefreshService extends IntentService implements
 				}
 			}
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(refreshTime);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -77,7 +81,6 @@ public class MessagesRefreshService extends IntentService implements
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "Service Destroyed", Toast.LENGTH_SHORT).show();
 		isDestroyed = true;
 		super.onDestroy();
 	}
@@ -89,7 +92,7 @@ public class MessagesRefreshService extends IntentService implements
 	@Override
 	public void onGetMessagesCompleted(long itemId, long conversationId,
 			int moreMessagesCount) {
-		//sendNewMessageBroadcast(itemId, conversationId, moreMessagesCount);
+		// sendNewMessageBroadcast(itemId, conversationId, moreMessagesCount);
 	}
 
 	@Override

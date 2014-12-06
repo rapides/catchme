@@ -53,17 +53,13 @@ public class GetMessagesInitTask extends AsyncTask<Long, Void, JSONObject> {
 
 	@Override
 	protected void onPostExecute(JSONObject result) {
-
-		System.out.println("Done");
 		if (result == null) {
 			Toast.makeText(context,
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 			listener.onGetMessagesError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-
 			ArrayList<Message> messages = ReadServerResponse.getMessagesList(result);
-			System.out.println("Succes: "+messages.size());
 			item.addOlderMessages(conversationId, messages);
 			listener.onGetMessagesCompleted(item.getId(), conversationId, messages.size());
 		} else {

@@ -2,8 +2,6 @@ package com.catchme.messages.interfaces;
 
 import android.support.v4.util.LongSparseArray;
 
-import com.catchme.exampleObjects.Message;
-
 public interface GetMessagesListener {
 
 	void onPreGetMessages();

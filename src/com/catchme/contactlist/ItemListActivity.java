@@ -42,7 +42,9 @@ public class ItemListActivity extends FragmentActivity implements
 	public static final String USER = "user";
 	public static final String MODEL_VERSION = "model_version";
 	public static final int CURRENT_VERSION = 1;
-	private static final int INTERVAL = 300000;// ms
+	private static final int GPS_INTERVAL = 300000;// ms
+	private static final int MESSAGES_INTERVAL_SHORT = 5000;// ms
+	private static final int MESSAGES_INTERVAL_LONG = 300000;// ms
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -101,7 +103,7 @@ public class ItemListActivity extends FragmentActivity implements
 			i.putExtras(bundle);
 			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime(), INTERVAL, pi);
+					SystemClock.elapsedRealtime(), GPS_INTERVAL, pi);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
 
@@ -213,17 +215,22 @@ public class ItemListActivity extends FragmentActivity implements
 		e.commit();
 	}
 
-
-
 	@Override
 	public void onPause() {
 		stopService(new Intent(this, MessagesRefreshService.class));
+		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+				MESSAGES_INTERVAL_LONG);
+		startService(messageIntent);
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
+		stopService(new Intent(this, MessagesRefreshService.class));
 		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+				MESSAGES_INTERVAL_SHORT);
 		startService(messageIntent);
 		super.onResume();
 	}

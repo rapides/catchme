@@ -69,7 +69,9 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		setUnderlinePos(0, 0);
 		loader.setMovieResource(R.drawable.loader);
 		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		new LoadDetailsTask(loader, loaderContainer).execute();
+		loader.setVisibility(View.GONE);
+		loaderContainer.setVisibility(View.GONE);
+		//new LoadDetailsTask(loader, loaderContainer).execute();
 		return rootView;
 	}
 
