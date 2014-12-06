@@ -1,14 +1,10 @@
-package com.catchme.loginregister;
+package com.catchme.loginregister.asynctasks;
 
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
@@ -17,22 +13,17 @@ import com.catchme.exampleObjects.LoggedUser;
 
 public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
-	private OnTaskCompleted listener;
-	private LoggedUser user;
-	private ProgressBar login_loading;
+	private LoginRegisterInterface listener;
 
-	public LoginTask(Context context, OnTaskCompleted listener,
-			ProgressBar login_loading) {
+	public LoginTask(Context context, LoginRegisterInterface listener) {
 		super();
 		this.context = context;
-		this.login_loading = login_loading;
 		this.listener = listener;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		login_loading.setVisibility(View.VISIBLE);
-		// animaton.setVisible(VIw.Visible);
+		listener.onPreExecute();
 	}
 
 	@Override
@@ -42,7 +33,6 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 			String login = params[0];
 			String password = params[1];
 			result = ServerRequests.getTokenRequest(login, password);
-			user = ReadServerResponse.getLoggedUser(result);
 		} else {
 			result = null;
 		}
@@ -52,25 +42,15 @@ public class LoginTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected void onPostExecute(JSONObject result) {
-		login_loading.setVisibility(View.GONE);
 		if (result == null) {
-			Toast.makeText(context,
-					context.getResources().getString(R.string.err_no_internet),
-					Toast.LENGTH_SHORT).show();
+			listener.onError(null);
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(context,
-						"Success! Logged user: " + user.getFullName(),
-						Toast.LENGTH_SHORT).show();
+				LoggedUser user = ReadServerResponse.getLoggedUser(result);
 				ItemListActivity.setLoggedUser(context, user);
-				listener.onTaskCompleted(null);
+				listener.onCompleted(user);
 			} else {
-				/*
-				 * Toast.makeText(context, "Fail! " +
-				 * ReadServerResponse.getErrors(result),
-				 * Toast.LENGTH_SHORT).show();
-				 */
-				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
+				listener.onError(ReadServerResponse.getErrors(result));
 			}
 		}
 	}

@@ -16,13 +16,16 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.mapcontent.ItemMapFragment;
 import com.catchme.messages.MessagesFragment;
+import com.catchme.messages.MessagesRefreshService;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
@@ -37,6 +40,8 @@ public class ItemListActivity extends FragmentActivity implements
 
 	public final static String PREFERENCES = "com.catchme";
 	public static final String USER = "user";
+	public static final String MODEL_VERSION = "model_version";
+	public static final int CURRENT_VERSION = 1;
 	private static final int INTERVAL = 300000;// ms
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -60,12 +65,12 @@ public class ItemListActivity extends FragmentActivity implements
 				this).defaultDisplayImageOptions(m_options).build();
 		ImageLoader.getInstance().init(config);
 		
+		if (preferences.getInt(MODEL_VERSION, -1) != CURRENT_VERSION) {
+			removeLoggedUser(getApplicationContext());
+		}
+		
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
-				// The detail container view will be present only in the
-				// large-screen layouts (res/values-large and
-				// res/values-sw600dp). If this view is present, then the
-				// activity should be in two-pane mode.
 				mTwoPane = true;
 
 				((ItemListFragment) getSupportFragmentManager()
@@ -101,6 +106,10 @@ public class ItemListActivity extends FragmentActivity implements
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
 		} else {
+			getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+					.edit()
+					.putInt(ItemListActivity.MODEL_VERSION,
+							ItemListActivity.CURRENT_VERSION).commit();
 			LoginFragment loginFragment = new LoginFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
@@ -162,7 +171,8 @@ public class ItemListActivity extends FragmentActivity implements
 				transaction.commit();
 			} else if (item.getState() == ContactStateType.SENT) {
 				Toast.makeText(getApplicationContext(),
-						"This type of contact? Not yet", 0).show();
+						"This type of contact? Not yet", Toast.LENGTH_SHORT)
+						.show();
 			}
 
 		}
@@ -179,7 +189,7 @@ public class ItemListActivity extends FragmentActivity implements
 
 	public static LoggedUser getLoggedUser(Context context) {
 
-		 SharedPreferences sharedpreferences = context.getSharedPreferences(
+		SharedPreferences sharedpreferences = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		String json = sharedpreferences.getString(ItemListActivity.USER, "");
 		return new Gson().fromJson(json, LoggedUser.class);
@@ -193,6 +203,20 @@ public class ItemListActivity extends FragmentActivity implements
 		String json = gsonUser.toJson(user);
 		e.putString(ItemListActivity.USER, json);
 		e.commit();
+	}
+
+	public static void removeLoggedUser(Context context) {
+		SharedPreferences preferences = context.getSharedPreferences(
+				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		Editor e = preferences.edit();
+		e.remove(ItemListActivity.USER);
+		e.commit();
+	}
+
+	@Override
+	public void onStop() {
+		stopService(new Intent(this, MessagesRefreshService.class));
+		super.onStop();
 	}
 
 }

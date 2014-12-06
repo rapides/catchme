@@ -11,9 +11,7 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
 
-;
 
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	SwipeRefreshLayout swipeLayout;

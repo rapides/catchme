@@ -23,11 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
-	private ArrayList<ExampleItem> items;/*
-										 * public static final String[]
-										 * SEARCHTYPES = { "0", "1" }; public
-										 * static final String SEARCHCHAR = ";";
-										 */
+	private ArrayList<ExampleItem> items;
 
 	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
 		this.items = items;
@@ -65,34 +61,12 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		// TextView city = (TextView)
-		// convertView.findViewById(R.id.item_city);
-
-		/*
-		 * TextView lastMsg = (TextView) convertView
-		 * .findViewById(R.id.item_last_message);
-		 */
+		
 
 		ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
 
 		name.setText(item.getFullName());
-		// city.setText(item.getCity());
-		/*
-		 * Message m = item.getMessages(item.getFirstConversationId()).get(
-		 * item.getMessages(item.getFirstConversationId()).size() - 1); if
-		 * (m.getSenderId() % 2 == 0) { lastMsg.setText("> " + m.getContent());
-		 * } else { lastMsg.setText("You: " + m.getContent()); }
-		 */
-		/*
-		 * int maxLength = activity.getResources()
-		 * .getInteger(R.integer.max_length);
-		 */
-		/*
-		 * if (m.getContent().length() > maxLength) {
-		 * 
-		 * lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3) +
-		 * "..."); }
-		 */
+		
 		img.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -100,7 +74,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				// ListView parentListView = (ListView)
 				// v.getParent().getParent();
 				// parentListView.setItemChecked(position, true);
-				// todo image checking
+				//TODO image selecting
 			}
 		});
 		return convertView;
@@ -129,20 +103,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				} else {
 
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
-					/*
-					 * String searchType = constraint.toString().substring(0,
-					 * constraint.toString().indexOf(SEARCHCHAR)); String
-					 * searchQuery = constraint.toString().substring(
-					 * constraint.toString().indexOf(SEARCHCHAR) + 1);
-					 * 
-					 * if (searchType.equals(SEARCHTYPES[0])) { for (int i = 0;
-					 * i < ExampleContent.ITEMS.size(); i++) { ExampleItem
-					 * dataItem = ExampleContent.ITEMS.get(i);
-					 * 
-					 * if (searchQuery .startsWith("" + dataItem.getState())) {
-					 * filteredArrayNames.add(dataItem); } } } else if
-					 * (searchType.equals(SEARCHTYPES[1])) {
-					 */
+					
 					for(Long key:ExampleContent.ITEM_MAP.keySet()){
 						ExampleItem dataItem = ExampleContent.ITEM_MAP.get(key);
 						if (dataItem

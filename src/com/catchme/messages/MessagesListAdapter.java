@@ -111,5 +111,5 @@ public class MessagesListAdapter extends BaseAdapter {
 		messageTime.setLayoutParams(timeParams);
 		return convertView;
 	}
-
+	
 }

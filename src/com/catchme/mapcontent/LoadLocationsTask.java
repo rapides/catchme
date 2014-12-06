@@ -1,12 +1,12 @@
 package com.catchme.mapcontent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.util.LongSparseArray;
 import android.widget.Toast;
 
 import com.catchme.R;
@@ -58,8 +58,9 @@ public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 	}
 
 	private void updateLocations(
-			HashMap<Long, ArrayList<UserLocation>> locations) {
-		for (long key : locations.keySet()) {
+			LongSparseArray<ArrayList<UserLocation>> locations) {
+		for (int i=0;i<locations.size();i++) {
+			long key = locations.keyAt(i);
 			if (key != 0) {
 				ExampleContent.ITEM_MAP.get(key).setLocations(
 						locations.get(key));

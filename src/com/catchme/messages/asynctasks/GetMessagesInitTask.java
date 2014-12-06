@@ -1,4 +1,4 @@
-package com.catchme.messages.asynctask;
+package com.catchme.messages.asynctasks;
 
 import java.util.ArrayList;
 
@@ -6,8 +6,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.catchme.R;
@@ -16,31 +14,25 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.Message;
-import com.catchme.messages.MessagesListAdapter;
+import com.catchme.messages.interfaces.GetMessagesListener;
 
 public class GetMessagesInitTask extends AsyncTask<String, Void, JSONObject> {
-	private MessagesListAdapter adapter;
-	private ListView listView;
-	private SwipeRefreshLayout swipeLatout;
 	private Context context;
-	private ArrayList<Message> messages;
 	private ExampleItem item;
+	GetMessagesListener listener;
 	private long conversationId;
 
-	public GetMessagesInitTask(ListView listView,
-			SwipeRefreshLayout swipeLayout, ExampleItem item) {
+	public GetMessagesInitTask(Context context, ExampleItem item,
+			GetMessagesListener listener) {
 		super();
-		this.listView = listView;
-		this.swipeLatout = swipeLayout;
-		this.adapter = (MessagesListAdapter) listView.getAdapter();
-		this.context = listView.getContext();
 		this.item = item;
-		messages = new ArrayList<Message>();
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		swipeLatout.setRefreshing(true);
+		listener.onPreGetMessages();
 	}
 
 	@Override
@@ -50,7 +42,6 @@ public class GetMessagesInitTask extends AsyncTask<String, Void, JSONObject> {
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesInit(token, conversationId);
-			messages = ReadServerResponse.getMessagesList(result);
 		} else {
 			result = null;
 		}
@@ -63,14 +54,13 @@ public class GetMessagesInitTask extends AsyncTask<String, Void, JSONObject> {
 			Toast.makeText(context,
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
+			listener.onGetMessagesError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
+			ArrayList<Message> messages = ReadServerResponse.getMessagesList(result);
 			item.addOlderMessages(conversationId, messages);
-			listView.setSelection(listView.getFirstVisiblePosition() +messages.size());
+			listener.onGetMessagesCompleted(messages.size());
 		} else {
-			Toast.makeText(context, "Message INIT server error", Toast.LENGTH_SHORT)
-					.show();
+			listener.onGetMessagesError(ReadServerResponse.getErrors(result));
 		}
-		adapter.notifyDataSetChanged();
-		swipeLatout.setRefreshing(false);
 	}
 }

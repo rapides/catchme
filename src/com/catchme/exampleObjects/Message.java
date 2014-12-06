@@ -10,6 +10,7 @@ public class Message {
 	private long messageId;
 	private String content;
 	private Date time;
+	@SuppressWarnings("unused")
 	private ArrayList<Object> readFeeds;
 	
 	public Message(long messageId, String content, Date createdAt, long userId, ArrayList<Object> readFeeds) {

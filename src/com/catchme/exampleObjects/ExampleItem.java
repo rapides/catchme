@@ -3,21 +3,20 @@ package com.catchme.exampleObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.location.Location;
+import android.support.v4.util.LongSparseArray;
 
 import com.catchme.R;
 import com.catchme.connections.ServerConst;
 
 public class ExampleItem {
 	public static final int IMAGE_INVALID = -1;
-	public static final String AVATAR_SMALL = "avatar_small";
-	public static final String AVATAR_BIG = "avatar_big";
-	public static final String AVATAR_MEDIUM = "avatar_medium";
-	public static final String AVATAR_URL = "avatar_url";
+	public static final long AVATAR_SMALL = 0;
+	public static final long AVATAR_MEDIUM = 1;
+	public static final long AVATAR_BIG = 2;
+	public static final long AVATAR_URL = 3;
 
 	public enum UserSex {
 		UNKNOWN, MAN, WOMAN
@@ -64,21 +63,21 @@ public class ExampleItem {
 	private String surname;
 	private String email;
 
-	private Map<Long, List<Message>> messages;
+	private LongSparseArray<List<Message>> messages;
 	private List<UserLocation> position;
 	private List<Long> conversationIds;
-	protected HashMap<String, String> avatars;
+	protected LongSparseArray<String> avatars;
 	private UserSex sex;
 	private Date dateOfBirth;
 
 	public ExampleItem(long id, String name, String surname, String email,
 			ContactStateType state, List<Long> conv_ids,
-			HashMap<String, String> avatars, String sex, String dob) {
+			LongSparseArray<String> avatars, String sex, String dob) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.surname = surname;
-		this.messages = new HashMap<Long, List<Message>>();
+		this.messages = new LongSparseArray<List<Message>>();
 		this.state = state;
 		this.conversationIds = conv_ids;
 		this.avatars = avatars;
@@ -95,8 +94,8 @@ public class ExampleItem {
 		this.surname = item.surname;
 		this.state = item.state;
 		this.messages = item.messages;
-		this.dateOfBirth = dateOfBirth;
-		this.sex = sex;
+		this.dateOfBirth = item.dateOfBirth;
+		this.sex = item.sex;
 	}
 
 	@Override
@@ -110,11 +109,11 @@ public class ExampleItem {
 
 	public long getNewestMessage(long conversationId) {
 		return messages.get(conversationId)
-				.get(messages.get(conversationIds).size() - 1).getMessageId();
+				.get(messages.get(conversationId).size() - 1).getMessageId();
 	}
 
 	public long getOldestMessage(long conversationId) {
-		return messages.get(conversationId).get(0 - 1).getMessageId();
+		return messages.get(conversationId).get(0).getMessageId();
 	}
 
 	public String getName() {
@@ -144,7 +143,7 @@ public class ExampleItem {
 	public Location getLastLocation() {
 		if (position != null && position.size() > 0) {
 			return position.get(0).getLocation();
-		}else{
+		} else {
 			return null;
 		}
 	}

@@ -1,8 +1,9 @@
 package com.catchme.mapcontent;
 
-import java.util.HashMap;
+import android.support.v4.util.LongSparseArray;
 
 public interface LoadLocationsListener {
 	public void locationsUpdated();
-	public void locationsError(HashMap<Integer, String> hashMap);
+
+	public void locationsError(LongSparseArray<String> errors);
 }

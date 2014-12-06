@@ -1,12 +1,11 @@
 package com.catchme.profile;
 
-import java.util.HashMap;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.LongSparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -111,12 +110,12 @@ public class ItemProfileFragment extends Fragment implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case android.R.id.home: {
-				getActivity().dispatchKeyEvent(
-						new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-				getActivity().onBackPressed();
-				return true;
-			}
+		case android.R.id.home: {
+			getActivity().dispatchKeyEvent(
+					new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+			getActivity().onBackPressed();
+			return true;
+		}
 		}
 		return super.onOptionsItemSelected(item);
 
@@ -167,7 +166,8 @@ public class ItemProfileFragment extends Fragment implements
 			} else {
 				imageFilePath = uri.getSchemeSpecificPart();
 			}
-			Toast.makeText(getActivity(), "DEBUG: "+imageFilePath, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "DEBUG: " + imageFilePath,
+					Toast.LENGTH_SHORT).show();
 			new UpdateAvatarTask(this.getActivity(), this).execute(
 					((LoggedUser) item).getToken(), imageFilePath);
 		}
@@ -192,7 +192,7 @@ public class ItemProfileFragment extends Fragment implements
 	}
 
 	@Override
-	public void onImageUploadError(HashMap<Integer, String> errors) {
+	public void onImageUploadError(LongSparseArray<String> errors) {
 		Toast.makeText(getActivity(), "UPLOAD FAIL:\n" + errors.toString(),
 				Toast.LENGTH_SHORT).show();
 	}

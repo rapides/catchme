@@ -3,8 +3,6 @@ package com.catchme.contactlist.asynctasks;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
@@ -47,11 +45,7 @@ public class LogoutTask extends AsyncTask<String, Void, JSONObject> {
 			if (ReadServerResponse.isSuccess(result)) {
 				Toast.makeText(context, "Success! Logged out",
 						Toast.LENGTH_SHORT).show();
-				SharedPreferences preferences = context.getSharedPreferences(
-						ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-				Editor e = preferences.edit();
-				e.remove(ItemListActivity.USER);
-				e.commit();
+				ItemListActivity.removeLoggedUser(context);
 			} else {
 				Toast.makeText(context,
 						"Fail! " + ReadServerResponse.getErrors(result),

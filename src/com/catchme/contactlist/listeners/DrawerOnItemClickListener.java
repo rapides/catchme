@@ -19,11 +19,13 @@ import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
+import com.catchme.exampleObjects.ExampleContent;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.profile.ItemProfileFragment;
 
+@SuppressWarnings("deprecation")
 public class DrawerOnItemClickListener implements OnItemClickListener {
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;

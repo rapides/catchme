@@ -1,4 +1,4 @@
-package com.catchme.messages.asynctask;
+package com.catchme.messages.asynctasks;
 
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.messages.listeners.OnMessageSent;
+import com.catchme.messages.interfaces.OnMessageSent;
 
 public class SendMessageTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;

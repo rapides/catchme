@@ -1,4 +1,4 @@
-package com.catchme.messages.asynctask;
+package com.catchme.messages.asynctasks;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.catchme.R;
@@ -17,26 +16,19 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.exampleObjects.Message;
-import com.catchme.messages.MessagesListAdapter;
+import com.catchme.messages.interfaces.NewerMessagesListener;
 
 public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
-
-	private long conversationId;
 	private Context context;
-	private ArrayList<Message> newerMessages;
-	private MessagesListAdapter adapter;
-	private ListView listView;
 	private ExampleItem item;
+	private NewerMessagesListener listener;
 
-	public GetNewerMessagesTask(ListView listView,
-			ExampleItem item) {
+	public GetNewerMessagesTask(Context context, ExampleItem item,
+			NewerMessagesListener listener) {
 		super();
 		this.item = item;
-		this.listView = listView;
-		this.conversationId = item.getFirstConversationId();
-		this.adapter = (MessagesListAdapter) listView.getAdapter();
-		this.context = listView.getContext();
-		newerMessages = new ArrayList<Message>();
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@Override
@@ -46,9 +38,8 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		String token = user.getToken();
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getMessagesNewer(token, conversationId,
-					oldestMessageId);
-			newerMessages = ReadServerResponse.getMessagesList(result);
+			result = ServerRequests.getMessagesNewer(token,
+					item.getFirstConversationId(), oldestMessageId);
 		} else {
 			result = null;
 		}
@@ -62,12 +53,14 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else if (ReadServerResponse.isSuccess(result)) {
-			item.addNewerMessages(conversationId, newerMessages);
-			adapter.notifyDataSetChanged();
-			listView.setSelection(listView.getCount()-1);
+			ArrayList<Message> newerMessages = ReadServerResponse
+					.getMessagesList(result);
+			item.addNewerMessages(item.getFirstConversationId(), newerMessages);
+			listener.onNewMessage();
 		} else {
 			Toast.makeText(context, "Message get NEWER problem",
 					Toast.LENGTH_SHORT).show();
+			listener.onNewMessageError(ReadServerResponse.getErrors(result));
 		}
 	}
 

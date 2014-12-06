@@ -1,19 +1,9 @@
 package com.catchme.loginregister;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.catchme.R;
-import com.catchme.contactlist.ItemListActivity;
-import com.catchme.contactlist.ItemListFragment;
-
-
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,11 +13,17 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.catchme.R;
+import com.catchme.contactlist.ItemListFragment;
+import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
+import com.catchme.loginregister.asynctasks.LoginTask;
+
 public class LoginFragment extends Fragment implements OnClickListener,
-		OnTaskCompleted {
+		LoginRegisterInterface {
 	private View rootView;
 	private ProgressBar login_loading;
-	private EditText login,pass;
+	private EditText login, pass;
 
 	public LoginFragment() {
 	}
@@ -38,14 +34,12 @@ public class LoginFragment extends Fragment implements OnClickListener,
 		// inflate layout from xml
 		rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
-		
 		login = (EditText) rootView.findViewById(R.id.login_email);
 		pass = (EditText) rootView.findViewById(R.id.login_pass);
 		Button login_btn = (Button) rootView.findViewById(R.id.login);
 		Button register_btn = (Button) rootView
 				.findViewById(R.id.goto_register);
-		login_loading = (ProgressBar) rootView
-				.findViewById(R.id.login_spinner);
+		login_loading = (ProgressBar) rootView.findViewById(R.id.login_spinner);
 		login_loading.setVisibility(View.GONE);
 		register_btn.setOnClickListener(this);
 		login_btn.setOnClickListener(this);
@@ -54,12 +48,10 @@ public class LoginFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		
-		if (v.getId() == R.id.login) {
-			
 
-			new LoginTask(getActivity(), this, login_loading).execute(login
-					.getText().toString(), pass.getText().toString());
+		if (v.getId() == R.id.login) {
+			new LoginTask(getActivity(), this).execute(login.getText()
+					.toString(), pass.getText().toString());
 		}
 		if (v.getId() == R.id.goto_register) {
 			// replace old view
@@ -76,49 +68,45 @@ public class LoginFragment extends Fragment implements OnClickListener,
 			transaction.addToBackStack(null);
 			transaction.commit();
 
-			// adjust actionBar
 		}
-
-		// new LoginTask(getActivity(), this).execute("mailCzeslawa@cycki.pl",
-		// "appleseed");
-		// TODO show animation or something else
 	}
 
 	@Override
-	public void onTaskCompleted(HashMap<Integer, String> errors) {
-		// get storage
-		SharedPreferences preferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+	public void onPreExecute() {
+		login_loading.setVisibility(View.VISIBLE);
+		// animaton.setVisible(VIw.Visible);
+	}
 
-		// if LoginTask was able to download user data
-		if (preferences.contains(ItemListActivity.USER)) {
-			// prepare new view
-			ItemListFragment mainFragment = new ItemListFragment();
-			// replace old view
-			getActivity().getSupportFragmentManager().beginTransaction()
-					.replace(R.id.main_fragment_container, mainFragment)
-					.commit();
-			// adjust actionBar
-			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-			getActivity().getActionBar().setHomeButtonEnabled(true);
-		} else {
-			if (errors == null) {
-				// not known error
-			} else {
-				String errorsSring = "";
-				for (int key:errors.keySet()) {
-					errorsSring += errors.get(key) + "\n";
-				}
+	@Override
+	public void onCompleted(LoggedUser user) {
+		login_loading.setVisibility(View.GONE);
+		Toast.makeText(getActivity(),
+				"Success! Logged user: " + user.getFullName(),
+				Toast.LENGTH_SHORT).show();
+		ItemListFragment mainFragment = new ItemListFragment();
+		// replace old view
+		getActivity().getSupportFragmentManager().beginTransaction()
+				.replace(R.id.main_fragment_container, mainFragment).commit();
+		// adjust actionBar
+		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActivity().getActionBar().setHomeButtonEnabled(true);
 
-				login.setBackgroundResource(R.drawable.error_frame);
-				login.setError("Login is required!!!");
-				pass.setError("Password is Required!!!");
-				pass.setBackgroundResource(R.drawable.error_frame);
-				Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT)
-						.show();
+	}
+
+	@Override
+	public void onError(LongSparseArray<String> errors) {
+
+		login_loading.setVisibility(View.GONE);
+		String errorsSring = "";
+		if (errors != null) {
+			for (int i = 0; i < errors.size(); i++) {
+				errorsSring += errors.get(errors.keyAt(i)) + "\n";
 			}
-			// Here you can handle errors.
-			// error messages returned by server are stored in errors
 		}
+		login.setBackgroundResource(R.drawable.error_frame);
+		login.setError("Login is required!!!");
+		pass.setError("Password is Required!!!");
+		pass.setBackgroundResource(R.drawable.error_frame);
+		Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT).show();
 	}
 }

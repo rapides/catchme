@@ -1,4 +1,4 @@
-package com.catchme.messages.listeners;
+package com.catchme.messages.interfaces;
 
 public interface OnMessageSent {
 	public void onMessageSent(boolean b);

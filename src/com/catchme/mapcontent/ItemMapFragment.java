@@ -1,7 +1,5 @@
 package com.catchme.mapcontent;
 
-import java.util.HashMap;
-
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +27,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import android.support.v4.util.LongSparseArray;
 
 public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	MapView mapView;
@@ -124,7 +123,7 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 				.strokeWidth(
 						getResources().getInteger(
 								R.integer.map_circle_stroke_width))
-		.fillColor(getResources().getColor(color.map_circle_fill));
+				.fillColor(getResources().getColor(color.map_circle_fill));
 
 	}
 
@@ -167,8 +166,9 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	}
 
 	@Override
-	public void locationsError(HashMap<Integer, String> errors) {
+	public void locationsError(LongSparseArray<String> errors) {
 		Toast.makeText(getActivity(), errors.toString(), Toast.LENGTH_SHORT)
 				.show();
 	}
+
 }

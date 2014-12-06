@@ -1,11 +1,8 @@
 package com.catchme.loginregister;
 
-import java.util.HashMap;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,11 +13,13 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
+import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
+import com.catchme.loginregister.asynctasks.RegisterTask;
 
 public class RegisterFragment extends Fragment implements OnClickListener,
-		OnTaskCompleted {
+		LoginRegisterInterface {
 	public static final String EMAIL = "useremail";
 	private View rootView;
 	private ProgressBar register_loading;
@@ -57,51 +56,43 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-
-		/*
-		 * Toast.makeText(rootView.getContext(), name.toString()+
-		 * " ---- "+pass.toString()+ " ---- "+surname.toString() +
-		 * " ---"+email.toString()+"--p2--"+conf_pass.toString(),
-		 * Toast.LENGTH_LONG).show();
-		 */
-		new RegisterTask(getActivity(), this, register_loading).execute(name
-				.getText().toString(), surname.getText().toString(), email
-				.getText().toString(), pass.getText().toString(), conf_pass
-				.getText().toString());
-
-		// TODO show animation or something else
+		new RegisterTask(getActivity(), this).execute(
+				name.getText().toString(), surname.getText().toString(), email
+						.getText().toString(), pass.getText().toString(),
+				conf_pass.getText().toString());
 	}
 
 	@Override
-	public void onTaskCompleted(HashMap<Integer, String> errors) {
-		// get storage
-		SharedPreferences preferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+	public void onPreExecute() {
+		register_loading.setVisibility(View.VISIBLE);
+	}
 
-		if (preferences.contains(ItemListActivity.USER)) {
-			// prepare new view
+	@Override
+	public void onCompleted(LoggedUser user) {
+		register_loading.setVisibility(View.GONE);
 
-			ItemListFragment mainFragment = new ItemListFragment();
-			// replace old view
-			getActivity().getSupportFragmentManager().beginTransaction()
-					.replace(R.id.main_fragment_container, mainFragment)
-					.commit();
-			// adjust actionBar
-			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-			getActivity().getActionBar().setHomeButtonEnabled(true);
-		} else {
-			// Here you can handle errors.
-			if (errors == null) {
-				// not known error
-			} else {
-				String errorsSring = "";
-				for (int key:errors.keySet()) {
-					errorsSring += errors.get(key) + "\n";
-				}
-				Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT)
-						.show();
+		Toast.makeText(getActivity(),
+				"Success! Registered user: " + user.getFullName(),
+				Toast.LENGTH_SHORT).show();
+		ItemListFragment mainFragment = new ItemListFragment();
+		// replace old view
+		getActivity().getSupportFragmentManager().beginTransaction()
+				.replace(R.id.main_fragment_container, mainFragment).commit();
+		// adjust actionBar
+		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActivity().getActionBar().setHomeButtonEnabled(true);
+	}
+
+	@Override
+	public void onError(LongSparseArray<String> errors) {
+		register_loading.setVisibility(View.GONE);
+		String errorsSring = "";
+		if (errors != null) {
+			for (int i = 0; i < errors.size(); i++) {
+				errorsSring += errors.get(errors.keyAt(i)) + "\n";
 			}
 		}
+		Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT).show();
 	}
 
 }

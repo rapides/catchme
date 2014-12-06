@@ -7,7 +7,8 @@ import android.widget.TextView;
 
 import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.messages.asynctask.SendMessageTask;
+import com.catchme.messages.asynctasks.SendMessageTask;
+import com.catchme.messages.interfaces.OnMessageSent;
 
 public class SendButtonOnClickListener implements OnClickListener {
 	private Context context;

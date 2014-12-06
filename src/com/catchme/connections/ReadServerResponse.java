@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
 import com.catchme.exampleObjects.ExampleItem;
@@ -21,11 +21,11 @@ import com.catchme.exampleObjects.Message;
 import com.catchme.exampleObjects.UserLocation;
 
 public class ReadServerResponse {
-	public static HashMap<Integer, String> getErrors(JSONObject fullResponse) {
-		HashMap<Integer, String> errors = null;
+	public static LongSparseArray<String> getErrors(JSONObject fullResponse) {
+		LongSparseArray<String> errors = new LongSparseArray<String>();
+		;
 		try {
 			if (!isSuccess(fullResponse)) {
-				errors = new HashMap<Integer, String>();
 				System.out.println(fullResponse);
 				JSONArray a = fullResponse
 						.getJSONArray(ServerConst.ERROR_MESSAGES);
@@ -58,7 +58,7 @@ public class ReadServerResponse {
 						.optString(ServerConst.USER_BIRTH_DATE);
 				String sex = personalData.optString(ServerConst.USER_SEX);
 				String email = user.getString(ServerConst.USER_EMAIL);
-				HashMap<String, String> avatars = getAvatarsFromArray(user
+				LongSparseArray<String> avatars = getAvatarsFromArray(user
 						.getJSONObject(ServerConst.USER_AVATAR));
 
 				logged = new LoggedUser(id, name, surname, email,
@@ -132,7 +132,7 @@ public class ReadServerResponse {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			conv_ids.add(jsonArray.getLong(i));
 		}
-		HashMap<String, String> avatars = getAvatarsFromArray(user
+		LongSparseArray<String> avatars = getAvatarsFromArray(user
 				.getJSONObject(ServerConst.USER_AVATAR));
 		String dob = personalData.optString(ServerConst.USER_BIRTH_DATE);
 		String sex = personalData.getString(ServerConst.USER_SEX);
@@ -141,9 +141,9 @@ public class ReadServerResponse {
 		return contact;
 	}
 
-	public static HashMap<String, String> updateAvatars(JSONObject avatars) {
+	public static LongSparseArray<String> updateAvatars(JSONObject avatars) {
 
-		HashMap<String, String> result = new HashMap<String, String>();
+		LongSparseArray<String> result = new LongSparseArray<String>();
 		try {
 			JSONObject mainAvatarArray = avatars.getJSONObject(
 					ServerConst.USER_AVATAR).getJSONObject(
@@ -169,10 +169,10 @@ public class ReadServerResponse {
 		return result;
 	}
 
-	private static HashMap<String, String> getAvatarsFromArray(
+	private static LongSparseArray<String> getAvatarsFromArray(
 			JSONObject avatars) throws JSONException {
 
-		HashMap<String, String> result = new HashMap<String, String>();
+		LongSparseArray<String> result = new LongSparseArray<String>();
 		JSONObject small = avatars.getJSONObject(ServerConst.USER_AVATAR_SMALL);
 		JSONObject medium = avatars
 				.getJSONObject(ServerConst.USER_AVATAR_MEDIUM);
@@ -270,9 +270,9 @@ public class ReadServerResponse {
 		return date;
 	}
 
-	public static HashMap<Long, ArrayList<UserLocation>> getLocations(
+	public static LongSparseArray<ArrayList<UserLocation>> getLocations(
 			JSONObject fullResponse) {
-		HashMap<Long, ArrayList<UserLocation>> locationList = new HashMap<Long, ArrayList<UserLocation>>();
+		LongSparseArray<ArrayList<UserLocation>> locationList = new LongSparseArray<ArrayList<UserLocation>>();
 		try {
 			if (isSuccess(fullResponse)) {
 				JSONArray positionsArray = fullResponse
@@ -294,7 +294,7 @@ public class ReadServerResponse {
 				}
 			}
 		} catch (JSONException e) {
-			// Log.e("JSONParseException", e.getMessage());
+			Log.e("JSONParseException", e.getMessage());
 			e.printStackTrace();
 		}
 		return locationList;

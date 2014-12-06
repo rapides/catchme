@@ -96,6 +96,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
 
+		
 		listView.setAdapter(new CustomListAdapter(getActivity(),
 				new ArrayList<ExampleItem>()));
 
@@ -113,13 +114,14 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
+				((DrawerMenuAdapter) drawerList.getAdapter())
+						.notifyDataSetChanged();
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				((DrawerMenuAdapter) drawerList.getAdapter())
-						.notifyDataSetChanged();
+
 			}
 
 		};
@@ -145,19 +147,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		return rootView;
 	}
 
-	private void setListItemChecked(int position) {
+	public void setListItemChecked(int position) {
 		boolean isChecked = listView.getCheckedItemPositions().get(
 				listView.getCheckedItemPositions().keyAt(position));
 		listView.setItemChecked(position, !isChecked);
 		// View itemView = getViewByPosition(position);
 
-		/*
-		 * if (isChecked) {
-		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
-		 * R.color.list_item_background)); } else {
-		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
-		 * R.color.list_item_selected)); }
-		 */
+
 		String out = "";
 		for (int i = 0; i < listView.getCheckedItemPositions().size(); i++) {
 			out += ""
@@ -169,7 +165,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		System.out.println(out);
 	}
 
-	private View getViewByPosition(int pos) {
+	public View getViewByPosition(int pos) {
 		final int firstListItemPosition = listView.getFirstVisiblePosition();
 		final int lastListItemPosition = firstListItemPosition
 				+ listView.getChildCount() - 1;

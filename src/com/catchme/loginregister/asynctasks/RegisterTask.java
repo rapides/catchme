@@ -1,14 +1,10 @@
-package com.catchme.loginregister;
+package com.catchme.loginregister.asynctasks;
 
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
@@ -17,21 +13,18 @@ import com.catchme.exampleObjects.LoggedUser;
 
 public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
-	private OnTaskCompleted listener;
+	private LoginRegisterInterface listener;
 	private LoggedUser user;
-	private ProgressBar register_loading;
 
-	public RegisterTask(Context context, OnTaskCompleted listener,
-			ProgressBar register_loading) {
+	public RegisterTask(Context context, LoginRegisterInterface listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
-		this.register_loading = register_loading;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		register_loading.setVisibility(View.VISIBLE);
+		listener.onPreExecute();
 	}
 
 	@Override
@@ -45,7 +38,6 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 			String confirmationPassword = params[4];
 			result = ServerRequests.addUserRequest(name, surname, email,
 					password, confirmationPassword);
-			user = ReadServerResponse.getLoggedUser(result);
 		} else {
 			result = null;
 		}
@@ -55,24 +47,15 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 
 	@Override
 	protected void onPostExecute(JSONObject result) {
-		register_loading.setVisibility(View.GONE);
 		if (result == null) {
-			Toast.makeText(context,
-					context.getResources().getString(R.string.err_no_internet),
-					Toast.LENGTH_SHORT).show();
+			listener.onError(null);
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				Toast.makeText(context,
-						"Success! Registered user: " + user.getFullName(),
-						Toast.LENGTH_SHORT).show();
+				user = ReadServerResponse.getLoggedUser(result);
 				ItemListActivity.setLoggedUser(context, user);
-				listener.onTaskCompleted(null);
-			} else {/*
-					 * Toast.makeText(context, "Register fail! " +
-					 * ReadServerResponse.getErrors(result),
-					 * Toast.LENGTH_SHORT).show();
-					 */
-				listener.onTaskCompleted(ReadServerResponse.getErrors(result));
+				listener.onCompleted(user);
+			} else {
+				listener.onError(ReadServerResponse.getErrors(result));
 			}
 		}
 	}

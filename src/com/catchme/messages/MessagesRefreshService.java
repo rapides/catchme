@@ -1,35 +1,49 @@
 package com.catchme.messages;
 
+import java.util.List;
+
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Handler;
+import android.widget.Toast;
+
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleItem;
+import com.catchme.exampleObjects.Message;
 
 public class MessagesRefreshService extends IntentService {
-	private Handler handler = new Handler();
-	private int i;
+	//private Handler handler = new Handler();// handler.post(new Runnable(){});
 
 	public MessagesRefreshService() {
-		super("name");
-		i = 0;
+		super("C@tchme Message check");
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		while (i < 10) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			handler.post(new Runnable() {
-				public void run() {
-					/*Toast.makeText(getApplicationContext(),
-							"Liczymy do 10ciu!\n " + i, Toast.LENGTH_SHORT)
-							.show();*/
-				}
-			});
-			i++;
+		ExampleItem item = ExampleContent.ITEM_MAP.get(intent.getExtras()
+				.getLong("item_id"));
+		List<Message> messages = item
+				.getMessages(item.getFirstConversationId());
+		if (messages != null) {
+			System.out.println(""
+					+ messages.get(messages.size() - 1).getMessageId());
 		}
 	}
 
+	/*private Runnable sendUpdatesToUI = new Runnable() {
+		public void run() {
+			handler.post(this); 
+		}
+	};*/
+
+	@Override
+	public void onDestroy() {
+		Toast.makeText(this, "Service Destroyed", Toast.LENGTH_SHORT).show();
+		super.onDestroy();
+	}
 }
