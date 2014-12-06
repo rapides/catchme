@@ -22,6 +22,7 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private ExampleItem item;
 	private Context context;
 	private GetMessagesListener listener;
+	private long conversationId;
 
 	public GetOlderMessagesTask(Context context, ExampleItem item,
 			GetMessagesListener listener) {
@@ -38,13 +39,14 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 
 	@Override
 	protected JSONObject doInBackground(Long... params) {
-		long oldestMessageId = params[0];
+		conversationId = params[0];
+		long oldestMessageId = params[1];
 		LoggedUser user = ItemListActivity.getLoggedUser(context);
 		String token = user.getToken();
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesOlder(token,
-					item.getFirstConversationId(), oldestMessageId);
+					conversationId, oldestMessageId);
 		} else {
 			result = null;
 		}
@@ -59,9 +61,12 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 			listener.onGetMessagesError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-			List<Message> olderMessages = ReadServerResponse.getMessagesList(result);;
-			item.addOlderMessages(item.getFirstConversationId(), olderMessages); 
-			listener.onGetMessagesCompleted(olderMessages.size());
+			List<Message> olderMessages = ReadServerResponse
+					.getMessagesList(result);
+			;
+			item.addOlderMessages(item.getFirstConversationId(), olderMessages);
+			listener.onGetMessagesCompleted(item.getId(), conversationId,
+					olderMessages.size());
 		} else {
 			listener.onGetMessagesError(ReadServerResponse.getErrors(result));
 		}

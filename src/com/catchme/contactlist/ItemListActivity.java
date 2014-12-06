@@ -64,11 +64,11 @@ public class ItemListActivity extends FragmentActivity implements
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				this).defaultDisplayImageOptions(m_options).build();
 		ImageLoader.getInstance().init(config);
-		
+
 		if (preferences.getInt(MODEL_VERSION, -1) != CURRENT_VERSION) {
 			removeLoggedUser(getApplicationContext());
 		}
-		
+
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
 				mTwoPane = true;
@@ -87,9 +87,9 @@ public class ItemListActivity extends FragmentActivity implements
 			// LocationRecorder(getApplicationContext());
 			// locationRecorder.startRecording();
 
+			// set up position listening
 			AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
 			Intent i = new Intent(this, LocationPoller.class);
-
 			Bundle bundle = new Bundle();
 			LocationPollerParameter parameter = new LocationPollerParameter(
 					bundle);
@@ -99,12 +99,12 @@ public class ItemListActivity extends FragmentActivity implements
 					LocationManager.NETWORK_PROVIDER });
 			parameter.setTimeout(20000);
 			i.putExtras(bundle);
-
 			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime(), INTERVAL, pi);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 			getActionBar().setHomeButtonEnabled(true);
+
 		} else {
 			getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 					.edit()
@@ -213,10 +213,19 @@ public class ItemListActivity extends FragmentActivity implements
 		e.commit();
 	}
 
+
+
 	@Override
-	public void onStop() {
+	public void onPause() {
 		stopService(new Intent(this, MessagesRefreshService.class));
-		super.onStop();
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		startService(messageIntent);
+		super.onResume();
 	}
 
 }

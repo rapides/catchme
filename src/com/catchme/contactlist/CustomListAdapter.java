@@ -98,14 +98,18 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				FilterResults results = new FilterResults();
 
 				if (constraint == null || constraint.length() == 0) {
-					results.values = new ArrayList<ExampleItem>(ExampleContent.ITEM_MAP.values());
+					ArrayList<ExampleItem> newValues = new ArrayList<ExampleItem>(ExampleContent.ITEM_MAP.size());
+					for(int i=0;i<ExampleContent.ITEM_MAP.size();i++){
+						newValues.add(ExampleContent.ITEM_MAP.valueAt(i));
+					}
+					results.values = newValues;
 					results.count = ExampleContent.ITEM_MAP.size();
 				} else {
 
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
 					
-					for(Long key:ExampleContent.ITEM_MAP.keySet()){
-						ExampleItem dataItem = ExampleContent.ITEM_MAP.get(key);
+					for(int i=0;i<ExampleContent.ITEM_MAP.size();i++){
+						ExampleItem dataItem = ExampleContent.ITEM_MAP.valueAt(i);
 						if (dataItem
 								.getFullName()
 								.toLowerCase(Locale.getDefault())

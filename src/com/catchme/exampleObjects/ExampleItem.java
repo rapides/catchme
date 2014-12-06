@@ -108,12 +108,21 @@ public class ExampleItem {
 	}
 
 	public long getNewestMessage(long conversationId) {
-		return messages.get(conversationId)
-				.get(messages.get(conversationId).size() - 1).getMessageId();
+		if (messages.size() > 0 && messages.get(conversationId).size() > 0) {
+			return messages.get(conversationId)
+					.get(messages.get(conversationId).size() - 1)
+					.getMessageId();
+		} else {
+			return -1;
+		}
 	}
 
 	public long getOldestMessage(long conversationId) {
-		return messages.get(conversationId).get(0).getMessageId();
+		if (messages != null && messages.size() > 0) {
+			return messages.get(conversationId).get(0).getMessageId();
+		} else {
+			return Long.MAX_VALUE;
+		}
 	}
 
 	public String getName() {
@@ -224,6 +233,14 @@ public class ExampleItem {
 
 	private String getDefaultImage() {
 		return "drawable://" + R.drawable.loader;
+	}
+
+	public LongSparseArray<List<Message>> getAllMessages() {
+		return messages;
+	}
+
+	public void setMessages(LongSparseArray<List<Message>> allMessages) {
+		this.messages = allMessages;
 	}
 
 }

@@ -23,11 +23,11 @@ public class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		try {
-			Thread.sleep((long) (Math.random() * 2000));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		//try {
+			//Thread.sleep((long) (Math.random() * 2000));
+		//} catch (InterruptedException e) {
+			//e.printStackTrace();
+		//}
 		return null;
 	}
 

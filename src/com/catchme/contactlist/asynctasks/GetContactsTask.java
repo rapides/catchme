@@ -14,7 +14,8 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.CustomListAdapter;
-import com.catchme.exampleObjects.*;
+import com.catchme.exampleObjects.ExampleContent;
+import com.catchme.exampleObjects.ExampleItem;
 import com.catchme.exampleObjects.ExampleItem.ContactStateType;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
@@ -62,8 +63,10 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				addItemsToDatabase(ReadServerResponse.getContactList(result,
-						state));
+				
+				ArrayList<ExampleItem> items =ReadServerResponse.getContactList(result,
+						state);
+				addItemsToDatabase(items);
 			} else {
 				Toast.makeText(
 						context,
