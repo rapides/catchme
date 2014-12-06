@@ -79,12 +79,10 @@ public class ItemListActivity extends FragmentActivity implements
 						.findFragmentById(R.id.item_list))
 						.setActivateOnItemClick(true);
 			}
-
 			ItemListFragment firstFragment = new ItemListFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, firstFragment)
 					.commit();
-
 			// LocationRecorder locationRecorder = new
 			// LocationRecorder(getApplicationContext());
 			// locationRecorder.startRecording();

@@ -5,13 +5,12 @@
 
     <com.catchme.utils.RoundedImageView
         android:id="@+id/single_message_image"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignTop="@+id/single_message_containter"
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/message_image_description"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" />
+        android:padding="5dp" />
 
     <RelativeLayout
         android:id="@+id/single_message_containter"

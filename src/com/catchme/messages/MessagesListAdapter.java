@@ -66,6 +66,8 @@ public class MessagesListAdapter extends BaseAdapter {
 				.findViewById(R.id.single_message_containter);
 		TextView message = (TextView) convertView
 				.findViewById(R.id.single_message_content);
+		RoundedImageView img = (RoundedImageView) convertView
+				.findViewById(R.id.single_message_image);
 
 		message.setText(item.getMessages(item.getFirstConversationId())
 				.get(position).getContent());
@@ -74,42 +76,44 @@ public class MessagesListAdapter extends BaseAdapter {
 
 		LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-		LayoutParams imageParams = new LayoutParams(60, 60);
+		LayoutParams imageParams = new LayoutParams(55, 55);
 		LayoutParams timeParams = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 		timeParams.addRule(RelativeLayout.BELOW, R.id.single_message_content);
 		timeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		RoundedImageView img = (RoundedImageView) convertView
-				.findViewById(R.id.single_message_image);
+		// img.setPadding(10, 10, 10, 10);
+		imageParams.setMargins(0, 5, 0, 5);
 		if (item.getMessages(item.getFirstConversationId()).get(position)
 				.getSenderId() == user.getId()) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			imageParams.addRule(RelativeLayout.ALIGN_TOP,
+			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM,
 					R.id.single_message_containter);
 			lp.addRule(RelativeLayout.LEFT_OF, R.id.single_message_image);
-			containter.setBackgroundResource(R.drawable.bubble_right);
+			containter.setBackgroundResource(R.drawable.bubble_right_2);
 			ImageLoader.getInstance()
 					.displayImage(user.getSmallImageUrl(), img);
 
 			timeParams.addRule(RelativeLayout.ALIGN_RIGHT,
 					R.id.single_message_content);
+			timeParams.setMargins(0, 0, 10, 0);
 		} else {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM,
+			imageParams.addRule(RelativeLayout.ALIGN_TOP,
 					R.id.single_message_containter);
 			lp.addRule(RelativeLayout.RIGHT_OF, R.id.single_message_image);
-			containter.setBackgroundResource(R.drawable.bubble_left);
+			containter.setBackgroundResource(R.drawable.bubble_left_2);
 			ImageLoader.getInstance()
 					.displayImage(item.getSmallImageUrl(), img);
 			timeParams.addRule(RelativeLayout.ALIGN_LEFT,
 					R.id.single_message_content);
+			timeParams.setMargins(17, 0, 0, 0);
 		}
+		img.setLayoutParams(imageParams);
 		message.setMinimumWidth((int) (parent.getWidth() * 0.25));
 		message.setMaxWidth((int) (parent.getWidth() * 0.7));
 		containter.setLayoutParams(lp);
-		img.setLayoutParams(imageParams);
 		messageTime.setLayoutParams(timeParams);
 		return convertView;
 	}
-	
+
 }
