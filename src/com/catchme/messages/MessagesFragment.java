@@ -1,5 +1,6 @@
 package com.catchme.messages;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.IntentFilter;
@@ -22,10 +23,7 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.Message;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.asynctasks.GetMessagesInitTask;
 import com.catchme.messages.asynctasks.GetNewerMessagesTask;
@@ -35,6 +33,9 @@ import com.catchme.messages.interfaces.NewerMessagesListener;
 import com.catchme.messages.interfaces.OnMessageSent;
 import com.catchme.messages.listeners.MessagesRefreshListener;
 import com.catchme.messages.listeners.SendButtonOnClickListener;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.Message;
 
 public class MessagesFragment extends Fragment implements OnMessageSent,
 		NewerMessagesListener, GetMessagesListener, OnScrollListener {
@@ -49,14 +50,16 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 	private boolean isGetingMessages;
 	private boolean isMoreMessages;
 	boolean isOpened = false;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public MessagesFragment() {
+	public MessagesFragment(CatchmeDatabaseAdapter dbAdapter) {
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		item = ExampleContent.ITEM_MAP.get(getArguments().getLong(
+		item = dbAdapter.getItem(getArguments().getLong(
 				ItemDetailsFragment.ARG_ITEM_ID));
 		user = ItemListActivity.getLoggedUser(getActivity());
 		isGetingMessages = false;
@@ -89,15 +92,17 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 		ImageButton sendBtn = (ImageButton) rootView
 				.findViewById(R.id.message_send);
 		t.setText("" + item.getFullName());
+		List<Message> listMessages = dbAdapter.getMessages(item
+				.getFirstConversationId());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
-				item, user);
+				user, item, dbAdapter, item.getFirstConversationId());
 		listView.setAdapter(adapter);
-		List<Message> messages = item.getMessages(item.getFirstConversationId());
-		if (messages != null && messages.size() >0) {
-			listView.setSelection(item.getMessages(
+		if (listMessages != null && listMessages.size() > 0) {
+			listView.setSelection(dbAdapter.getMessages(
 					item.getFirstConversationId()).size() - 1);
 		} else {
-			new GetMessagesInitTask(getActivity(), item, this);
+			new GetMessagesInitTask(getActivity(), item, dbAdapter, this)
+					.execute(item.getFirstConversationId());
 		}
 		listView.setOnScrollListener(this);
 
@@ -110,7 +115,6 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 		sendBtn.setOnClickListener(new SendButtonOnClickListener(getActivity(),
 				user, item, textBox, this));
-
 		return rootView;
 	}
 
@@ -125,7 +129,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 200) { // TODO different resolutions
-							listView.setSelection(item.getMessages(
+							listView.setSelection(dbAdapter.getMessages(
 									item.getFirstConversationId()).size() - 1);
 							isOpened = true;
 						} else if (isOpened == true) {
@@ -153,8 +157,6 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 	@Override
 	public void onNewMessageError(LongSparseArray<String> errors) {
-		Toast.makeText(getActivity(), "Message get NEW server problem",
-				Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -164,14 +166,14 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 	}
 
 	@Override
-	public void onGetMessagesCompleted(long itemId, long conversationId,
-			int moreMessagesCount) {
+	public void onGetMessagesCompleted(long id, long conversationId,
+			ArrayList<Message> messages) {
 		((MessagesListAdapter) listView.getAdapter()).notifyDataSetChanged();
 		listView.setSelection(listView.getFirstVisiblePosition()
-				+ moreMessagesCount);
-		swipeLayout.setRefreshing(false);
+				+ messages.size());
 		isGetingMessages = false;
-		isMoreMessages = moreMessagesCount > 0;
+		isMoreMessages = messages.size() > 0;
+		swipeLayout.setRefreshing(false);
 	}
 
 	@Override
@@ -188,13 +190,14 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 		if (isMoreMessages && !isGetingMessages && firstVisibleItem == 0
 				&& visibleItemCount > 0) {
 			long conversationId = item.getFirstConversationId();
-			new GetOlderMessagesTask(getActivity(), item, this).execute(
-					conversationId, item.getOldestMessageId(conversationId));
+			new GetOlderMessagesTask(getActivity(), item, dbAdapter, this)
+					.execute(conversationId,
+							dbAdapter.getOldestMessageId(conversationId));
 		}
 	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 	}
-	
+
 }

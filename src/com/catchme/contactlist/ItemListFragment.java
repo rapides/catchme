@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -26,24 +27,28 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
+import com.catchme.contactlist.interfaces.OnAddContactCompletedListener;
+import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.MessagesRefreshService;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.model.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
 
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnQueryTextListener,
-		OnMenuItemClickListener {
+		OnMenuItemClickListener, OnAddContactCompletedListener,
+		OnGetContactCompletedListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 	public static final String SELECTED_FILTER = "filter";
@@ -56,6 +61,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	private FloatingActionButton fab;
 	private LoggedUser user;
 	private SharedPreferences sharedpreferences;
+	CatchmeDatabaseAdapter dbAdapter;
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -78,8 +84,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		}
 	};
 
-	public ItemListFragment() {
-
+	public ItemListFragment(CatchmeDatabaseAdapter dbAdapter) {
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -87,6 +93,12 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
+
+		// Intent messageIntent = new Intent(getActivity(),
+		// MessagesRefreshService.class);
+		// messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+		// MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+		// getActivity().startService(messageIntent);
 
 		user = ItemListActivity.getLoggedUser(getActivity());
 		sharedpreferences = getActivity().getSharedPreferences(
@@ -100,15 +112,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
 
-		listView.setAdapter(new CustomListAdapter(getActivity(),
-				new ArrayList<ExampleItem>()));
+		listView.setAdapter(new CustomListAdapter(getActivity(), dbAdapter));
 
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				swipeLayout, listView));
+				getActivity().getApplicationContext(), this, dbAdapter));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
-
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), user));
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
 
@@ -133,16 +143,16 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
 				getActivity(), drawerLayout, drawerToggle, drawerList,
-				listView, swipeLayout, user));
+				dbAdapter));
 		listView.setOnItemClickListener(new ItemListOnItemClickListener(
 				drawerToggle, mCallbacks));
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
-				swipeLayout, user));
+				this));
 
+		getActivity().getActionBar().setTitle(
+				getResources().getString(R.string.app_name));
 		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
-
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter(),
+		new GetContactsTask(this.getActivity(), this, dbAdapter,
 				ContactStateType.getStateType(sharedpreferences.getInt(
 						SELECTED_FILTER,
 						ContactStateType.ACCEPTED.getIntegerValue())))
@@ -281,7 +291,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			long itemId = data.getLong(MessagesRefreshService.ITEM_ID);
 			Bundle arguments = new Bundle();
 			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, itemId);
-			ItemDetailsFragment frag = new ItemDetailsFragment();
+			ItemDetailsFragment frag = new ItemDetailsFragment(dbAdapter);
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();
@@ -290,8 +300,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			transaction.replace(R.id.main_fragment_container, frag);
 			transaction.addToBackStack(null);
 			transaction.commit();
-			getActivity().setTitle(
-					ExampleContent.ITEM_MAP.get(itemId).getFullName());
 		}
 	}
 
@@ -344,36 +352,35 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		Editor editor = sharedpreferences.edit();
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.ACCEPTED).execute(user.getToken());
+			new GetContactsTask(getActivity().getApplicationContext(), this,
+					dbAdapter, ContactStateType.ACCEPTED).execute(user
+					.getToken());
 			item.setChecked(!item.isChecked());
 			editor.putInt(SELECTED_FILTER,
 					ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_accepted:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.ACCEPTED).execute(user.getToken());
+			new GetContactsTask(getActivity().getApplicationContext(), this,
+					dbAdapter, ContactStateType.ACCEPTED).execute(user
+					.getToken());
 			item.setChecked(!item.isChecked());
 			editor.putInt(SELECTED_FILTER,
 					ContactStateType.ACCEPTED.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_sent:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.SENT).execute(user.getToken());
+			new GetContactsTask(getActivity().getApplicationContext(), this,
+					dbAdapter, ContactStateType.SENT).execute(user.getToken());
 			item.setChecked(!item.isChecked());
 			editor.putInt(SELECTED_FILTER,
 					ContactStateType.SENT.getIntegerValue());
 			editor.commit();
 			return true;
 		case R.id.menu_group_received:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.RECEIVED).execute(user.getToken());
+			new GetContactsTask(getActivity().getApplicationContext(), this,
+					dbAdapter, ContactStateType.RECEIVED).execute(user
+					.getToken());
 			item.setChecked(!item.isChecked());
 			editor.putInt(SELECTED_FILTER,
 					ContactStateType.RECEIVED.getIntegerValue());
@@ -423,4 +430,55 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		return false;
 	}
 
+	@Override
+	public void onAddContactSucceded() {
+		Toast.makeText(getActivity(), "Add contact succeded: ",
+				Toast.LENGTH_SHORT).show();
+		swipeLayout.setRefreshing(false);
+	}
+
+	@Override
+	public void onAddContactError(LongSparseArray<String> errors) {
+		swipeLayout.setRefreshing(false);
+		if (errors == null) {
+			Toast.makeText(getActivity(),
+					getResources().getString(R.string.err_no_internet),
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getActivity(),
+					"Add contact failed, server error\n" + errors,
+					Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	@Override
+	public void onPreAddContact() {
+		swipeLayout.setRefreshing(true);
+	}
+
+	@Override
+	public void onPreGetContacts() {
+		swipeLayout.setRefreshing(true);
+	}
+
+	@Override
+	public void onGetContactsError(LongSparseArray<String> errors) {
+		if (errors == null) {
+			Toast.makeText(getActivity().getApplicationContext(),
+					getResources().getString(R.string.err_no_internet),
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getActivity().getApplicationContext(),
+					"Refresh Failed, server error\n" + errors,
+					Toast.LENGTH_SHORT).show();
+		}
+		swipeLayout.setRefreshing(false);
+	}
+
+	@Override
+	public void onGetContactsSucceded(final ArrayList<ExampleItem> contactList) {
+		((CustomListAdapter) listView.getAdapter()).notifyDataSetChanged();
+		swipeLayout.setRefreshing(false);
+	}
 }

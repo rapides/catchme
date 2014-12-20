@@ -19,11 +19,11 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.model.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -35,8 +35,10 @@ public class ItemProfileFragment extends Fragment implements
 	private boolean isLoggedUser;
 	public static final int PICK_IMAGE = 0;
 	private RoundedImageView itemImage;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public ItemProfileFragment() {
+	public ItemProfileFragment(CatchmeDatabaseAdapter dbAdapter) {
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -45,14 +47,14 @@ public class ItemProfileFragment extends Fragment implements
 		rootView = inflater
 				.inflate(R.layout.fragment_profile, container, false);
 
-		if (getArguments() == null) {
+		if (getArguments() == null || dbAdapter == null) {
 			isLoggedUser = true;
 			item = ItemListActivity.getLoggedUser(getActivity());
 		} else {
 			isLoggedUser = false;
 			long itemId = getArguments().getLong(
 					ItemDetailsFragment.ARG_ITEM_ID);
-			item = ExampleContent.ITEM_MAP.get(itemId);
+			item = dbAdapter.getItem(itemId);
 		}
 
 		TextView txtName = (TextView) rootView.findViewById(R.id.profile_name);
@@ -70,7 +72,7 @@ public class ItemProfileFragment extends Fragment implements
 		txtName.setText(item.getName());
 		txtSurname.setText(item.getSurname());
 		txtEmail.setText(item.getEmail());
-		ImageLoader.getInstance().displayImage(item.getLargeImage(), itemImage);
+		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(), itemImage);
 		if (isLoggedUser) {
 			fab.setVisibility(View.VISIBLE);
 			fab.setOnClickListener(new OnClickListener() {
@@ -187,7 +189,7 @@ public class ItemProfileFragment extends Fragment implements
 	@Override
 	public void onImageUploaded() {
 		item = ItemListActivity.getLoggedUser(getActivity());
-		ImageLoader.getInstance().displayImage(item.getLargeImage(), itemImage);
+		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(), itemImage);
 		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
 	}
 

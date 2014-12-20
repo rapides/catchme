@@ -1,16 +1,14 @@
-package com.catchme.exampleObjects;
+package com.catchme.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import android.location.Location;
 import android.support.v4.util.LongSparseArray;
 
 import com.catchme.R;
-import com.catchme.connections.ServerConst;
 
 public class ExampleItem {
 	public static final int IMAGE_INVALID = -1;
@@ -20,7 +18,14 @@ public class ExampleItem {
 	public static final long AVATAR_URL = 3;
 
 	public enum UserSex {
-		UNKNOWN, MAN, WOMAN
+		UNKNOWN(0), MAN(1), WOMAN(2);
+		UserSex(int val) {
+			intValue = val;
+		}
+		int intValue;
+		public int getIntegerValue() {
+			return intValue;
+		}
 	}
 
 	public enum ContactStateType {
@@ -64,7 +69,6 @@ public class ExampleItem {
 	private String surname;
 	private String email;
 
-	private LongSparseArray<List<Message>> messages;
 	private List<UserLocation> position;
 	private List<Long> conversationIds;
 	protected LongSparseArray<String> avatars;
@@ -78,7 +82,6 @@ public class ExampleItem {
 		this.name = name;
 		this.email = email;
 		this.surname = surname;
-		this.messages = new LongSparseArray<List<Message>>();
 		this.state = state;
 		this.conversationIds = conv_ids;
 		this.avatars = avatars;
@@ -94,7 +97,6 @@ public class ExampleItem {
 		this.email = item.email;
 		this.surname = item.surname;
 		this.state = item.state;
-		this.messages = item.messages;
 		this.dateOfBirth = item.dateOfBirth;
 		this.sex = item.sex;
 	}
@@ -104,36 +106,11 @@ public class ExampleItem {
 		return "Id: " + id + ", " + name + " " + surname + ", " + email;
 	}
 
-	public List<Message> getMessages(long conversationId) {
-		return messages.get(conversationId);
-	}
+	
 
-	public long getNewestMessageId(long conversationId) {
-		if (messages.size() > 0 && messages.get(conversationId).size() > 0) {
-			return messages.get(conversationId)
-					.get(messages.get(conversationId).size() - 1)
-					.getMessageId();
-		} else {
-			return -1;
-		}
-	}
+	
 
-	public Message getNewestMessage(long conversationId) {
-		if (messages.size() > 0 && messages.get(conversationId).size() > 0) {
-			return messages.get(conversationId).get(
-					messages.get(conversationId).size() - 1);
-		} else {
-			return null;
-		}
-	}
-
-	public long getOldestMessageId(long conversationId) {
-		if (messages != null && messages.size() > 0) {
-			return messages.get(conversationId).get(0).getMessageId();
-		} else {
-			return Long.MAX_VALUE;
-		}
-	}
+	
 
 	public String getName() {
 		return name;
@@ -175,36 +152,11 @@ public class ExampleItem {
 		this.position = position;
 	}
 
-	public void addOlderMessage(long conversationId, Message message) {
-		List<Message> temp = messages.get(conversationId);
-		Collections.reverse(temp);
-		temp.add(message);
-		Collections.reverse(temp);
-		messages.put(conversationId, temp);
-	}
+	
 
-	public void addOlderMessages(long conversationId, List<Message> messageList) {
-		List<Message> temp = messages.get(conversationId);
-		if (temp != null) {
-			Collections.reverse(temp);
-		} else {
-			temp = new ArrayList<Message>();
-		}
-		Collections.reverse(messageList);
-		temp.addAll(messageList);
-		Collections.reverse(temp);
-		messages.put(conversationId, temp);
-	}
 
-	public void addNewerMessages(long conversationId,
-			ArrayList<Message> newerMessages) {
-		List<Message> temp = messages.get(conversationId);
-		if (temp == null) {
-			temp = new ArrayList<Message>();
-		}
-		temp.addAll(newerMessages);
-		messages.put(conversationId, temp);
-	}
+
+	
 
 	/**
 	 * Returns first conversation id. Used in conversations between 2 people.
@@ -214,29 +166,42 @@ public class ExampleItem {
 	public Long getFirstConversationId() {
 		return conversationIds.get(0);
 	}
+	
+	public List<Long> getConversations(){
+		return conversationIds;
+	}
 
 	public String getSmallImageUrl() {
-		if (avatars.get(AVATAR_SMALL).length() > 4) {// no idea why if null it
-														// return string "null"
-			return ServerConst.SERVER_IP + avatars.get(AVATAR_SMALL);
+		String url = avatars.get(AVATAR_SMALL);
+		if (url.length() > 4) {
+			return url;
 		} else {
 			return getDefaultImage();
 		}
 	}
 
-	public String getMediumImage() {
-		if (avatars != null && avatars.get(AVATAR_MEDIUM) != null
-				&& avatars.get(AVATAR_MEDIUM).length() > 4) {
-			return ServerConst.SERVER_IP + avatars.get(AVATAR_MEDIUM);
+	public String getMediumImageUrl() {
+		String url = avatars.get(AVATAR_MEDIUM);
+		if (url.length() > 4) {
+			return url;
 		} else {
 			return getDefaultImage();
 		}
 	}
 
-	public String getLargeImage() {
-		if (avatars.get(AVATAR_BIG).length() > 4) {
-			return ServerConst.SERVER_IP + avatars.get(AVATAR_BIG);
+	public String getLargeImageUrl() {
+		String url = avatars.get(AVATAR_BIG);
+		if (url.length() > 4) {
+			return url;
 		} else {
+			return getDefaultImage();
+		}
+	}
+	public String getOriginalImageURl(){
+		String url = avatars.get(AVATAR_URL);
+		if(url.length()>4){
+			return url;
+		}else{
 			return getDefaultImage();
 		}
 	}
@@ -245,22 +210,16 @@ public class ExampleItem {
 		return "drawable://" + R.drawable.loader;
 	}
 
-	public LongSparseArray<List<Message>> getAllMessages() {
-		return messages;
+	
+
+	public UserSex getSex() {
+		return sex;
 	}
 
-	public void setMessages(LongSparseArray<List<Message>> allMessages) {
-		this.messages = allMessages;
-	}
-
-	public LinkedList<Message> getLastMessages(long conversationId,
-			int messagesCount) {
-		LinkedList<Message> result = new LinkedList<Message>();
-		for (int i = 1; i <= messagesCount; i++) {
-			result.add(messages.get(conversationId).get(
-					messages.get(conversationId).size() - i));
-		}
-		return result;
+	public String getBirthday() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(dateOfBirth);	
 	}
 
 }

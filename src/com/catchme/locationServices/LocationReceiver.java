@@ -12,7 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.model.LoggedUser;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerResult;
 

@@ -6,37 +6,35 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.Toast;
 
-import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.CustomListAdapter;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.ExampleItem.ContactStateType;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 
-	private SwipeRefreshLayout swipeLayout;
-	private CustomListAdapter adapter;
 	private Context context;
 	private ContactStateType state;
+	private OnGetContactCompletedListener listener;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public GetContactsTask(SwipeRefreshLayout swipeLayout,
-			CustomListAdapter listAdapter, ContactStateType state) {
+	public GetContactsTask(Context context,
+			OnGetContactCompletedListener listener,
+			CatchmeDatabaseAdapter dbAdapter, ContactStateType state) {
 		super();
-		this.swipeLayout = swipeLayout;
-		this.adapter = listAdapter;
 		this.state = state;
-		context = swipeLayout.getContext();
+		this.context = context;
+		this.listener = listener;
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		swipeLayout.setRefreshing(true);
+		listener.onPreGetContacts();
 	}
 
 	@Override
@@ -51,6 +49,13 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 			} else if (state == ContactStateType.RECEIVED) {
 				result = ServerRequests.getReceivedContactsRequest(token);
 			}
+			if (ReadServerResponse.isSuccess(result)) {
+				ArrayList<ExampleItem> contactList = ReadServerResponse
+						.getContactList(result, state);
+				if(dbAdapter.isOpened()){
+					dbAdapter.updateItems(contactList);
+				}
+			}
 		}
 		return result;
 	}
@@ -58,28 +63,16 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		if (result == null) {
-			Toast.makeText(context,
-					context.getResources().getString(R.string.err_no_internet),
-					Toast.LENGTH_SHORT).show();
+			listener.onGetContactsError(null);
 		} else {
 			if (ReadServerResponse.isSuccess(result)) {
-				
-				ArrayList<ExampleItem> items =ReadServerResponse.getContactList(result,
-						state);
-				addItemsToDatabase(items);
+				listener.onGetContactsSucceded(ReadServerResponse
+						.getContactList(result, state));
 			} else {
-				Toast.makeText(
-						context,
-						"Refresh Failed, server error\n"
-								+ ReadServerResponse.getErrors(result),
-						Toast.LENGTH_SHORT).show();
+				listener.onGetContactsError(ReadServerResponse
+						.getErrors(result));
 			}
 		}
-		swipeLayout.setRefreshing(false);
 	}
 
-	private void addItemsToDatabase(ArrayList<ExampleItem> itemList) {
-		ExampleContent.updateItems(itemList);
-		adapter.swapItems(itemList);
-	}
 }

@@ -4,27 +4,24 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.Toast;
 
-import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
+import com.catchme.contactlist.interfaces.OnAddContactCompletedListener;
 
 public class AddContactTask extends AsyncTask<String, Void, JSONObject> {
-	private SwipeRefreshLayout swipeLayout;
 	private Context context;
-
-	public AddContactTask(SwipeRefreshLayout swipeLayout) {
+	private OnAddContactCompletedListener listener;
+	public AddContactTask(Context context, OnAddContactCompletedListener listener) {
 		super();
-		this.swipeLayout = swipeLayout;
-		this.context = swipeLayout.getContext();
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@Override
 	protected void onPreExecute() {
-		swipeLayout.setRefreshing(true);
+		listener.onPreAddContact();
 	}
 
 	@Override
@@ -41,22 +38,12 @@ public class AddContactTask extends AsyncTask<String, Void, JSONObject> {
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		if (result == null) {
-			Toast.makeText(context,
-					context.getResources().getString(R.string.err_no_internet),
-					Toast.LENGTH_SHORT).show();
+			listener.onAddContactError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-			Toast.makeText(context, "Add contact succeded: ",
-					Toast.LENGTH_SHORT).show();
-			// TODO importing
+			listener.onAddContactSucceded();
 		} else {
-			Toast.makeText(
-					context,
-					"Add contact failed, server error\n"
-							+ ReadServerResponse.getErrors(result),
-					Toast.LENGTH_SHORT).show();
+			listener.onAddContactError(ReadServerResponse.getErrors(result));
 		}
-
-		swipeLayout.setRefreshing(false);
 	}
 
 }

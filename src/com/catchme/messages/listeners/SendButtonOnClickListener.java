@@ -5,10 +5,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
 import com.catchme.messages.asynctasks.SendMessageTask;
 import com.catchme.messages.interfaces.OnMessageSent;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
 
 public class SendButtonOnClickListener implements OnClickListener {
 	private Context context;

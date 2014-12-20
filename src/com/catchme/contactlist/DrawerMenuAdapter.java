@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.*;
+import com.catchme.model.*;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -68,7 +68,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 
 			name.setText(user.getFullName());
 			email.setText(user.getEmail());
-			ImageLoader.getInstance().displayImage(user.getMediumImage(),avatar);
+			ImageLoader.getInstance().displayImage(user.getMediumImageUrl(),avatar);
 
 			convertView.setClickable(false);
 		} else {

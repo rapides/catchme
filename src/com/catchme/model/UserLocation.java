@@ -1,4 +1,4 @@
-package com.catchme.exampleObjects;
+package com.catchme.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -3,25 +3,25 @@ package com.catchme.contactlist;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.catchme.R;
+import com.catchme.contactlist.interfaces.OnAddContactCompletedListener;
 import com.catchme.contactlist.listeners.DialogAddContactClickListener;
-import com.catchme.exampleObjects.*;
 
 public class NoticeDialogFragment extends DialogFragment {
+	private Context context;
+	private OnAddContactCompletedListener listener;
 
-	private SwipeRefreshLayout swipeLayout;
-	private LoggedUser user;
-
-	public NoticeDialogFragment(SwipeRefreshLayout swipeLayout, LoggedUser user) {
+	public NoticeDialogFragment(Context context,
+			OnAddContactCompletedListener listener) {
 		super();
-		this.swipeLayout = swipeLayout;
-		this.user = user;
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@SuppressLint("InflateParams")
@@ -33,12 +33,12 @@ public class NoticeDialogFragment extends DialogFragment {
 		builder.setView(dialogView)
 				.setPositiveButton(
 						R.string.new_contact_add_button,
-						new DialogAddContactClickListener(dialogView,
-								swipeLayout, user))
+						new DialogAddContactClickListener(context, dialogView,
+								listener))
 				.setNegativeButton(
 						R.string.cancel,
-						new DialogAddContactClickListener(dialogView,
-								swipeLayout, user));
+						new DialogAddContactClickListener(context, dialogView,
+								listener));
 		return builder.create();
 	}
 

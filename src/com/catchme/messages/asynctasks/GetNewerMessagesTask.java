@@ -12,10 +12,10 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.Message;
 import com.catchme.messages.interfaces.NewerMessagesListener;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.Message;
 
 public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private Context context;
@@ -53,7 +53,7 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		} else if (ReadServerResponse.isSuccess(result)) {
 			ArrayList<Message> newerMessages = ReadServerResponse
 					.getMessagesList(result);
-			item.addNewerMessages(conversationId, newerMessages);
+			//item.addNewerMessages(conversationId, newerMessages);
 			listener.onNewMessage(item.getId(), conversationId, newerMessages.size());
 		} else {
 			Toast.makeText(context, "Message get NEWER problem",

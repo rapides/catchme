@@ -21,6 +21,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.catchme.R;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.utils.GifMovieView;
 
 public class ItemDetailsFragment extends Fragment implements OnClickListener,
@@ -35,6 +36,11 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	private View tabUnderline;
 	private GifMovieView loader;
 	private RelativeLayout loaderContainer;
+	CatchmeDatabaseAdapter dbAdapter;
+
+	public ItemDetailsFragment(CatchmeDatabaseAdapter dbAdapter) {
+		this.dbAdapter = dbAdapter;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,9 +48,9 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		super.onCreate(savedInstanceState);
 		rootView = inflater.inflate(R.layout.fragment_item_details, container,
 				false);
-
 		long itemId = getArguments().getLong(ARG_ITEM_ID);
-		pagerAdapter = new ItemDetailsPagerAdapter(getFragmentManager(), itemId);
+		getActivity().getActionBar().setTitle(dbAdapter.getItem(itemId).getFullName());
+		pagerAdapter = new ItemDetailsPagerAdapter(getFragmentManager(), dbAdapter, itemId);
 
 		viewPager = (ViewPager) rootView.findViewById(R.id.item_pager);
 		viewPager.setAdapter(pagerAdapter);

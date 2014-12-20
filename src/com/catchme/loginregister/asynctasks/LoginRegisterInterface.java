@@ -1,6 +1,6 @@
 package com.catchme.loginregister.asynctasks;
 
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.model.LoggedUser;
 
 import android.support.v4.util.LongSparseArray;
 

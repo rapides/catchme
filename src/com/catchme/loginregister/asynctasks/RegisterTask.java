@@ -9,7 +9,7 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.model.LoggedUser;
 
 public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;

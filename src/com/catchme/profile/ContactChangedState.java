@@ -1,6 +1,6 @@
 package com.catchme.profile;
 
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
+import com.catchme.model.ExampleItem.ContactStateType;
 
 public interface ContactChangedState {
 	public void contactChangedState(ContactStateType newState);

@@ -1,7 +1,5 @@
 package com.catchme.messages.asynctasks;
 
-import java.util.List;
-
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -13,23 +11,25 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.Message;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.messages.interfaces.GetMessagesListener;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
 
 public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private ExampleItem item;
 	private Context context;
 	private GetMessagesListener listener;
 	private long conversationId;
+	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetOlderMessagesTask(Context context, ExampleItem item,
-			GetMessagesListener listener) {
+			CatchmeDatabaseAdapter dbAdapter, GetMessagesListener listener) {
 		super();
 		this.item = item;
 		this.context = context;
 		this.listener = listener;
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -45,8 +45,12 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		String token = user.getToken();
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getMessagesOlder(token,
-					conversationId, oldestMessageId);
+			result = ServerRequests.getMessagesOlder(token, conversationId,
+					oldestMessageId);
+			if(ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()){
+				dbAdapter.insertMessages(conversationId, ReadServerResponse
+						.getMessagesList(result));
+			}
 		} else {
 			result = null;
 		}
@@ -61,12 +65,8 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 			listener.onGetMessagesError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-			List<Message> olderMessages = ReadServerResponse
-					.getMessagesList(result);
-			;
-			item.addOlderMessages(item.getFirstConversationId(), olderMessages);
 			listener.onGetMessagesCompleted(item.getId(), conversationId,
-					olderMessages.size());
+					ReadServerResponse.getMessagesList(result));
 		} else {
 			listener.onGetMessagesError(ReadServerResponse.getErrors(result));
 		}

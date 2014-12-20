@@ -14,11 +14,11 @@ import org.json.JSONObject;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.Message;
-import com.catchme.exampleObjects.UserLocation;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.Message;
+import com.catchme.model.UserLocation;
+import com.catchme.model.ExampleItem.ContactStateType;
 
 public class ReadServerResponse {
 	public static LongSparseArray<String> getErrors(JSONObject fullResponse) {
@@ -181,10 +181,10 @@ public class ReadServerResponse {
 		String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
 		String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
 		String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
-		result.put(ExampleItem.AVATAR_SMALL, smallUrl);
-		result.put(ExampleItem.AVATAR_MEDIUM, mediumUrl);
-		result.put(ExampleItem.AVATAR_BIG, bigUrl);
-		result.put(ExampleItem.AVATAR_URL, url);
+		result.put(ExampleItem.AVATAR_SMALL, ServerConst.SERVER_IP+smallUrl);
+		result.put(ExampleItem.AVATAR_MEDIUM, ServerConst.SERVER_IP+mediumUrl);
+		result.put(ExampleItem.AVATAR_BIG, ServerConst.SERVER_IP+bigUrl);
+		result.put(ExampleItem.AVATAR_URL, ServerConst.SERVER_IP+url);
 
 		return result;
 	}

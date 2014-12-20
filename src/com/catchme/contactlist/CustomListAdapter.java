@@ -1,7 +1,6 @@
 package com.catchme.contactlist;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,7 +15,8 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.*;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.model.ExampleItem;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -24,15 +24,17 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
-		this.items = items;
+	public CustomListAdapter(Activity activity, CatchmeDatabaseAdapter dbAdapter) {
 		this.activity = activity;
+		this.dbAdapter = dbAdapter;
+		items = dbAdapter.getItems(null);
 	}
 
 	@Override
 	public int getCount() {
-		return items.size();
+		return items==null?0:items.size();
 	}
 
 	@Override
@@ -54,19 +56,13 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		}
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row, null);
-
 		}
 		ExampleItem item = items.get(position);
-
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		
-
 		ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
-
 		name.setText(item.getFullName());
-		
 		img.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -74,7 +70,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				// ListView parentListView = (ListView)
 				// v.getParent().getParent();
 				// parentListView.setItemChecked(position, true);
-				//TODO image selecting
+				// TODO image selecting
 			}
 		});
 		return convertView;
@@ -83,7 +79,6 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public Filter getFilter() {
 		Filter filter = new Filter() {
-			;
 			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence constraint,
@@ -98,27 +93,21 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 				FilterResults results = new FilterResults();
 
 				if (constraint == null || constraint.length() == 0) {
-					ArrayList<ExampleItem> newValues = new ArrayList<ExampleItem>(ExampleContent.ITEM_MAP.size());
-					for(int i=0;i<ExampleContent.ITEM_MAP.size();i++){
-						newValues.add(ExampleContent.ITEM_MAP.valueAt(i));
-					}
+					ArrayList<ExampleItem> newValues = dbAdapter.getItems(null);
 					results.values = newValues;
-					results.count = ExampleContent.ITEM_MAP.size();
+					results.count = newValues.size();
 				} else {
 
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
-					
-					for(int i=0;i<ExampleContent.ITEM_MAP.size();i++){
-						ExampleItem dataItem = ExampleContent.ITEM_MAP.valueAt(i);
-						if (dataItem
-								.getFullName()
-								.toLowerCase(Locale.getDefault())
-								.contains(
-										constraint.toString().toLowerCase(
-												Locale.getDefault()))) {
-							filteredArrayNames.add(dataItem);
-						}
-					}
+					filteredArrayNames = dbAdapter.getItems(null);
+					/*
+					 * for (int i = 0; i < ExampleContent.ITEM_MAP.size(); i++)
+					 * { ExampleItem dataItem = ExampleContent.ITEM_MAP
+					 * .valueAt(i); if (dataItem .getFullName()
+					 * .toLowerCase(Locale.getDefault()) .contains(
+					 * constraint.toString().toLowerCase( Locale.getDefault())))
+					 * { filteredArrayNames.add(dataItem); } }
+					 */// TODO getItems from DB
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}
@@ -128,9 +117,9 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		};
 		return filter;
 	}
-
-	public void swapItems(ArrayList<ExampleItem> items) {
-		this.items = items;
-		notifyDataSetChanged();
+	@Override
+	public void notifyDataSetChanged(){
+		items = dbAdapter.getItems(null);
+		super.notifyDataSetChanged();
 	}
 }

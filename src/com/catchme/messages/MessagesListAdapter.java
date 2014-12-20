@@ -1,5 +1,7 @@
 package com.catchme.messages;
 
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -12,42 +14,50 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.Message;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class MessagesListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private Activity activity;
-	private ExampleItem item;
+	private List<Message> messagesList;
 	private LoggedUser user;
+	private ExampleItem item;
+	private CatchmeDatabaseAdapter dbAdapter;
+	private long conversationId;
 
-	public MessagesListAdapter(Activity activity, ExampleItem mItem,
-			LoggedUser user) {
+	public MessagesListAdapter(Activity activity, LoggedUser user,
+			ExampleItem item, CatchmeDatabaseAdapter dbAdapter,
+			long conversationId) {
 		this.activity = activity;
-		this.item = mItem;
 		this.user = user;
+		this.item = item;
+		this.conversationId = conversationId;
+		this.dbAdapter = dbAdapter;
+		this.messagesList = dbAdapter.getMessages(conversationId);
 	}
 
 	@Override
 	public int getCount() {
-		if (item.getMessages(item.getFirstConversationId()) != null) {
-			return item.getMessages(item.getFirstConversationId()).size();
+		if (messagesList != null) {
+			return messagesList.size();
+		} else {
+			return 0;
 		}
-		return 0;
 	}
 
 	@Override
-	public Object getItem(int position) {
-		return item.getMessages(item.getFirstConversationId()).get(position);
+	public Message getItem(int position) {
+		return messagesList.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-
-		return item.getMessages(item.getFirstConversationId()).get(position)
-				.getMessageId();
+		return messagesList.get(position).getMessageId();
 	}
 
 	@SuppressLint("InflateParams")
@@ -69,10 +79,8 @@ public class MessagesListAdapter extends BaseAdapter {
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.single_message_image);
 
-		message.setText(item.getMessages(item.getFirstConversationId())
-				.get(position).getContent());
-		messageTime.setText(item.getMessages(item.getFirstConversationId())
-				.get(position).getTime());
+		message.setText(messagesList.get(position).getContent());
+		messageTime.setText(messagesList.get(position).getTime());
 
 		LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
@@ -83,8 +91,7 @@ public class MessagesListAdapter extends BaseAdapter {
 		timeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		// img.setPadding(10, 10, 10, 10);
 		imageParams.setMargins(0, 5, 0, 5);
-		if (item.getMessages(item.getFirstConversationId()).get(position)
-				.getSenderId() == user.getId()) {
+		if (messagesList.get(position).getSenderId() == user.getId()) {
 			imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			imageParams.addRule(RelativeLayout.ALIGN_BOTTOM,
 					R.id.single_message_containter);
@@ -116,4 +123,9 @@ public class MessagesListAdapter extends BaseAdapter {
 		return convertView;
 	}
 
+	@Override
+	public void notifyDataSetChanged() {
+		messagesList = dbAdapter.getMessages(conversationId);
+		super.notifyDataSetChanged();
+	}
 }

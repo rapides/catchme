@@ -13,20 +13,16 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
-import com.catchme.mapcontent.ItemMapFragment;
-import com.catchme.messages.MessagesFragment;
-import com.catchme.messages.MessagesRefreshService;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.model.LoggedUser;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;
@@ -42,14 +38,15 @@ public class ItemListActivity extends FragmentActivity implements
 	public final static String PREFERENCES = "com.catchme";
 	public static final String USER = "user";
 	public static final String MODEL_VERSION = "model_version";
-	public static final int CURRENT_VERSION = 1;
+	public static final int CURRENT_VERSION = 2;
 	private static final int GPS_INTERVAL = 300000;// ms
 	public static final int NOTIFICATION_ID = 17;
+	private CatchmeDatabaseAdapter dbAdapter;
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
 	 */
-	private boolean mTwoPane;
+	//private boolean mTwoPane;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +58,7 @@ public class ItemListActivity extends FragmentActivity implements
 		Options decodingOptions = new Options();
 		DisplayImageOptions m_options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loader)
-				.decodingOptions(decodingOptions).cacheOnDisk(true)
+				.decodingOptions(decodingOptions).cacheOnDisk(true).cacheInMemory(true)
 				.imageScaleType(ImageScaleType.NONE).build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				this).defaultDisplayImageOptions(m_options).build();
@@ -71,15 +68,18 @@ public class ItemListActivity extends FragmentActivity implements
 			removeLoggedUser(getApplicationContext());
 		}
 
+		dbAdapter = new CatchmeDatabaseAdapter(getApplicationContext());
+		dbAdapter.open();
+
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
-				mTwoPane = true;
+				//mTwoPane = true;
 
 				((ItemListFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.item_list))
 						.setActivateOnItemClick(true);
 			}
-			ItemListFragment firstFragment = new ItemListFragment();
+			ItemListFragment firstFragment = new ItemListFragment(dbAdapter);
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, firstFragment)
 					.commit();
@@ -109,7 +109,7 @@ public class ItemListActivity extends FragmentActivity implements
 					.edit()
 					.putInt(ItemListActivity.MODEL_VERSION,
 							ItemListActivity.CURRENT_VERSION).commit();
-			LoginFragment loginFragment = new LoginFragment();
+			LoginFragment loginFragment = new LoginFragment(dbAdapter);
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();
@@ -122,68 +122,45 @@ public class ItemListActivity extends FragmentActivity implements
 	 */
 	@Override
 	public void onItemSelected(long id) {
-		if (mTwoPane) {
-			// In two-pane mode, show the detail view in this activity by
-			// adding or replacing the detail fragment using a
-			// fragment transaction.
+		// if (mTwoPane) {
+		// In two-pane mode, show the detail view in this activity by
+		// adding or replacing the detail fragment using a
+		// fragment transaction.
+		// TODO handling big screens
+
+		// } else {
+		ExampleItem item = dbAdapter.getItem(id);
+		if (item.getState() == ContactStateType.ACCEPTED) {
 			Bundle arguments = new Bundle();
 			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-			ItemMapFragment fragment = new ItemMapFragment();
-			fragment.setArguments(arguments);
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.item_detail_container, fragment).commit();
+			ItemDetailsFragment frag = new ItemDetailsFragment(dbAdapter);
+			frag.setArguments(arguments);
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
 
-			Bundle arguments2 = new Bundle();
-			arguments2.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-			MessagesFragment fragment2 = new MessagesFragment();
-			fragment2.setArguments(arguments2);
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.messages_list_container, fragment2).commit();
-
-		} else {
-			ExampleItem item = ExampleContent.ITEM_MAP.get(id);
-			if (item.getState() == ContactStateType.ACCEPTED) {
-				Bundle arguments = new Bundle();
-				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-				ItemDetailsFragment frag = new ItemDetailsFragment();
-				frag.setArguments(arguments);
-				FragmentTransaction transaction = getSupportFragmentManager()
-						.beginTransaction();
-				transaction.setCustomAnimations(android.R.anim.fade_in,
-						android.R.anim.fade_out);
-				transaction.replace(R.id.main_fragment_container, frag);
-				transaction.addToBackStack(null);
-				transaction.commit();
-
-				setTitle(ExampleContent.ITEM_MAP.get(id).getFullName());
-			} else if (item.getState() == ContactStateType.RECEIVED) {
-				Bundle arguments = new Bundle();
-				arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-				ItemProfileFragment frag = new ItemProfileFragment();
-				frag.setArguments(arguments);
-				FragmentTransaction transaction = getSupportFragmentManager()
-						.beginTransaction();
-				transaction.setCustomAnimations(android.R.anim.fade_in,
-						android.R.anim.fade_out);
-				transaction.replace(R.id.main_fragment_container, frag);
-				transaction.addToBackStack(null);
-				transaction.commit();
-			} else if (item.getState() == ContactStateType.SENT) {
-				Toast.makeText(getApplicationContext(),
-						"This type of contact? Not yet", Toast.LENGTH_SHORT)
-						.show();
-			}
-
+		} else if (item.getState() == ContactStateType.RECEIVED) {
+			Bundle arguments = new Bundle();
+			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
+			ItemProfileFragment frag = new ItemProfileFragment(dbAdapter);
+			frag.setArguments(arguments);
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+		} else if (item.getState() == ContactStateType.SENT) {
+			Toast.makeText(getApplicationContext(),
+					"This type of contact? Not yet", Toast.LENGTH_SHORT).show();
 		}
-	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			setTitle(getResources().getString(R.string.app_name));
-			// getActionBar().setDisplayHomeAsUpEnabled(false);
-		}
-		return super.onKeyDown(keyCode, event);
+		// }
 	}
 
 	public static LoggedUser getLoggedUser(Context context) {
@@ -205,7 +182,7 @@ public class ItemListActivity extends FragmentActivity implements
 	}
 
 	public static void removeLoggedUser(Context context) {
-		context.stopService(new Intent(context, MessagesRefreshService.class));
+		//context.stopService(new Intent(context, MessagesRefreshService.class));
 		SharedPreferences preferences = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		Editor e = preferences.edit();
@@ -215,24 +192,30 @@ public class ItemListActivity extends FragmentActivity implements
 
 	@Override
 	public void onPause() {
-		stopService(new Intent(this, MessagesRefreshService.class));
-		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
-		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-				MessagesRefreshService.MESSAGES_INTERVAL_LONG);
-		startService(messageIntent);
+		//stopService(new Intent(this, MessagesRefreshService.class));
+		//Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		//messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+		//		MessagesRefreshService.MESSAGES_INTERVAL_LONG);
+		//startService(messageIntent);
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
-		stopService(new Intent(this, MessagesRefreshService.class));
-		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
-		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-				MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
-		startService(messageIntent);
+		//stopService(new Intent(this, MessagesRefreshService.class));
+		//Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		//messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+		//		MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+		//startService(messageIntent);
 		NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		nMgr.cancelAll();
 		super.onResume();
+	}
+	
+	@Override
+	public void onDestroy(){
+		dbAdapter.close();
+		super.onDestroy();
 	}
 
 }

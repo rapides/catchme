@@ -1,4 +1,4 @@
-package com.catchme.exampleObjects;
+package com.catchme.model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,8 +12,9 @@ public class Message {
 	private Date time;
 	@SuppressWarnings("unused")
 	private ArrayList<Object> readFeeds;
-	
-	public Message(long messageId, String content, Date createdAt, long userId, ArrayList<Object> readFeeds) {
+
+	public Message(long messageId, String content, Date createdAt, long userId,
+			ArrayList<Object> readFeeds) {
 		this.messageId = messageId;
 		this.content = content;
 		this.time = createdAt;
@@ -30,14 +31,16 @@ public class Message {
 	}
 
 	public String getTime() {
-		return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(time);
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+				.format(time);
 	}
-	
+
 	public long getMessageId() {
 		return messageId;
 	}
 
-	public String toString(){
-		return getTime()+", "+content + ", id:"+messageId+", user:"+senderId;
+	public String toString() {
+		return getTime() + ", " + content + ", id:" + messageId + ", user:"
+				+ senderId;
 	}
 }

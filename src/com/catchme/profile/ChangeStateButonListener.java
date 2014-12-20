@@ -6,9 +6,9 @@ import android.view.View.OnClickListener;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.LoggedUser;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.ExampleItem.ContactStateType;
 
 public class ChangeStateButonListener implements OnClickListener {
 

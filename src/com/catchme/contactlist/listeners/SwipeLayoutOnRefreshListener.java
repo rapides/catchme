@@ -2,28 +2,27 @@ package com.catchme.contactlist.listeners;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.widget.ListView;
 
-import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
-import com.catchme.exampleObjects.ExampleItem.ContactStateType;
-
+import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.model.ExampleItem.ContactStateType;
 
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
-	SwipeRefreshLayout swipeLayout;
-	ListView listView;
+	private OnGetContactCompletedListener listener;
 	private Context context;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public SwipeLayoutOnRefreshListener(SwipeRefreshLayout swipeLayout,
-			ListView listView) {
+	public SwipeLayoutOnRefreshListener(Context context,
+			OnGetContactCompletedListener listener,
+			CatchmeDatabaseAdapter dbAdapter) {
 		super();
-		this.swipeLayout = swipeLayout;
-		this.listView = listView;
-		this.context = listView.getContext();
+		this.context = context;
+		this.listener = listener;
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -31,8 +30,7 @@ public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 		SharedPreferences prefs = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, 1);
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter(),
+		new GetContactsTask(context, listener, dbAdapter,
 				ContactStateType.getStateType(val)).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
 	}

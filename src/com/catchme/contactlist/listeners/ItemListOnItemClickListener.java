@@ -6,7 +6,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.catchme.contactlist.ItemListFragment.Callbacks;
-import com.catchme.exampleObjects.*;
+import com.catchme.model.*;
 
 @SuppressWarnings("deprecation")
 public class ItemListOnItemClickListener implements OnItemClickListener {

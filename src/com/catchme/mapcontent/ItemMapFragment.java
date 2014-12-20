@@ -1,8 +1,11 @@
 package com.catchme.mapcontent;
 
+import java.util.ArrayList;
+
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +15,11 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.R.color;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleItem;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.UserLocation;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.model.ExampleItem;
+import com.catchme.model.LoggedUser;
+import com.catchme.model.UserLocation;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,9 +30,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import android.support.v4.util.LongSparseArray;
 
-public class ItemMapFragment extends Fragment implements LoadLocationsListener {
+public class ItemMapFragment extends Fragment implements
+		OnLoadLocationsListener {
 	MapView mapView;
 	GoogleMap map;
 	View rootView;
@@ -37,15 +40,17 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	private long itemId;
 	private ExampleItem mItem;
 	private LoggedUser user;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public ItemMapFragment() {
+	public ItemMapFragment(CatchmeDatabaseAdapter dbAdapter) {
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		itemId = getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID);
-		mItem = ExampleContent.ITEM_MAP.get(itemId);
+		mItem = dbAdapter.getItem(itemId);
 	}
 
 	@Override
@@ -88,7 +93,11 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	}
 
 	@Override
-	public void locationsUpdated() {
+	public void loadLocationsSucceded(
+			LongSparseArray<ArrayList<UserLocation>> locations) {
+
+		dbAdapter.updateLocations(locations);
+		mItem = dbAdapter.getItem(itemId);
 		Location lastLocation = mItem.getLastLocation();
 		if (lastLocation != null) {
 			LatLng location = new LatLng(lastLocation.getLatitude(),
@@ -166,7 +175,7 @@ public class ItemMapFragment extends Fragment implements LoadLocationsListener {
 	}
 
 	@Override
-	public void locationsError(LongSparseArray<String> errors) {
+	public void loadLocationError(LongSparseArray<String> errors) {
 		Toast.makeText(getActivity(), errors.toString(), Toast.LENGTH_SHORT)
 				.show();
 	}

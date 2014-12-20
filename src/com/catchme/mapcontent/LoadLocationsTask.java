@@ -6,23 +6,18 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.util.LongSparseArray;
 import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
-import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.LoggedUser;
-import com.catchme.exampleObjects.UserLocation;
 
 public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
-	private LoadLocationsListener listener;
+	private OnLoadLocationsListener listener;
 
-	public LoadLocationsTask(Context context, LoadLocationsListener listener) {
+	public LoadLocationsTask(Context context, OnLoadLocationsListener listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
@@ -50,27 +45,10 @@ public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else if (ReadServerResponse.isSuccess(result)) {
-			updateLocations(ReadServerResponse.getLocations(result));
-			listener.locationsUpdated();
+			listener.loadLocationsSucceded(ReadServerResponse.getLocations(result));
 		} else {
-			listener.locationsError(ReadServerResponse.getErrors(result));
+			listener.loadLocationError(ReadServerResponse.getErrors(result));
 		}
-	}
-
-	private void updateLocations(
-			LongSparseArray<ArrayList<UserLocation>> locations) {
-		for (int i=0;i<locations.size();i++) {
-			long key = locations.keyAt(i);
-			if (key != 0) {
-				ExampleContent.ITEM_MAP.get(key).setLocations(
-						locations.get(key));
-			} else {
-				LoggedUser user = ItemListActivity.getLoggedUser(context);
-				user.setLocations(locations.get(key));
-				ItemListActivity.setLoggedUser(context, user);
-			}
-		}
-
 	}
 
 	
