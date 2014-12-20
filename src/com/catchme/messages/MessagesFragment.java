@@ -141,7 +141,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 	@Override
 	public void onMessageSent(boolean b) {
-		new GetNewerMessagesTask(getActivity(), item, this).execute(
+		new GetNewerMessagesTask(getActivity(), item, dbAdapter, this).execute(
 				item.getFirstConversationId(),
 				listView.getItemIdAtPosition(listView.getCount() - 1));
 		textBox.setText("");

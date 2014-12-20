@@ -12,6 +12,7 @@ import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
+import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.messages.interfaces.NewerMessagesListener;
 import com.catchme.model.ExampleItem;
 import com.catchme.model.LoggedUser;
@@ -22,13 +23,15 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private ExampleItem item;
 	private NewerMessagesListener listener;
 	private Long conversationId;
+	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetNewerMessagesTask(Context context, ExampleItem item,
-			NewerMessagesListener listener) {
+			CatchmeDatabaseAdapter dbAdapter, NewerMessagesListener listener) {
 		super();
 		this.item = item;
 		this.context = context;
 		this.listener = listener;
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -39,7 +42,12 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		String token = user.getToken();
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			result = ServerRequests.getMessagesNewer(token,conversationId, oldestMessageId);
+			result = ServerRequests.getMessagesNewer(token, conversationId,
+					oldestMessageId);
+			if(ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()){
+				dbAdapter.insertMessages(conversationId, ReadServerResponse
+						.getMessagesList(result));
+			}
 		} else {
 			result = null;
 		}
@@ -53,8 +61,8 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		} else if (ReadServerResponse.isSuccess(result)) {
 			ArrayList<Message> newerMessages = ReadServerResponse
 					.getMessagesList(result);
-			//item.addNewerMessages(conversationId, newerMessages);
-			listener.onNewMessage(item.getId(), conversationId, newerMessages.size());
+			listener.onNewMessage(item.getId(), conversationId,
+					newerMessages.size());
 		} else {
 			Toast.makeText(context, "Message get NEWER problem",
 					Toast.LENGTH_SHORT).show();
