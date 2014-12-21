@@ -74,15 +74,6 @@ public class CatchmeDatabaseAdapter {
 			+ DB_AVATAR_BIG + " TEXT NOT NULL, " + DB_AVATAR_URL
 			+ " TEXT NOT NULL " + ")";
 
-	/*
-	 * private static final String DB_CREATE_AVATARS_TABLE = "CREATE TABLE " +
-	 * DB_AVATAR_TABLE + " (" + DB_AVATAR_ID
-	 * +" INTEGER PRIMARY KEY AUTOINCREMENT, " + DB_ITEM_ID+
-	 * " INTEGER PRIMARY KEY, " + DB_AVATAR_SMALL + " TEXT NOT NULL, " +
-	 * DB_AVATAR_MEDIUM + " TEXT NOT NULL, " + DB_AVATAR_BIG+ " TEXT NOT NULL, "
-	 * + DB_AVATAR_URL + " TEXT NOT NULL " + ")";
-	 */
-
 	private static final String DB_CREATE_LOCATIONS_TABLE = "CREATE TABLE "
 			+ DB_LOCATIONS_TABLE + " (" + DB_ITEM_ID + " INTEGER NOT NULL, "
 			+ DB_LOCATIONS_ACCURACY + " REAL NOT NULL, "
@@ -222,22 +213,37 @@ public class CatchmeDatabaseAdapter {
 		return result;
 	}
 
-	public ArrayList<ExampleItem> getItems(ContactStateType state) {
+	public ArrayList<ExampleItem> getItemsByName(String name) {
+		String where = DB_ITEM_NAME + " LIKE '%" + name + "%' OR "
+				+ DB_ITEM_SURNAME + " LIKE '%" + name + "%'";
+		return getItems(where);
+	}
+
+	public ArrayList<ExampleItem> getItemsByState(ContactStateType state) {
+		String where = null;
+		if (state == ContactStateType.ACCEPTED) {
+			where = DB_ITEM_STATE + "="
+					+ ContactStateType.ACCEPTED.getIntegerValue();
+		} else if (state == ContactStateType.SENT) {
+			where = DB_ITEM_STATE + "="
+					+ ContactStateType.SENT.getIntegerValue();
+		} else if (state == ContactStateType.RECEIVED) {
+			where = DB_ITEM_STATE + "="
+					+ ContactStateType.RECEIVED.getIntegerValue();
+		} else {
+			where = null;
+		}
+		return getItems(where);
+	}
+
+	public ArrayList<ExampleItem> getItems(String query) {
 		ArrayList<ExampleItem> result = new ArrayList<ExampleItem>();
 		String[] columns = { DB_ITEM_ID, DB_ITEM_NAME, DB_ITEM_SURNAME,
 				DB_ITEM_EMAIL, DB_ITEM_STATE, DB_ITEM_SEX, DB_ITEM_BIRDTHDAY,
 				DB_AVATAR_SMALL, DB_AVATAR_MEDIUM, DB_AVATAR_BIG, DB_AVATAR_URL };
-		Cursor cursor = db.query(DB_ITEM_TABLE, columns, null, null, null,
+
+		Cursor cursor = db.query(DB_ITEM_TABLE, columns, query, null, null,
 				null, null);
-		if (state == null) {
-
-		} else if (state == ContactStateType.ACCEPTED) {
-
-		} else if (state == ContactStateType.SENT) {
-
-		} else if (state == ContactStateType.RECEIVED) {
-			// TODO Auto-generated method stub
-		}
 		if (cursor.moveToFirst()) {
 			while (cursor.isAfterLast() == false) {
 				ExampleItem item = getItemFromCursor(cursor);
@@ -334,9 +340,9 @@ public class CatchmeDatabaseAdapter {
 
 	public Message getLastMessage(long conversationId) {
 		List<Message> list = getMessages(conversationId);
-		if(list.size()>0){
+		if (list.size() > 0) {
 			return list.get(list.size() - 1);
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -348,11 +354,11 @@ public class CatchmeDatabaseAdapter {
 	}
 
 	public Location getLastLocation(long id) {
-		//TODO improve
+		// TODO improve
 		LinkedList<Location> l = getLocations(id);
-		if(l.size()>0){
+		if (l.size() > 0) {
 			return l.get(0);
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -385,7 +391,7 @@ public class CatchmeDatabaseAdapter {
 				DB_LOCATIONS_LATITUDE, DB_LOCATIONS_LONGITUDE,
 				DB_LOCATIONS_TIME };
 		String where = DB_ITEM_ID + "=" + itemId;
-		String orderby = DB_LOCATIONS_TIME+ " DESC";
+		String orderby = DB_LOCATIONS_TIME + " DESC";
 		Cursor cursor = db.query(DB_LOCATIONS_TABLE, columns, where, null,
 				null, null, orderby);
 

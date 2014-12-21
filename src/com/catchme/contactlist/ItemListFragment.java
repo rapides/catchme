@@ -3,10 +3,7 @@ package com.catchme.contactlist;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -36,12 +34,11 @@ import com.catchme.contactlist.interfaces.OnAddContactCompletedListener;
 import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
-import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
 import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.database.model.ExampleItem;
-import com.catchme.database.model.LoggedUser;
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.MessagesRefreshService;
 import com.catchme.utils.FloatingActionButton;
@@ -61,8 +58,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	private ActionBarDrawerToggle drawerToggle;
 	private FloatingActionButton fab;
 	private LoggedUser user;
-	private SharedPreferences sharedpreferences;
-	CatchmeDatabaseAdapter dbAdapter;
+	private CatchmeDatabaseAdapter dbAdapter;
+	private int defaulFilter = ContactStateType.ACCEPTED.getIntegerValue();
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -88,7 +85,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	public ItemListFragment(CatchmeDatabaseAdapter dbAdapter) {
 		this.dbAdapter = dbAdapter;
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -96,14 +93,12 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				container, false);
 
 		Intent messageIntent = new Intent(getActivity(),
-		MessagesRefreshService.class);
+				MessagesRefreshService.class);
 		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-		MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+				MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
 		getActivity().startService(messageIntent);
 
 		user = ItemListActivity.getLoggedUser(getActivity());
-		sharedpreferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 
 		swipeLayout = (SwipeRefreshLayout) rootView
@@ -145,16 +140,27 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
 				getActivity(), drawerLayout, drawerToggle, drawerList,
 				dbAdapter));
-		listView.setOnItemClickListener(new ItemListOnItemClickListener(
-				drawerToggle, mCallbacks));
+		filterList(defaulFilter);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				drawerToggle.setDrawerIndicatorEnabled(false);
+				mCallbacks.onItemSelected(listView.getItemIdAtPosition(position));
+			}
+		});
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
 				this));
 
 		getActivity().getActionBar().setTitle(
 				getResources().getString(R.string.app_name));
-		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
 		new GetContactsTask(this.getActivity(), this, dbAdapter,
 				ContactStateType.ACCEPTED).execute(user.getToken());
+		new GetContactsTask(this.getActivity(), this, dbAdapter,
+				ContactStateType.SENT).execute(user.getToken());
+		new GetContactsTask(this.getActivity(), this, dbAdapter,
+				ContactStateType.RECEIVED).execute(user.getToken());
 		return rootView;
 	}
 
@@ -264,19 +270,17 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		return listView;
 	}
 
-	/*
-	 * private void filterList(int state) { if (listView != null &&
-	 * listView.getAdapter() != null) { if (state >= 0) { ((CustomListAdapter)
-	 * listView.getAdapter()).getFilter().filter(
-	 * CustomListAdapter.SEARCHTYPES[0] + CustomListAdapter.SEARCHCHAR + state);
-	 * } else { ((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-	 * null); } } }
-	 */
+	private void filterList(int state) {
+		if (listView != null && listView.getAdapter() != null) {
+			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+					"" + CustomListAdapter.SEARCHTYPES[1] + state);
+		}
+	}
 
 	private void filterList(String newText) {
 		if (listView != null && listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					newText);
+					CustomListAdapter.SEARCHTYPES[0] + newText);
 		}
 
 	}
@@ -340,50 +344,28 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				R.id.action_filter));
 		popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 		popup.setOnMenuItemClickListener(this);
-		ContactStateType state = ContactStateType
-				.getStateType(sharedpreferences.getInt(SELECTED_FILTER, 1));
-		popup.getMenu().getItem(state.getMenuPosition()).setChecked(true);
+		popup.getMenu().getItem(defaulFilter).setChecked(true);
 		popup.show();
 	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		Editor editor = sharedpreferences.edit();
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			new GetContactsTask(getActivity().getApplicationContext(), this,
-					dbAdapter, ContactStateType.ACCEPTED).execute(user
-					.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			editor.commit();
+			filterList(-1);
+			defaulFilter = 0;
 			return true;
 		case R.id.menu_group_accepted:
-			new GetContactsTask(getActivity().getApplicationContext(), this,
-					dbAdapter, ContactStateType.ACCEPTED).execute(user
-					.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.ACCEPTED.getIntegerValue());
+			defaulFilter = 1;
 			return true;
 		case R.id.menu_group_sent:
-			new GetContactsTask(getActivity().getApplicationContext(), this,
-					dbAdapter, ContactStateType.SENT).execute(user.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.SENT.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.SENT.getIntegerValue());
+			defaulFilter = 2;
 			return true;
 		case R.id.menu_group_received:
-			new GetContactsTask(getActivity().getApplicationContext(), this,
-					dbAdapter, ContactStateType.RECEIVED).execute(user
-					.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.RECEIVED.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.RECEIVED.getIntegerValue());
+			defaulFilter = 3;
 			return true;
 		}
 		return false;
@@ -415,12 +397,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		filterList(newText);
-		if (sharedpreferences != null) {
-			Editor e = sharedpreferences.edit();
-			e.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			e.commit();
-		}
 		return true;
 	}
 

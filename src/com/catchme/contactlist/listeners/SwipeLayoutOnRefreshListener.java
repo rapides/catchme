@@ -1,11 +1,9 @@
 package com.catchme.contactlist.listeners;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.database.CatchmeDatabaseAdapter;
@@ -27,11 +25,15 @@ public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 
 	@Override
 	public void onRefresh() {
-		SharedPreferences prefs = context.getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, 1);
 		new GetContactsTask(context, listener, dbAdapter,
-				ContactStateType.getStateType(val)).execute(ItemListActivity
+				ContactStateType.ACCEPTED).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
+		new GetContactsTask(context, listener, dbAdapter,
+				ContactStateType.RECEIVED).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
+		new GetContactsTask(context, listener, dbAdapter,
+				ContactStateType.SENT).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
+		
 	}
 }

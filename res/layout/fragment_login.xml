@@ -44,7 +44,8 @@
                     android:layout_centerHorizontal="true"
                     android:hint="@string/hint_email"
                     android:inputType="textEmailAddress"
-                    android:minWidth="200dp" />
+                    android:minWidth="200dp"
+                    android:text="mailczeslawa2@cycki.pl" />
 
                 <ImageView
                     android:id="@+id/login_icon_email"
@@ -71,7 +72,8 @@
                     android:layout_centerHorizontal="true"
                     android:hint="@string/hint_password"
                     android:inputType="textPassword"
-                    android:minWidth="200dp" />
+                    android:minWidth="200dp"
+                    android:text="appleseed" />
 
                 <ImageView
                     android:id="@+id/login_icon_pass"

@@ -65,7 +65,7 @@ public class MessagesRefreshService extends IntentService implements
 			Log.d("MessageService", "Working in background. Refresh time: "
 					+ refreshTime);
 			ArrayList<ExampleItem> items = dbAdapter
-					.getItems(ContactStateType.ACCEPTED);
+					.getItemsByState(ContactStateType.ACCEPTED);
 			for (ExampleItem item : items) {
 				long convId = item.getFirstConversationId();
 				Message lastMessage = dbAdapter.getLastMessage(convId);

@@ -17,24 +17,28 @@ import android.widget.TextView;
 import com.catchme.R;
 import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class CustomListAdapter extends BaseAdapter implements Filterable {
+	public static final int[] SEARCHTYPES = { '$', '%' };
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
 	private CatchmeDatabaseAdapter dbAdapter;
+	private ContactStateType filterType;
 
 	public CustomListAdapter(Activity activity, CatchmeDatabaseAdapter dbAdapter) {
 		this.activity = activity;
 		this.dbAdapter = dbAdapter;
-		items = dbAdapter.getItems(null);
+		filterType = null;
+		items = dbAdapter.getItemsByState(filterType);
 	}
 
 	@Override
 	public int getCount() {
-		return items==null?0:items.size();
+		return items == null ? 0 : items.size();
 	}
 
 	@Override
@@ -83,7 +87,6 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-
 				items = (ArrayList<ExampleItem>) results.values;
 				notifyDataSetChanged();
 			}
@@ -91,35 +94,39 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults results = new FilterResults();
-
 				if (constraint == null || constraint.length() == 0) {
 					ArrayList<ExampleItem> newValues = dbAdapter.getItems(null);
 					results.values = newValues;
 					results.count = newValues.size();
 				} else {
-
+					int searchType = Integer.parseInt(constraint.subSequence(0,
+							2).toString());
+					String searchquery = constraint.subSequence(2,
+							constraint.length()).toString();
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
-					filteredArrayNames = dbAdapter.getItems(null);
-					/*
-					 * for (int i = 0; i < ExampleContent.ITEM_MAP.size(); i++)
-					 * { ExampleItem dataItem = ExampleContent.ITEM_MAP
-					 * .valueAt(i); if (dataItem .getFullName()
-					 * .toLowerCase(Locale.getDefault()) .contains(
-					 * constraint.toString().toLowerCase( Locale.getDefault())))
-					 * { filteredArrayNames.add(dataItem); } }
-					 */// TODO getItems from DB
+					if (searchType == SEARCHTYPES[0]) {// search for name
+						filteredArrayNames = dbAdapter.getItemsByName(searchquery);
+					} else if (searchType == SEARCHTYPES[1]) {
+						filterType = ContactStateType.getStateType(Integer
+								.parseInt(searchquery));
+						filteredArrayNames = dbAdapter.getItemsByState(filterType);
+					} else {
+						filteredArrayNames = dbAdapter.getItemsByState(null);
+					}
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}
 				return results;
-
 			}
 		};
 		return filter;
 	}
+
 	@Override
-	public void notifyDataSetChanged(){
-		items = dbAdapter.getItems(null);
+	public void notifyDataSetChanged() {
+		if(items == null || items.size()==0){
+			items = dbAdapter.getItemsByState(filterType);
+		}
 		super.notifyDataSetChanged();
 	}
 }

@@ -47,18 +47,6 @@ public class ExampleItem {
 			}
 			return null;
 		}
-
-		public int getMenuPosition() {
-			if (this == ACCEPTED) {
-				return 1;
-			} else if (this == SENT) {
-				return 2;
-			} else if (this == RECEIVED) {
-				return 3;
-			} else {
-				return 0;
-			}
-		}
 	}
 
 	private long id;// idcontactu
