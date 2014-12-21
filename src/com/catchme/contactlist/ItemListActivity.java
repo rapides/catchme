@@ -68,10 +68,11 @@ public class ItemListActivity extends FragmentActivity implements
 			removeLoggedUser(getApplicationContext());
 		}
 
-		dbAdapter = new CatchmeDatabaseAdapter(getApplicationContext());
-		dbAdapter.open();
+		
 
 		if (preferences.contains(USER)) {
+			dbAdapter = new CatchmeDatabaseAdapter(getApplicationContext());
+			dbAdapter.open();
 			if (findViewById(R.id.item_detail_container) != null) {
 				//mTwoPane = true;
 
@@ -109,7 +110,7 @@ public class ItemListActivity extends FragmentActivity implements
 					.edit()
 					.putInt(ItemListActivity.MODEL_VERSION,
 							ItemListActivity.CURRENT_VERSION).commit();
-			LoginFragment loginFragment = new LoginFragment(dbAdapter);
+			LoginFragment loginFragment = new LoginFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();

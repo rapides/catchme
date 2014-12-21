@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListFragment;
-import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
 import com.catchme.loginregister.asynctasks.LoginTask;
 import com.catchme.model.LoggedUser;
@@ -25,10 +24,8 @@ public class LoginFragment extends Fragment implements OnClickListener,
 	private View rootView;
 	private ProgressBar login_loading;
 	private EditText login, pass;
-	private CatchmeDatabaseAdapter dbAdapter;
 
-	public LoginFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public LoginFragment() {
 	}
 
 	@Override
@@ -61,7 +58,7 @@ public class LoginFragment extends Fragment implements OnClickListener,
 			Bundle arguments = new Bundle();
 			arguments.putString(RegisterFragment.EMAIL, login.getText()
 					.toString());
-			RegisterFragment regFragment = new RegisterFragment(dbAdapter);
+			RegisterFragment regFragment = new RegisterFragment();
 			regFragment.setArguments(arguments);
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();
@@ -86,7 +83,7 @@ public class LoginFragment extends Fragment implements OnClickListener,
 		Toast.makeText(getActivity(),
 				"Success! Logged user: " + user.getFullName(),
 				Toast.LENGTH_SHORT).show();
-		ItemListFragment mainFragment = new ItemListFragment(dbAdapter);
+		ItemListFragment mainFragment = new ItemListFragment(null);
 		// replace old view
 		getActivity().getSupportFragmentManager().beginTransaction()
 				.replace(R.id.main_fragment_container, mainFragment).commit();

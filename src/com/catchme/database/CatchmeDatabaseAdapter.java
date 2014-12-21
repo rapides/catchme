@@ -123,15 +123,21 @@ public class CatchmeDatabaseAdapter {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.d(DEBUG_TAG, "Database updating...");
 			// on upgrade drop older tables
-			db.execSQL("DROP TABLE IF EXISTS " + DB_ITEM_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS " + DB_CONVERSATIONS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS " + DB_LOCATIONS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS " + DB_MESSAGES_TABLE);
+			destroy();
 
-			onCreate(db);
 			Log.d(DEBUG_TAG, "Tables" + " updated from ver." + oldVersion
 					+ " to ver." + newVersion);
 			Log.d(DEBUG_TAG, "All data is lost.");
+		}
+
+		public void destroy() {
+			if(db!=null){
+				db.execSQL("DROP TABLE IF EXISTS " + DB_ITEM_TABLE);
+				db.execSQL("DROP TABLE IF EXISTS " + DB_CONVERSATIONS_TABLE);
+				db.execSQL("DROP TABLE IF EXISTS " + DB_LOCATIONS_TABLE);
+				db.execSQL("DROP TABLE IF EXISTS " + DB_MESSAGES_TABLE);
+				onCreate(db);
+			}
 		}
 	}
 
@@ -347,6 +353,8 @@ public class CatchmeDatabaseAdapter {
 		List<Message> list = getMessages(conversationId);
 		return list.get(0).getMessageId();
 	}
+
+	
 
 	
 }

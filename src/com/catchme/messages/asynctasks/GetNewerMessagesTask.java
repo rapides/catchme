@@ -44,9 +44,9 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesNewer(token, conversationId,
 					oldestMessageId);
-			if(ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()){
-				dbAdapter.insertMessages(conversationId, ReadServerResponse
-						.getMessagesList(result));
+			if (ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()) {
+				dbAdapter.insertMessages(conversationId,
+						ReadServerResponse.getMessagesList(result));
 			}
 		} else {
 			result = null;

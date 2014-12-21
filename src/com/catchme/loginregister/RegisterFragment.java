@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListFragment;
-import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
 import com.catchme.loginregister.asynctasks.RegisterTask;
 import com.catchme.model.LoggedUser;
@@ -25,10 +24,8 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 	private View rootView;
 	private ProgressBar register_loading;
 	private EditText email, name, surname, pass, conf_pass;
-	private CatchmeDatabaseAdapter dbAdapter;
 
-	public RegisterFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public RegisterFragment() {
 	}
 
 	@Override
@@ -76,7 +73,7 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 		Toast.makeText(getActivity(),
 				"Success! Registered user: " + user.getFullName(),
 				Toast.LENGTH_SHORT).show();
-		ItemListFragment mainFragment = new ItemListFragment(dbAdapter);
+		ItemListFragment mainFragment = new ItemListFragment(null);
 		// replace old view
 		getActivity().getSupportFragmentManager().beginTransaction()
 				.replace(R.id.main_fragment_container, mainFragment).commit();

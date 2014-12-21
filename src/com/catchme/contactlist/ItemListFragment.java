@@ -87,7 +87,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	public ItemListFragment(CatchmeDatabaseAdapter dbAdapter) {
 		this.dbAdapter = dbAdapter;
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -153,10 +153,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				getResources().getString(R.string.app_name));
 		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
 		new GetContactsTask(this.getActivity(), this, dbAdapter,
-				ContactStateType.getStateType(sharedpreferences.getInt(
-						SELECTED_FILTER,
-						ContactStateType.ACCEPTED.getIntegerValue())))
-				.execute(user.getToken());
+				ContactStateType.ACCEPTED);
 		return rootView;
 	}
 
@@ -221,7 +218,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			throw new IllegalStateException(
 					"Activity must implement fragment's callbacks.");
 		}
+		if (dbAdapter == null) {
+			System.out.println(activity);
+			dbAdapter = new CatchmeDatabaseAdapter(getActivity());
+			dbAdapter.open();
+		}
 		mCallbacks = (Callbacks) activity;
+		super.onAttach(activity);
 	}
 
 	@Override
