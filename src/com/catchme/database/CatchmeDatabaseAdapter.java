@@ -15,6 +15,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.SyncStateContract.Helpers;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
@@ -352,6 +353,10 @@ public class CatchmeDatabaseAdapter {
 		//TODO improve, bad solution
 		List<Message> list = getMessages(conversationId);
 		return list.get(0).getMessageId();
+	}
+
+	public void deleteAll() {
+		dbHelper.destroy();
 	}
 
 	

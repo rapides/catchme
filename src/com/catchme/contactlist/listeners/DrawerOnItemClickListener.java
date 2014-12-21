@@ -46,8 +46,8 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			ItemListActivity.removeLoggedUser(context);
 			context.stopService(new Intent(context,
 					MessagesRefreshService.class));
-			dbAdapter.close();
-			LoginFragment loginFragment = new LoginFragment();
+			dbAdapter.deleteAll();
+			LoginFragment loginFragment = new LoginFragment(dbAdapter);
 			((FragmentActivity) context).getSupportFragmentManager()
 					.beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
