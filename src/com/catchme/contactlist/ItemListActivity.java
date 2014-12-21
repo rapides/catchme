@@ -39,10 +39,9 @@ public class ItemListActivity extends FragmentActivity implements
 	public final static String PREFERENCES = "com.catchme";
 	public static final String USER = "user";
 	public static final String MODEL_VERSION = "model_version";
-	public static final int CURRENT_VERSION = 2;
+	public static final int CURRENT_VERSION = 3;
 	private static final int GPS_INTERVAL = 300000;// ms
 	public static final int NOTIFICATION_ID = 17;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -70,8 +69,7 @@ public class ItemListActivity extends FragmentActivity implements
 		if (preferences.getInt(MODEL_VERSION, -1) != CURRENT_VERSION) {
 			removeLoggedUser(getApplicationContext());
 		}
-		dbAdapter = new CatchmeDatabaseAdapter(getApplicationContext());
-		dbAdapter.open();
+
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
 				// mTwoPane = true;
@@ -80,7 +78,7 @@ public class ItemListActivity extends FragmentActivity implements
 						.findFragmentById(R.id.item_list))
 						.setActivateOnItemClick(true);
 			}
-			ItemListFragment firstFragment = new ItemListFragment(dbAdapter);
+			ItemListFragment firstFragment = new ItemListFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, firstFragment)
 					.commit();
@@ -110,7 +108,7 @@ public class ItemListActivity extends FragmentActivity implements
 					.edit()
 					.putInt(ItemListActivity.MODEL_VERSION,
 							ItemListActivity.CURRENT_VERSION).commit();
-			LoginFragment loginFragment = new LoginFragment(dbAdapter);
+			LoginFragment loginFragment = new LoginFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();
@@ -130,11 +128,12 @@ public class ItemListActivity extends FragmentActivity implements
 		// TODO handling big screens
 
 		// } else {
-		ExampleItem item = dbAdapter.getItem(id);
+		ExampleItem item = CatchmeDatabaseAdapter.getInstance(
+				getApplicationContext()).getItem(id);
 		if (item.getState() == ContactStateType.ACCEPTED) {
 			Bundle arguments = new Bundle();
 			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-			ItemDetailsFragment frag = new ItemDetailsFragment(dbAdapter);
+			ItemDetailsFragment frag = new ItemDetailsFragment();
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
@@ -147,7 +146,7 @@ public class ItemListActivity extends FragmentActivity implements
 		} else if (item.getState() == ContactStateType.RECEIVED) {
 			Bundle arguments = new Bundle();
 			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, id);
-			ItemProfileFragment frag = new ItemProfileFragment(dbAdapter);
+			ItemProfileFragment frag = new ItemProfileFragment();
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
@@ -216,7 +215,6 @@ public class ItemListActivity extends FragmentActivity implements
 
 	@Override
 	public void onDestroy() {
-		dbAdapter.close();
 		super.onDestroy();
 	}
 

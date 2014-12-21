@@ -27,18 +27,16 @@ public class MessagesListAdapter extends BaseAdapter {
 	private List<Message> messagesList;
 	private LoggedUser user;
 	private ExampleItem item;
-	private CatchmeDatabaseAdapter dbAdapter;
 	private long conversationId;
 
 	public MessagesListAdapter(Activity activity, LoggedUser user,
-			ExampleItem item, CatchmeDatabaseAdapter dbAdapter,
-			long conversationId) {
+			ExampleItem item, long conversationId) {
 		this.activity = activity;
 		this.user = user;
 		this.item = item;
 		this.conversationId = conversationId;
-		this.dbAdapter = dbAdapter;
-		this.messagesList = dbAdapter.getMessages(conversationId);
+		this.messagesList = CatchmeDatabaseAdapter.getInstance(
+				activity.getApplicationContext()).getMessages(conversationId);
 	}
 
 	@Override
@@ -125,7 +123,8 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	@Override
 	public void notifyDataSetChanged() {
-		messagesList = dbAdapter.getMessages(conversationId);
+		messagesList = CatchmeDatabaseAdapter.getInstance(
+				activity.getApplicationContext()).getMessages(conversationId);
 		super.notifyDataSetChanged();
 	}
 }

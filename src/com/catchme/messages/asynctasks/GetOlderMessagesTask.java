@@ -21,15 +21,13 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private Context context;
 	private GetMessagesListener listener;
 	private long conversationId;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetOlderMessagesTask(Context context, ExampleItem item,
-			CatchmeDatabaseAdapter dbAdapter, GetMessagesListener listener) {
+			GetMessagesListener listener) {
 		super();
 		this.item = item;
 		this.context = context;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -47,9 +45,10 @@ public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesOlder(token, conversationId,
 					oldestMessageId);
-			if(ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()){
-				dbAdapter.insertMessages(conversationId, ReadServerResponse
-						.getMessagesList(result));
+			if (ReadServerResponse.isSuccess(result)) {
+				CatchmeDatabaseAdapter.getInstance(context).insertMessages(
+						conversationId,
+						ReadServerResponse.getMessagesList(result));
 			}
 		} else {
 			result = null;

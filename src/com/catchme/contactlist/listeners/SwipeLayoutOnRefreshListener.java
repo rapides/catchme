@@ -6,32 +6,28 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
-import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	private OnGetContactCompletedListener listener;
 	private Context context;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	public SwipeLayoutOnRefreshListener(Context context,
-			OnGetContactCompletedListener listener,
-			CatchmeDatabaseAdapter dbAdapter) {
+			OnGetContactCompletedListener listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
 	public void onRefresh() {
-		new GetContactsTask(context, listener, dbAdapter,
+		new GetContactsTask(context, listener,
 				ContactStateType.ACCEPTED).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
-		new GetContactsTask(context, listener, dbAdapter,
+		new GetContactsTask(context, listener,
 				ContactStateType.RECEIVED).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
-		new GetContactsTask(context, listener, dbAdapter,
+		new GetContactsTask(context, listener,
 				ContactStateType.SENT).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
 		

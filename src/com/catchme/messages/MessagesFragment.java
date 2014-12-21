@@ -50,17 +50,16 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 	private boolean isGetingMessages;
 	private boolean isMoreMessages;
 	boolean isOpened = false;
-	private CatchmeDatabaseAdapter dbAdapter;
 
-	public MessagesFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public MessagesFragment() {
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		item = dbAdapter.getItem(getArguments().getLong(
-				ItemDetailsFragment.ARG_ITEM_ID));
+		item = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getItem(
+				getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID));
 		user = ItemListActivity.getLoggedUser(getActivity());
 		isGetingMessages = false;
 		isMoreMessages = true;
@@ -92,17 +91,19 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 		ImageButton sendBtn = (ImageButton) rootView
 				.findViewById(R.id.message_send);
 		t.setText("" + item.getFullName());
-		List<Message> listMessages = dbAdapter.getMessages(item
-				.getFirstConversationId());
+		List<Message> listMessages = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getMessages(
+				item.getFirstConversationId());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
-				user, item, dbAdapter, item.getFirstConversationId());
+				user, item, item.getFirstConversationId());
 		listView.setAdapter(adapter);
 		if (listMessages != null && listMessages.size() > 0) {
-			listView.setSelection(dbAdapter.getMessages(
-					item.getFirstConversationId()).size() - 1);
+			listView.setSelection(CatchmeDatabaseAdapter
+					.getInstance(getActivity().getApplicationContext())
+					.getMessages(item.getFirstConversationId()).size() - 1);
 		} else {
-			new GetMessagesInitTask(getActivity(), item, dbAdapter, this)
-					.execute(item.getFirstConversationId());
+			new GetMessagesInitTask(getActivity(), item, this).execute(item
+					.getFirstConversationId());
 		}
 		listView.setOnScrollListener(this);
 
@@ -129,8 +130,12 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 200) { // TODO different resolutions
-							listView.setSelection(dbAdapter.getMessages(
-									item.getFirstConversationId()).size() - 1);
+							listView.setSelection(CatchmeDatabaseAdapter
+									.getInstance(
+											getActivity()
+													.getApplicationContext())
+									.getMessages(item.getFirstConversationId())
+									.size() - 1);
 							isOpened = true;
 						} else if (isOpened == true) {
 							isOpened = false;
@@ -141,7 +146,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 	@Override
 	public void onMessageSent(boolean b) {
-		new GetNewerMessagesTask(getActivity(), item, dbAdapter, this).execute(
+		new GetNewerMessagesTask(getActivity(), item, this).execute(
 				item.getFirstConversationId(),
 				listView.getItemIdAtPosition(listView.getCount() - 1));
 		textBox.setText("");
@@ -156,7 +161,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 					.notifyDataSetChanged();
 			listView.setSelection(listView.getCount() - 1);
 		} else {
-			//TODO what to do if message list is not visible?
+			// TODO what to do if message list is not visible?
 			Toast.makeText(getActivity(), "New message from: " + itemId,
 					Toast.LENGTH_SHORT).show();
 		}
@@ -197,9 +202,10 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 		if (isMoreMessages && !isGetingMessages && firstVisibleItem == 0
 				&& visibleItemCount > 0) {
 			long conversationId = item.getFirstConversationId();
-			new GetOlderMessagesTask(getActivity(), item, dbAdapter, this)
+			new GetOlderMessagesTask(getActivity(), item, this)
 					.execute(conversationId,
-							dbAdapter.getOldestMessageId(conversationId));
+							CatchmeDatabaseAdapter
+							.getInstance(getActivity().getApplicationContext()).getOldestMessageId(conversationId));
 		}
 	}
 

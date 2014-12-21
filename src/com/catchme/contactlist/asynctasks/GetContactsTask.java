@@ -20,16 +20,14 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private ContactStateType state;
 	private OnGetContactCompletedListener listener;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetContactsTask(Context context,
 			OnGetContactCompletedListener listener,
-			CatchmeDatabaseAdapter dbAdapter, ContactStateType state) {
+			ContactStateType state) {
 		super();
 		this.state = state;
 		this.context = context;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -52,10 +50,8 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 			if (ReadServerResponse.isSuccess(result)) {
 				ArrayList<ExampleItem> contactList = ReadServerResponse
 						.getContactList(result, state);
-				if(dbAdapter.isOpened()){
-					dbAdapter.updateItems(contactList);
-				}
-			}
+				CatchmeDatabaseAdapter
+				.getInstance(context).updateItems(contactList);			}
 		}
 		return result;
 	}

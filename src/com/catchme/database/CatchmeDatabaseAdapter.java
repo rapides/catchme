@@ -25,9 +25,18 @@ import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.database.model.Message;
 
 public class CatchmeDatabaseAdapter {
+	private static CatchmeDatabaseAdapter dbInstance = null;
 	private SQLiteDatabase db;
 	private Context context;
 	private DatabaseHelper dbHelper;
+
+	public static CatchmeDatabaseAdapter getInstance(Context ctx) {
+		if (dbInstance == null) {
+			dbInstance = new CatchmeDatabaseAdapter(ctx.getApplicationContext());
+			dbInstance.open();
+		}
+		return dbInstance;
+	}
 
 	private static final String DEBUG_TAG = "SqLiteManager";
 

@@ -26,14 +26,13 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	private LayoutInflater inflater;
 	private Activity activity;
 	private ArrayList<ExampleItem> items;
-	private CatchmeDatabaseAdapter dbAdapter;
 	private ContactStateType filterType;
 
-	public CustomListAdapter(Activity activity, CatchmeDatabaseAdapter dbAdapter) {
+	public CustomListAdapter(Activity activity) {
 		this.activity = activity;
-		this.dbAdapter = dbAdapter;
 		filterType = null;
-		items = dbAdapter.getItemsByState(filterType);
+		items = CatchmeDatabaseAdapter.getInstance(
+				activity.getApplicationContext()).getItemsByState(filterType);
 	}
 
 	@Override
@@ -95,7 +94,9 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults results = new FilterResults();
 				if (constraint == null || constraint.length() == 0) {
-					ArrayList<ExampleItem> newValues = dbAdapter.getItems(null);
+					ArrayList<ExampleItem> newValues = CatchmeDatabaseAdapter
+							.getInstance(activity.getApplicationContext())
+							.getItems(null);
 					results.values = newValues;
 					results.count = newValues.size();
 				} else {
@@ -105,13 +106,19 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 							constraint.length()).toString();
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
 					if (searchType == SEARCHTYPES[0]) {// search for name
-						filteredArrayNames = dbAdapter.getItemsByName(searchquery);
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByName(searchquery);
 					} else if (searchType == SEARCHTYPES[1]) {
 						filterType = ContactStateType.getStateType(Integer
 								.parseInt(searchquery));
-						filteredArrayNames = dbAdapter.getItemsByState(filterType);
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByState(filterType);
 					} else {
-						filteredArrayNames = dbAdapter.getItemsByState(null);
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByState(null);
 					}
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
@@ -124,8 +131,10 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public void notifyDataSetChanged() {
-		if(items == null || items.size()==0){
-			items = dbAdapter.getItemsByState(filterType);
+		if (items == null || items.size() == 0) {
+			items = CatchmeDatabaseAdapter.getInstance(
+					activity.getApplicationContext()).getItemsByState(
+					filterType);
 		}
 		super.notifyDataSetChanged();
 	}

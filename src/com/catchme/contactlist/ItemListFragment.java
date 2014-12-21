@@ -35,7 +35,6 @@ import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.database.model.ExampleItem;
 import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.database.model.LoggedUser;
@@ -58,7 +57,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	private ActionBarDrawerToggle drawerToggle;
 	private FloatingActionButton fab;
 	private LoggedUser user;
-	private CatchmeDatabaseAdapter dbAdapter;
 	private int defaulFilter = ContactStateType.ACCEPTED.getIntegerValue();
 	/**
 	 * The fragment's current callback object, which is notified of list item
@@ -82,8 +80,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		}
 	};
 
-	public ItemListFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public ItemListFragment() {
 	}
 
 	@Override
@@ -108,10 +105,10 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
 
-		listView.setAdapter(new CustomListAdapter(getActivity(), dbAdapter));
+		listView.setAdapter(new CustomListAdapter(getActivity()));
 
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				getActivity().getApplicationContext(), this, dbAdapter));
+				getActivity().getApplicationContext(), this));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
@@ -138,8 +135,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				getActivity(), drawerLayout, drawerToggle, drawerList,
-				dbAdapter));
+				getActivity(), drawerLayout, drawerToggle, drawerList));
 		filterList(defaulFilter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -147,7 +143,8 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				drawerToggle.setDrawerIndicatorEnabled(false);
-				mCallbacks.onItemSelected(listView.getItemIdAtPosition(position));
+				mCallbacks.onItemSelected(listView
+						.getItemIdAtPosition(position));
 			}
 		});
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
@@ -155,11 +152,11 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 
 		getActivity().getActionBar().setTitle(
 				getResources().getString(R.string.app_name));
-		new GetContactsTask(this.getActivity(), this, dbAdapter,
+		new GetContactsTask(this.getActivity(), this,
 				ContactStateType.ACCEPTED).execute(user.getToken());
-		new GetContactsTask(this.getActivity(), this, dbAdapter,
+		new GetContactsTask(this.getActivity(), this,
 				ContactStateType.SENT).execute(user.getToken());
-		new GetContactsTask(this.getActivity(), this, dbAdapter,
+		new GetContactsTask(this.getActivity(), this,
 				ContactStateType.RECEIVED).execute(user.getToken());
 		return rootView;
 	}
@@ -294,7 +291,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			long itemId = data.getLong(MessagesRefreshService.ITEM_ID);
 			Bundle arguments = new Bundle();
 			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, itemId);
-			ItemDetailsFragment frag = new ItemDetailsFragment(dbAdapter);
+			ItemDetailsFragment frag = new ItemDetailsFragment();
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();

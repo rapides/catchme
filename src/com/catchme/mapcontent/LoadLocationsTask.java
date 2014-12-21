@@ -19,16 +19,13 @@ import com.catchme.database.CatchmeDatabaseAdapter;
 public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnLoadLocationsListener listener;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	private LongSparseArray<ArrayList<Location>> locations;
 
-	public LoadLocationsTask(Context context, CatchmeDatabaseAdapter dbAdapter,
-			OnLoadLocationsListener listener) {
+	public LoadLocationsTask(Context context, OnLoadLocationsListener listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -44,7 +41,8 @@ public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 			result = ServerRequests.getLocations(token, contactIds, numberPos);
 			if (ReadServerResponse.isSuccess(result)) {
 				locations = ReadServerResponse.getLocations(result);
-				dbAdapter.updateLocations(locations);
+				CatchmeDatabaseAdapter.getInstance(context).updateLocations(
+						locations);
 			}
 		}
 		return result;

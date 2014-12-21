@@ -38,17 +38,16 @@ public class ItemMapFragment extends Fragment implements
 
 	private ExampleItem mItem;
 	private LoggedUser user;
-	private CatchmeDatabaseAdapter dbAdapter;
 
-	public ItemMapFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public ItemMapFragment() {
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mItem = dbAdapter.getItem(getArguments().getLong(
-				ItemDetailsFragment.ARG_ITEM_ID));
+		mItem = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getItem(
+				getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID));
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class ItemMapFragment extends Fragment implements
 		((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
 				.getFullName());
 		ItemListActivity.getLoggedUser(getActivity());
-		new LoadLocationsTask(getActivity(), dbAdapter, this).execute(user.getToken(),
+		new LoadLocationsTask(getActivity(), this).execute(user.getToken(),
 				"" + 10, "" + mItem.getId());
 		return rootView;
 	}
@@ -93,8 +92,11 @@ public class ItemMapFragment extends Fragment implements
 	@Override
 	public void loadLocationsSucceded(
 			LongSparseArray<ArrayList<Location>> locations) {
-		mItem = dbAdapter.getItem(mItem.getId());
-		Location lastLocation = dbAdapter.getLastLocation(mItem.getId());
+		mItem = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getItem(mItem.getId());
+		Location lastLocation = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getLastLocation(
+				mItem.getId());
 		if (lastLocation != null) {
 			LatLng location = new LatLng(lastLocation.getLatitude(),
 					lastLocation.getLongitude());
@@ -120,7 +122,9 @@ public class ItemMapFragment extends Fragment implements
 
 	private CircleOptions getCircle() {
 		CircleOptions circleOptions = new CircleOptions();
-		Location lastLocation = dbAdapter.getLastLocation(mItem.getId());
+		Location lastLocation = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getLastLocation(
+				mItem.getId());
 		return circleOptions
 				.center(new LatLng(lastLocation.getLatitude(), lastLocation
 						.getLongitude()))
@@ -135,7 +139,9 @@ public class ItemMapFragment extends Fragment implements
 
 	private PolylineOptions getPolilyne() {
 		PolylineOptions rectOptions = new PolylineOptions();
-		for (Location l : dbAdapter.getLocations(mItem.getId())) {
+		for (Location l : CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getLocations(
+				mItem.getId())) {
 			LatLng locTemp = new LatLng(l.getLatitude(), l.getLongitude());
 			rectOptions.add(locTemp);
 			map.addMarker(new MarkerOptions()

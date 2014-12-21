@@ -36,10 +36,8 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 	private View tabUnderline;
 	private GifMovieView loader;
 	private RelativeLayout loaderContainer;
-	CatchmeDatabaseAdapter dbAdapter;
 
-	public ItemDetailsFragment(CatchmeDatabaseAdapter dbAdapter) {
-		this.dbAdapter = dbAdapter;
+	public ItemDetailsFragment() {
 	}
 
 	@Override
@@ -49,8 +47,11 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		rootView = inflater.inflate(R.layout.fragment_item_details, container,
 				false);
 		long itemId = getArguments().getLong(ARG_ITEM_ID);
-		getActivity().getActionBar().setTitle(dbAdapter.getItem(itemId).getFullName());
-		pagerAdapter = new ItemDetailsPagerAdapter(getFragmentManager(), dbAdapter, itemId);
+		getActivity().getActionBar().setTitle(
+				CatchmeDatabaseAdapter
+						.getInstance(getActivity().getApplicationContext())
+						.getItem(itemId).getFullName());
+		pagerAdapter = new ItemDetailsPagerAdapter(getFragmentManager(), itemId);
 
 		viewPager = (ViewPager) rootView.findViewById(R.id.item_pager);
 		viewPager.setAdapter(pagerAdapter);
@@ -77,7 +78,7 @@ public class ItemDetailsFragment extends Fragment implements OnClickListener,
 		loader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		loader.setVisibility(View.GONE);
 		loaderContainer.setVisibility(View.GONE);
-		//new LoadDetailsTask(loader, loaderContainer).execute();
+		// new LoadDetailsTask(loader, loaderContainer).execute();
 		return rootView;
 	}
 

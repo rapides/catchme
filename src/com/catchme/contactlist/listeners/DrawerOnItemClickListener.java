@@ -25,18 +25,15 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 	private ListView drawerList;
 	private Context context;
 	private ActionBarDrawerToggle drawerToggle;
-	private CatchmeDatabaseAdapter dbAdapter;
-	
 
 	public DrawerOnItemClickListener(Context context,
 			DrawerLayout drawerLayout, ActionBarDrawerToggle drawerToggle,
-			ListView drawerList, CatchmeDatabaseAdapter dbAdapter) {
+			ListView drawerList) {
 		super();
 		this.context = context;
 		this.drawerLayout = drawerLayout;
 		this.drawerList = drawerList;
 		this.drawerToggle = drawerToggle;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -46,21 +43,23 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			ItemListActivity.removeLoggedUser(context);
 			context.stopService(new Intent(context,
 					MessagesRefreshService.class));
-			dbAdapter.clear();
-			LoginFragment loginFragment = new LoginFragment(dbAdapter);
-			((FragmentActivity) context).getSupportFragmentManager()
-					.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left,
+			CatchmeDatabaseAdapter.getInstance(context).clear();
+			LoginFragment loginFragment = new LoginFragment();
+			((FragmentActivity) context)
+					.getSupportFragmentManager()
+					.beginTransaction()
+					.setCustomAnimations(android.R.anim.slide_in_left,
 							android.R.anim.slide_out_right)
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();
 			((Activity) context).getActionBar()
 					.setDisplayHomeAsUpEnabled(false);
 			((Activity) context).getActionBar().setHomeButtonEnabled(false);
-			
+
 		}
 		drawerLayout.closeDrawer(drawerList);
 		if (position == 0) {
-			ItemProfileFragment frag = new ItemProfileFragment(dbAdapter);
+			ItemProfileFragment frag = new ItemProfileFragment();
 			FragmentTransaction transaction = ((FragmentActivity) context)
 					.getSupportFragmentManager().beginTransaction();
 			transaction.setCustomAnimations(android.R.anim.slide_in_left,

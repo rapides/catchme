@@ -43,7 +43,6 @@ public class MessagesRefreshService extends IntentService implements
 	public static final int MESSAGES_INTERVAL_LONG = 15000;
 	private LongSparseArray<LinkedList<Message>> unreadedMessages = new LongSparseArray<LinkedList<Message>>();
 
-	private CatchmeDatabaseAdapter dbAdapter;
 	private static int refreshTime = 5000;
 
 	public MessagesRefreshService() {
@@ -53,8 +52,6 @@ public class MessagesRefreshService extends IntentService implements
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		dbAdapter = new CatchmeDatabaseAdapter(this);
-		dbAdapter.open();
 		isDestroyed = false;
 	}
 
@@ -64,19 +61,20 @@ public class MessagesRefreshService extends IntentService implements
 		while (!isDestroyed) {
 			Log.d("MessageService", "Working in background. Refresh time: "
 					+ refreshTime);
-			ArrayList<ExampleItem> items = dbAdapter
-					.getItemsByState(ContactStateType.ACCEPTED);
+			ArrayList<ExampleItem> items = CatchmeDatabaseAdapter.getInstance(
+					getApplicationContext()).getItemsByState(
+					ContactStateType.ACCEPTED);
 			for (ExampleItem item : items) {
 				long convId = item.getFirstConversationId();
-				Message lastMessage = dbAdapter.getLastMessage(convId);
-				if(lastMessage!=null){
+				Message lastMessage = CatchmeDatabaseAdapter.getInstance(
+						getApplicationContext()).getLastMessage(convId);
+				if (lastMessage != null) {
 					new GetNewerMessagesTask(getApplicationContext(), item,
-							dbAdapter, this).execute(convId,
-							lastMessage.getMessageId());
-				}else{
-					//TODO getmessageInit if first run
+							this).execute(convId, lastMessage.getMessageId());
+				} else {
+					// TODO getmessageInit if first run
 				}
-				
+
 			}
 			try {
 				Thread.sleep(refreshTime);
@@ -94,7 +92,6 @@ public class MessagesRefreshService extends IntentService implements
 	@Override
 	public void onDestroy() {
 		isDestroyed = true;
-		dbAdapter.close();
 		super.onDestroy();
 	}
 
@@ -104,10 +101,12 @@ public class MessagesRefreshService extends IntentService implements
 	}
 
 	@Override
-	public void onNewMessage(long itemId, long conversationId, LinkedList<Message> newerMessages) {
+	public void onNewMessage(long itemId, long conversationId,
+			LinkedList<Message> newerMessages) {
 		if (newerMessages.size() > 0) {
 			if (refreshTime == MESSAGES_INTERVAL_SHORT) {
-				sendNewMessageBroadcast(itemId, conversationId, newerMessages.size());
+				sendNewMessageBroadcast(itemId, conversationId,
+						newerMessages.size());
 			} else {
 				sendNotification(itemId, conversationId, newerMessages);
 			}
@@ -133,7 +132,8 @@ public class MessagesRefreshService extends IntentService implements
 		LocalBroadcastManager.getInstance(this).sendBroadcast(resultIntent);
 	}
 
-	private InboxStyle getInboxStyle(long itemId, long conversationId, String title) {
+	private InboxStyle getInboxStyle(long itemId, long conversationId,
+			String title) {
 		InboxStyle inboxStyle = new InboxStyle();
 
 		inboxStyle.setBigContentTitle(title);
@@ -152,7 +152,8 @@ public class MessagesRefreshService extends IntentService implements
 		for (int i = 0; i < unreadedMessages.size(); i++) {
 			LinkedList<Message> m = unreadedMessages.get(unreadedMessages
 					.keyAt(i));
-			ExampleItem item = dbAdapter.getItem(unreadedMessages.keyAt(i));
+			ExampleItem item = CatchmeDatabaseAdapter.getInstance(
+					getApplicationContext()).getItem(unreadedMessages.keyAt(i));
 			inboxStyle.addLine(item.getName() + ": "
 					+ m.get(m.size() - 1).getContent());
 		}
@@ -172,32 +173,38 @@ public class MessagesRefreshService extends IntentService implements
 			LinkedList<Message> newerMessages) {
 		updateMessages(itemId, conversationId, newerMessages);
 
-		Message lastMessage = dbAdapter.getLastMessage(conversationId);
+		Message lastMessage = CatchmeDatabaseAdapter.getInstance(
+				getApplicationContext()).getLastMessage(conversationId);
 		Intent resultIntent;
 		InboxStyle inboxStyle;
 		Builder mBuilder;
 		if (!isInNotification()) {
-			String title = dbAdapter.getItem(itemId).getFullName();
+			String title = CatchmeDatabaseAdapter
+					.getInstance(getApplicationContext()).getItem(itemId)
+					.getFullName();
 			Bitmap bmp = ImageLoader.getInstance().loadImageSync(
-					dbAdapter.getItem(itemId).getMediumImageUrl());
+					CatchmeDatabaseAdapter.getInstance(getApplicationContext())
+							.getItem(itemId).getMediumImageUrl());
 			mBuilder = new Builder(this).setContentTitle(title)
 					.setContentText(lastMessage.getContent())
 					.setSmallIcon(R.drawable.catch_me)
 					.setNumber(unreadedMessages.get(itemId).size())
 					.setLargeIcon(bmp);
-			inboxStyle = getInboxStyle(itemId, conversationId,
-					title);
-			resultIntent = prepareIntent(itemId, conversationId, newerMessages.size());
+			inboxStyle = getInboxStyle(itemId, conversationId, title);
+			resultIntent = prepareIntent(itemId, conversationId,
+					newerMessages.size());
 
 		} else {
 			String title = unreadedMessages.size() + " "
 					+ getResources().getString(R.string.new_messages);
-			String content = dbAdapter.getItem(unreadedMessages.keyAt(0))
-					.getName();
+			String content = CatchmeDatabaseAdapter
+					.getInstance(getApplicationContext())
+					.getItem(unreadedMessages.keyAt(0)).getName();
 			for (int i = 1; i < unreadedMessages.size(); i++) {
 				content += ", "
-						+ dbAdapter.getItem(unreadedMessages.keyAt(i))
-								.getName();
+						+ CatchmeDatabaseAdapter
+								.getInstance(getApplicationContext())
+								.getItem(unreadedMessages.keyAt(i)).getName();
 			}
 			mBuilder = new Builder(this).setContentTitle(title)
 					.setContentText(content).setSmallIcon(R.drawable.catch_me);
@@ -220,7 +227,7 @@ public class MessagesRefreshService extends IntentService implements
 			LinkedList<Message> newerMessages) {
 		LinkedList<Message> olderUnreaded = unreadedMessages.get(itemId);
 		Collections.reverse(newerMessages);
-		if(olderUnreaded!=null){
+		if (olderUnreaded != null) {
 			newerMessages.addAll(olderUnreaded);
 		}
 		unreadedMessages.put(itemId, newerMessages);

@@ -21,15 +21,13 @@ public class GetMessagesInitTask extends AsyncTask<Long, Void, JSONObject> {
 	GetMessagesListener listener;
 	private ExampleItem item;
 	private long conversationId;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetMessagesInitTask(Context context, ExampleItem item,
-			CatchmeDatabaseAdapter dbAdapter, GetMessagesListener listener) {
+			GetMessagesListener listener) {
 		super();
 		this.context = context;
 		this.item = item;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -46,9 +44,10 @@ public class GetMessagesInitTask extends AsyncTask<Long, Void, JSONObject> {
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesInit(token, conversationId);
 
-			if(ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()){
-				dbAdapter.insertMessages(conversationId, ReadServerResponse
-						.getMessagesList(result));
+			if (ReadServerResponse.isSuccess(result)) {
+				CatchmeDatabaseAdapter.getInstance(context).insertMessages(
+						conversationId,
+						ReadServerResponse.getMessagesList(result));
 			}
 		} else {
 			result = null;
@@ -64,8 +63,8 @@ public class GetMessagesInitTask extends AsyncTask<Long, Void, JSONObject> {
 					Toast.LENGTH_SHORT).show();
 			listener.onGetMessagesError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-			listener.onGetMessagesCompleted(item.getId(), conversationId, ReadServerResponse
-					.getMessagesList(result));
+			listener.onGetMessagesCompleted(item.getId(), conversationId,
+					ReadServerResponse.getMessagesList(result));
 		} else {
 			listener.onGetMessagesError(ReadServerResponse.getErrors(result));
 		}

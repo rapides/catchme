@@ -23,15 +23,13 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private ExampleItem item;
 	private NewerMessagesListener listener;
 	private Long conversationId;
-	private CatchmeDatabaseAdapter dbAdapter;
 
 	public GetNewerMessagesTask(Context context, ExampleItem item,
-			CatchmeDatabaseAdapter dbAdapter, NewerMessagesListener listener) {
+			NewerMessagesListener listener) {
 		super();
 		this.item = item;
 		this.context = context;
 		this.listener = listener;
-		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -44,8 +42,10 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getMessagesNewer(token, conversationId,
 					oldestMessageId);
-			if (ReadServerResponse.isSuccess(result) && dbAdapter.isOpened()) {
-				dbAdapter.insertMessages(conversationId,
+
+			if (ReadServerResponse.isSuccess(result)) {
+				CatchmeDatabaseAdapter.getInstance(context).insertMessages(
+						conversationId,
 						ReadServerResponse.getMessagesList(result));
 			}
 		} else {
@@ -61,8 +61,7 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		} else if (ReadServerResponse.isSuccess(result)) {
 			LinkedList<Message> newerMessages = ReadServerResponse
 					.getMessagesList(result);
-			listener.onNewMessage(item.getId(), conversationId,
-					newerMessages);
+			listener.onNewMessage(item.getId(), conversationId, newerMessages);
 		} else {
 			Toast.makeText(context, "Message get NEWER problem",
 					Toast.LENGTH_SHORT).show();
