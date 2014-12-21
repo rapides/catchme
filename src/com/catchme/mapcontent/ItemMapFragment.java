@@ -16,10 +16,9 @@ import com.catchme.R;
 import com.catchme.R.color;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
 import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.LoggedUser;
-import com.catchme.model.UserLocation;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,7 +36,6 @@ public class ItemMapFragment extends Fragment implements
 	GoogleMap map;
 	View rootView;
 
-	private long itemId;
 	private ExampleItem mItem;
 	private LoggedUser user;
 	private CatchmeDatabaseAdapter dbAdapter;
@@ -49,8 +47,8 @@ public class ItemMapFragment extends Fragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		itemId = getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID);
-		mItem = dbAdapter.getItem(itemId);
+		mItem = dbAdapter.getItem(getArguments().getLong(
+				ItemDetailsFragment.ARG_ITEM_ID));
 	}
 
 	@Override
@@ -69,7 +67,7 @@ public class ItemMapFragment extends Fragment implements
 		((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem
 				.getFullName());
 		ItemListActivity.getLoggedUser(getActivity());
-		new LoadLocationsTask(getActivity(), this).execute(user.getToken(),
+		new LoadLocationsTask(getActivity(), dbAdapter, this).execute(user.getToken(),
 				"" + 10, "" + mItem.getId());
 		return rootView;
 	}
@@ -94,11 +92,9 @@ public class ItemMapFragment extends Fragment implements
 
 	@Override
 	public void loadLocationsSucceded(
-			LongSparseArray<ArrayList<UserLocation>> locations) {
-
-		dbAdapter.updateLocations(locations);
-		mItem = dbAdapter.getItem(itemId);
-		Location lastLocation = mItem.getLastLocation();
+			LongSparseArray<ArrayList<Location>> locations) {
+		mItem = dbAdapter.getItem(mItem.getId());
+		Location lastLocation = dbAdapter.getLastLocation(mItem.getId());
 		if (lastLocation != null) {
 			LatLng location = new LatLng(lastLocation.getLatitude(),
 					lastLocation.getLongitude());
@@ -124,10 +120,11 @@ public class ItemMapFragment extends Fragment implements
 
 	private CircleOptions getCircle() {
 		CircleOptions circleOptions = new CircleOptions();
+		Location lastLocation = dbAdapter.getLastLocation(mItem.getId());
 		return circleOptions
-				.center(new LatLng(mItem.getLastLocation().getLatitude(), mItem
-						.getLastLocation().getLongitude()))
-				.radius(mItem.getLastLocation().getAccuracy())
+				.center(new LatLng(lastLocation.getLatitude(), lastLocation
+						.getLongitude()))
+				.radius(lastLocation.getAccuracy())
 				.strokeColor(getResources().getColor(color.map_circle_stroke))
 				.strokeWidth(
 						getResources().getInteger(
@@ -138,7 +135,7 @@ public class ItemMapFragment extends Fragment implements
 
 	private PolylineOptions getPolilyne() {
 		PolylineOptions rectOptions = new PolylineOptions();
-		for (UserLocation l : mItem.getLocations()) {
+		for (Location l : dbAdapter.getLocations(mItem.getId())) {
 			LatLng locTemp = new LatLng(l.getLatitude(), l.getLongitude());
 			rectOptions.add(locTemp);
 			map.addMarker(new MarkerOptions()
@@ -150,7 +147,7 @@ public class ItemMapFragment extends Fragment implements
 					.snippet(
 							"Seen here "
 									+ getTimeAgo(System.currentTimeMillis()
-											- l.getFixTime())));
+											- l.getTime())));
 
 		}
 		return rectOptions.color(getResources().getColor(color.map_line))

@@ -1,4 +1,4 @@
-package com.catchme.model;
+package com.catchme.database.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,13 +8,13 @@ import android.location.Location;
 
 import com.catchme.connections.ServerConst;
 
-public class UserLocation implements Comparable<UserLocation>{
+public class UserLocation_Old implements Comparable<UserLocation_Old>{
 	private float accuracy;
 	private double latitude;
 	private double longitude;
 	private long fixTime;
 
-	public UserLocation(float accuracy, double latitude, double longitude,
+	public UserLocation_Old(float accuracy, double latitude, double longitude,
 			String fixTime) {
 		super();
 		this.accuracy = accuracy;
@@ -87,7 +87,7 @@ public class UserLocation implements Comparable<UserLocation>{
 	
 
 	@Override
-	public int compareTo(UserLocation another) {
+	public int compareTo(UserLocation_Old another) {
 		Long time1 = this.fixTime;
 		Long time2 = another.fixTime;
 		return time2.compareTo(time1);

@@ -13,10 +13,10 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.Message;
 import com.catchme.messages.interfaces.NewerMessagesListener;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.LoggedUser;
-import com.catchme.model.Message;
 
 public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private Context context;

@@ -16,9 +16,9 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.LoggedUser;
 import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
 import com.catchme.loginregister.asynctasks.LoginTask;
-import com.catchme.model.LoggedUser;
 
 public class LoginFragment extends Fragment implements OnClickListener,
 		LoginRegisterInterface {

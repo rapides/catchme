@@ -5,22 +5,30 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.support.v4.util.LongSparseArray;
 import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
+import com.catchme.database.CatchmeDatabaseAdapter;
 
 public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private OnLoadLocationsListener listener;
+	private CatchmeDatabaseAdapter dbAdapter;
 
-	public LoadLocationsTask(Context context, OnLoadLocationsListener listener) {
+	private LongSparseArray<ArrayList<Location>> locations;
+
+	public LoadLocationsTask(Context context, CatchmeDatabaseAdapter dbAdapter,
+			OnLoadLocationsListener listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
+		this.dbAdapter = dbAdapter;
 	}
 
 	@Override
@@ -34,6 +42,10 @@ public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 		JSONObject result = null;
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.getLocations(token, contactIds, numberPos);
+			if (ReadServerResponse.isSuccess(result)) {
+				locations = ReadServerResponse.getLocations(result);
+				dbAdapter.updateLocations(locations);
+			}
 		}
 		return result;
 	}
@@ -45,11 +57,10 @@ public class LoadLocationsTask extends AsyncTask<String, Void, JSONObject> {
 					context.getResources().getString(R.string.err_no_internet),
 					Toast.LENGTH_SHORT).show();
 		} else if (ReadServerResponse.isSuccess(result)) {
-			listener.loadLocationsSucceded(ReadServerResponse.getLocations(result));
+			listener.loadLocationsSucceded(locations);
 		} else {
 			listener.loadLocationError(ReadServerResponse.getErrors(result));
 		}
 	}
 
-	
 }

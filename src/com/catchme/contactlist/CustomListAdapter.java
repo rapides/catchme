@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.catchme.R;
 import com.catchme.database.CatchmeDatabaseAdapter;
-import com.catchme.model.ExampleItem;
+import com.catchme.database.model.ExampleItem;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

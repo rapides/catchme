@@ -3,7 +3,6 @@ package com.catchme.connections;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -12,14 +11,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.Location;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
-import com.catchme.model.ExampleItem;
-import com.catchme.model.LoggedUser;
-import com.catchme.model.Message;
-import com.catchme.model.UserLocation;
-import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.Message;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class ReadServerResponse {
 	public static LongSparseArray<String> getErrors(JSONObject fullResponse) {
@@ -182,10 +181,10 @@ public class ReadServerResponse {
 		String smallUrl = small.optString(ServerConst.USER_AVATAR_URL);
 		String mediumUrl = medium.optString(ServerConst.USER_AVATAR_URL);
 		String bigUrl = big.optString(ServerConst.USER_AVATAR_URL);
-		result.put(ExampleItem.AVATAR_SMALL, ServerConst.SERVER_IP+smallUrl);
-		result.put(ExampleItem.AVATAR_MEDIUM, ServerConst.SERVER_IP+mediumUrl);
-		result.put(ExampleItem.AVATAR_BIG, ServerConst.SERVER_IP+bigUrl);
-		result.put(ExampleItem.AVATAR_URL, ServerConst.SERVER_IP+url);
+		result.put(ExampleItem.AVATAR_SMALL, ServerConst.SERVER_IP + smallUrl);
+		result.put(ExampleItem.AVATAR_MEDIUM, ServerConst.SERVER_IP + mediumUrl);
+		result.put(ExampleItem.AVATAR_BIG, ServerConst.SERVER_IP + bigUrl);
+		result.put(ExampleItem.AVATAR_URL, ServerConst.SERVER_IP + url);
 
 		return result;
 	}
@@ -271,9 +270,9 @@ public class ReadServerResponse {
 		return date;
 	}
 
-	public static LongSparseArray<ArrayList<UserLocation>> getLocations(
+	public static LongSparseArray<ArrayList<Location>> getLocations(
 			JSONObject fullResponse) {
-		LongSparseArray<ArrayList<UserLocation>> locationList = new LongSparseArray<ArrayList<UserLocation>>();
+		LongSparseArray<ArrayList<Location>> locationList = new LongSparseArray<ArrayList<Location>>();
 		try {
 			if (isSuccess(fullResponse)) {
 				JSONArray positionsArray = fullResponse
@@ -284,12 +283,12 @@ public class ReadServerResponse {
 									ServerConst.POSITION_RESPONSE_COORDINATES);
 					long contacId = positionsArray.getJSONObject(i).optLong(
 							ServerConst.USER_CONTACT_ID);
-					ArrayList<UserLocation> userLocations = new ArrayList<UserLocation>();
+					ArrayList<Location> userLocations = new ArrayList<Location>();
 					for (int j = 0; j < coordinates.length(); j++) {
-						UserLocation location = getLocationFromJSONObject(coordinates
+						Location location = getLocationFromJSONObject(coordinates
 								.getJSONObject(j));
 						userLocations.add(location);
-						Collections.sort(userLocations);
+						// Collections.sort(userLocations);
 					}
 					locationList.put(contacId, userLocations);
 				}
@@ -301,12 +300,30 @@ public class ReadServerResponse {
 		return locationList;
 	}
 
-	private static UserLocation getLocationFromJSONObject(JSONObject o)
+	private static Location getLocationFromJSONObject(JSONObject o)
 			throws JSONException {
-		return new UserLocation(
-				(float) o.getDouble(ServerConst.POSITION_ACCURACY),
-				o.getDouble(ServerConst.POSITION_LATITUDE),
-				o.getDouble(ServerConst.POSITION_LONGITUDE),
-				o.getString(ServerConst.POSITION_FIX_TIME));
+		Location result = new Location(ServerConst.SERVER_NAME);
+		result.setAccuracy((float) o.getDouble(ServerConst.POSITION_ACCURACY));
+		result.setLatitude(o.getDouble(ServerConst.POSITION_LATITUDE));
+		result.setLongitude(o.getDouble(ServerConst.POSITION_LONGITUDE));
+		result.setTime(getTimeFromString(o
+				.getString(ServerConst.POSITION_FIX_TIME)));
+		return result;
+
+	}
+
+	private static long getTimeFromString(String date) {
+		try {
+			return new SimpleDateFormat(ServerConst.DATE_FORMAT,
+					Locale.getDefault()).parse(date).getTime();
+		} catch (ParseException e) {
+			try {// TODO remove, only for testing on computer, with newer java
+				return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+						Locale.getDefault()).parse(date).getTime();
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return -1;
 	}
 }

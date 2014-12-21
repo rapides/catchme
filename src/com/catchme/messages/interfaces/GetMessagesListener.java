@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import android.support.v4.util.LongSparseArray;
 
-import com.catchme.model.Message;
+import com.catchme.database.model.Message;
 
 public interface GetMessagesListener {
 

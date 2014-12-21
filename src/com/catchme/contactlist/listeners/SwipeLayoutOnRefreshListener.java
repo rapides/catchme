@@ -9,7 +9,7 @@ import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
 import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.database.CatchmeDatabaseAdapter;
-import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	private OnGetContactCompletedListener listener;

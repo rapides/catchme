@@ -1,4 +1,4 @@
-package com.catchme.model;
+package com.catchme.database.model;
 
 import android.support.v4.util.LongSparseArray;
 

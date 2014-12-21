@@ -39,11 +39,11 @@ import com.catchme.contactlist.listeners.FloatingActionButtonListener;
 import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.MessagesRefreshService;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.ExampleItem.ContactStateType;
-import com.catchme.model.LoggedUser;
 import com.catchme.utils.FloatingActionButton;
 
 @SuppressWarnings("deprecation")

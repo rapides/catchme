@@ -15,13 +15,14 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
-import com.catchme.model.ExampleItem;
-import com.catchme.model.ExampleItem.ContactStateType;
-import com.catchme.model.Message;
-import com.catchme.model.UserLocation;
+import com.catchme.connections.ServerConst;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.Message;
 
 public class CatchmeDatabaseAdapter {
 	private SQLiteDatabase db;
@@ -30,7 +31,7 @@ public class CatchmeDatabaseAdapter {
 
 	private static final String DEBUG_TAG = "SqLiteManager";
 
-	private static final int DB_VERSION = 3;
+	private static final int DB_VERSION = 5;
 	private static final String DB_NAME = "catchmeDB.db";
 	private static final String DB_ITEM_TABLE = "item";
 	private static final String DB_ITEM_ID = "itemId";
@@ -49,7 +50,6 @@ public class CatchmeDatabaseAdapter {
 	private static final String DB_AVATAR_URL = "url";
 
 	private static final String DB_LOCATIONS_TABLE = "locations";
-	private static final String DB_LOCATIONS_ID = "locationId";
 	private static final String DB_LOCATIONS_ACCURACY = "accuracy";
 	private static final String DB_LOCATIONS_LATITUDE = "latitude";
 	private static final String DB_LOCATIONS_LONGITUDE = "longitude";
@@ -84,12 +84,12 @@ public class CatchmeDatabaseAdapter {
 	 */
 
 	private static final String DB_CREATE_LOCATIONS_TABLE = "CREATE TABLE "
-			+ DB_LOCATIONS_TABLE + " (" + DB_LOCATIONS_ID
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + DB_ITEM_ID
-			+ " INTEGER, " + DB_LOCATIONS_ACCURACY + " TEXT NOT NULL, "
-			+ DB_LOCATIONS_LATITUDE + " TEXT NOT NULL, "
-			+ DB_LOCATIONS_LONGITUDE + " TEXT NOT NULL, " + DB_LOCATIONS_TIME
-			+ " TEXT NOT NULL " + ")";
+			+ DB_LOCATIONS_TABLE + " (" + DB_ITEM_ID + " INTEGER NOT NULL, "
+			+ DB_LOCATIONS_ACCURACY + " REAL NOT NULL, "
+			+ DB_LOCATIONS_LATITUDE + " REAL NOT NULL, "
+			+ DB_LOCATIONS_LONGITUDE + " REAL NOT NULL, " + DB_LOCATIONS_TIME
+			+ " INTEGER NOT NULL," + " PRIMARY KEY ( " + DB_ITEM_ID + ", "
+			+ DB_LOCATIONS_TIME + ")" + ")";
 
 	private static final String DB_CREATE_CONVERSATIONS_TABLE = "CREATE TABLE "
 			+ DB_CONVERSATIONS_TABLE + " (" + DB_CONVERSATIONS_ID
@@ -123,15 +123,15 @@ public class CatchmeDatabaseAdapter {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.d(DEBUG_TAG, "Database updating...");
 			// on upgrade drop older tables
-			destroy();
+			clear();
 
 			Log.d(DEBUG_TAG, "Tables" + " updated from ver." + oldVersion
 					+ " to ver." + newVersion);
 			Log.d(DEBUG_TAG, "All data is lost.");
 		}
 
-		public void destroy() {
-			if(db!=null){
+		public void clear() {
+			if (db != null) {
 				db.execSQL("DROP TABLE IF EXISTS " + DB_ITEM_TABLE);
 				db.execSQL("DROP TABLE IF EXISTS " + DB_CONVERSATIONS_TABLE);
 				db.execSQL("DROP TABLE IF EXISTS " + DB_LOCATIONS_TABLE);
@@ -160,6 +160,11 @@ public class CatchmeDatabaseAdapter {
 			dbHelper.close();
 		}
 	}
+
+	public void clear() {
+		dbHelper.clear();
+	}
+
 	public boolean isOpened() {
 		return db != null && db.isOpen();
 	}
@@ -270,23 +275,8 @@ public class CatchmeDatabaseAdapter {
 			db.insertWithOnConflict(DB_CONVERSATIONS_TABLE, null, convVal,
 					SQLiteDatabase.CONFLICT_REPLACE);
 		}
-		Log.d(DEBUG_TAG, "Updating: " + item.getFullName());
 		return db.insertWithOnConflict(DB_ITEM_TABLE, null, itemVal,
 				SQLiteDatabase.CONFLICT_REPLACE) == -1;
-	}
-
-	public void updateLocations(
-			LongSparseArray<ArrayList<UserLocation>> locations) {
-		// TODO import
-		/*
-		 * for (int i = 0; i < locations.size(); i++) { long key =
-		 * locations.keyAt(i); if (key != 0) {
-		 * ExampleContent.ITEM_MAP.get(key).setLocations( locations.get(key)); }
-		 * else { LoggedUser user = ItemListActivity.getLoggedUser(getActivity()
-		 * .getApplicationContext()); user.setLocations(locations.get(key));
-		 * ItemListActivity.setLoggedUser(getActivity()
-		 * .getApplicationContext(), user); } }
-		 */
 	}
 
 	public void insertMessages(long conversationId, LinkedList<Message> messages) {
@@ -334,8 +324,7 @@ public class CatchmeDatabaseAdapter {
 					.parse(cursor.getString(cursor
 							.getColumnIndex(DB_MESSAGES_TIME)));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("DatabaseError", e.getMessage());
 		}
 		long senderId = cursor.getLong(cursor
 				.getColumnIndex(DB_MESSAGES_SENDER));
@@ -345,20 +334,84 @@ public class CatchmeDatabaseAdapter {
 
 	public Message getLastMessage(long conversationId) {
 		List<Message> list = getMessages(conversationId);
-		return list.get(list.size()-1);
+		if(list.size()>0){
+			return list.get(list.size() - 1);
+		}else{
+			return null;
+		}
 	}
 
 	public Long getOldestMessageId(long conversationId) {
-		//TODO improve, bad solution
+		// TODO improve, bad solution
 		List<Message> list = getMessages(conversationId);
 		return list.get(0).getMessageId();
 	}
 
-	public void deleteAll() {
-		dbHelper.destroy();
+	public Location getLastLocation(long id) {
+		//TODO improve
+		LinkedList<Location> l = getLocations(id);
+		if(l.size()>0){
+			return l.get(0);
+		}else{
+			return null;
+		}
 	}
 
-	
+	public void updateLocations(LongSparseArray<ArrayList<Location>> locations) {
+		for (int i = 0; i < locations.size(); i++) {
+			ArrayList<Location> itemLocations = locations.valueAt(i);
+			for (Location l : itemLocations) {
+				updateItemLocation(locations.keyAt(i), l);
+			}
+		}
 
-	
+	}
+
+	private boolean updateItemLocation(long itemId, Location itemLocation) {
+		ContentValues locationVal = new ContentValues();
+		locationVal.put(DB_LOCATIONS_ACCURACY, itemLocation.getAccuracy());
+		locationVal.put(DB_ITEM_ID, itemId);
+		locationVal.put(DB_LOCATIONS_LATITUDE, itemLocation.getLatitude());
+		locationVal.put(DB_LOCATIONS_LONGITUDE, itemLocation.getLongitude());
+		locationVal.put(DB_LOCATIONS_TIME, itemLocation.getTime());
+
+		return db.insertWithOnConflict(DB_LOCATIONS_TABLE, null, locationVal,
+				SQLiteDatabase.CONFLICT_REPLACE) == -1;
+	}
+
+	public LinkedList<Location> getLocations(long itemId) {
+		LinkedList<Location> result = new LinkedList<Location>();
+		String[] columns = { DB_LOCATIONS_ACCURACY, DB_ITEM_ID,
+				DB_LOCATIONS_LATITUDE, DB_LOCATIONS_LONGITUDE,
+				DB_LOCATIONS_TIME };
+		String where = DB_ITEM_ID + "=" + itemId;
+		String orderby = DB_LOCATIONS_TIME+ " DESC";
+		Cursor cursor = db.query(DB_LOCATIONS_TABLE, columns, where, null,
+				null, null, orderby);
+
+		if (cursor.moveToFirst()) {
+			while (cursor.isAfterLast() == false) {
+				Location l = getLocationFromCursor(cursor);
+				result.add(l);
+				cursor.moveToNext();
+			}
+		}
+		return result;
+	}
+
+	private Location getLocationFromCursor(Cursor cursor) {
+		float accuracy = cursor.getFloat(cursor
+				.getColumnIndex(DB_LOCATIONS_ACCURACY));
+		double longitude = cursor.getDouble(cursor
+				.getColumnIndex(DB_LOCATIONS_LONGITUDE));
+		double latitude = cursor.getDouble(cursor
+				.getColumnIndex(DB_LOCATIONS_LATITUDE));
+		long time = cursor.getLong(cursor.getColumnIndex(DB_LOCATIONS_TIME));
+		Location result = new Location(ServerConst.SERVER_NAME);
+		result.setAccuracy(accuracy);
+		result.setLongitude(longitude);
+		result.setLatitude(latitude);
+		result.setTime(time);
+		return result;
+	}
 }

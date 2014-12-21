@@ -24,6 +24,9 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.Message;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.messages.asynctasks.GetMessagesInitTask;
 import com.catchme.messages.asynctasks.GetNewerMessagesTask;
@@ -33,9 +36,6 @@ import com.catchme.messages.interfaces.NewerMessagesListener;
 import com.catchme.messages.interfaces.OnMessageSent;
 import com.catchme.messages.listeners.MessagesRefreshListener;
 import com.catchme.messages.listeners.SendButtonOnClickListener;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.LoggedUser;
-import com.catchme.model.Message;
 
 public class MessagesFragment extends Fragment implements OnMessageSent,
 		NewerMessagesListener, GetMessagesListener, OnScrollListener {

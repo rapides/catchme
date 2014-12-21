@@ -2,7 +2,7 @@ package com.catchme.contactlist.interfaces;
 
 import java.util.ArrayList;
 
-import com.catchme.model.ExampleItem;
+import com.catchme.database.model.ExampleItem;
 
 import android.support.v4.util.LongSparseArray;
 

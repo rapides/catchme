@@ -1,4 +1,4 @@
-package com.catchme.model;
+package com.catchme.database.model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

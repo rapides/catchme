@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class ServerRequests {
 	public static JSONObject getLocations(String token,

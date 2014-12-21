@@ -12,9 +12,9 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
 import com.catchme.messages.interfaces.GetMessagesListener;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.LoggedUser;
 
 public class GetOlderMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 	private ExampleItem item;

@@ -20,11 +20,11 @@ import android.util.Log;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.Message;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.messages.asynctasks.GetNewerMessagesTask;
 import com.catchme.messages.interfaces.NewerMessagesListener;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.ExampleItem.ContactStateType;
-import com.catchme.model.Message;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -69,9 +69,14 @@ public class MessagesRefreshService extends IntentService implements
 			for (ExampleItem item : items) {
 				long convId = item.getFirstConversationId();
 				Message lastMessage = dbAdapter.getLastMessage(convId);
-				new GetNewerMessagesTask(getApplicationContext(), item,
-						dbAdapter, this).execute(convId,
-						lastMessage.getMessageId());
+				if(lastMessage!=null){
+					new GetNewerMessagesTask(getApplicationContext(), item,
+							dbAdapter, this).execute(convId,
+							lastMessage.getMessageId());
+				}else{
+					//TODO getmessageInit if first run
+				}
+				
 			}
 			try {
 				Thread.sleep(refreshTime);

@@ -1,11 +1,10 @@
-package com.catchme.model;
+package com.catchme.database.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import android.location.Location;
 import android.support.v4.util.LongSparseArray;
 
 import com.catchme.R;
@@ -69,7 +68,6 @@ public class ExampleItem {
 	private String surname;
 	private String email;
 
-	private List<UserLocation> position;
 	private List<Long> conversationIds;
 	protected LongSparseArray<String> avatars;
 	private UserSex sex;
@@ -136,22 +134,7 @@ public class ExampleItem {
 		return email;
 	}
 
-	public Location getLastLocation() {
-		if (position != null && position.size() > 0) {
-			return position.get(0).getLocation();
-		} else {
-			return null;
-		}
-	}
-
-	public List<UserLocation> getLocations() {
-		return position;
-	}
-
-	public void setLocations(List<UserLocation> position) {
-		this.position = position;
-	}
-
+	
 	
 
 

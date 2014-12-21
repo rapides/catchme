@@ -9,7 +9,7 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerRequests;
-import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class ChangeContactStateTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;

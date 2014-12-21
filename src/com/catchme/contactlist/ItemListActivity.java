@@ -17,13 +17,13 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.messages.MessagesRefreshService;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.ExampleItem.ContactStateType;
-import com.catchme.model.LoggedUser;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
 import com.commonsware.cwac.locpoll.LocationPollerParameter;

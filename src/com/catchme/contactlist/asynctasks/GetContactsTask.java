@@ -12,8 +12,8 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.database.CatchmeDatabaseAdapter;
-import com.catchme.model.ExampleItem;
-import com.catchme.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 
