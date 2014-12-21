@@ -20,6 +20,7 @@ import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
+import com.catchme.messages.MessagesRefreshService;
 import com.catchme.model.ExampleItem;
 import com.catchme.model.ExampleItem.ContactStateType;
 import com.catchme.model.LoggedUser;
@@ -42,11 +43,12 @@ public class ItemListActivity extends FragmentActivity implements
 	private static final int GPS_INTERVAL = 300000;// ms
 	public static final int NOTIFICATION_ID = 17;
 	private CatchmeDatabaseAdapter dbAdapter;
+
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
 	 */
-	//private boolean mTwoPane;
+	// private boolean mTwoPane;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +60,9 @@ public class ItemListActivity extends FragmentActivity implements
 		Options decodingOptions = new Options();
 		DisplayImageOptions m_options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loader)
-				.decodingOptions(decodingOptions).cacheOnDisk(true).cacheInMemory(true)
-				.imageScaleType(ImageScaleType.NONE).build();
+				.decodingOptions(decodingOptions).cacheOnDisk(true)
+				.cacheInMemory(true).imageScaleType(ImageScaleType.NONE)
+				.build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				this).defaultDisplayImageOptions(m_options).build();
 		ImageLoader.getInstance().init(config);
@@ -71,7 +74,7 @@ public class ItemListActivity extends FragmentActivity implements
 		dbAdapter.open();
 		if (preferences.contains(USER)) {
 			if (findViewById(R.id.item_detail_container) != null) {
-				//mTwoPane = true;
+				// mTwoPane = true;
 
 				((ItemListFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.item_list))
@@ -180,7 +183,8 @@ public class ItemListActivity extends FragmentActivity implements
 	}
 
 	public static void removeLoggedUser(Context context) {
-		//context.stopService(new Intent(context, MessagesRefreshService.class));
+		// context.stopService(new Intent(context,
+		// MessagesRefreshService.class));
 		SharedPreferences preferences = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
 		Editor e = preferences.edit();
@@ -190,28 +194,28 @@ public class ItemListActivity extends FragmentActivity implements
 
 	@Override
 	public void onPause() {
-		//stopService(new Intent(this, MessagesRefreshService.class));
-		//Intent messageIntent = new Intent(this, MessagesRefreshService.class);
-		//messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-		//		MessagesRefreshService.MESSAGES_INTERVAL_LONG);
-		//startService(messageIntent);
+		stopService(new Intent(this, MessagesRefreshService.class));
+		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+				MessagesRefreshService.MESSAGES_INTERVAL_LONG);
+		startService(messageIntent);
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
-		//stopService(new Intent(this, MessagesRefreshService.class));
-		//Intent messageIntent = new Intent(this, MessagesRefreshService.class);
-		//messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-		//		MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
-		//startService(messageIntent);
+		stopService(new Intent(this, MessagesRefreshService.class));
+		Intent messageIntent = new Intent(this, MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+				MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+		startService(messageIntent);
 		NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		nMgr.cancelAll();
 		super.onResume();
 	}
-	
+
 	@Override
-	public void onDestroy(){
+	public void onDestroy() {
 		dbAdapter.close();
 		super.onDestroy();
 	}

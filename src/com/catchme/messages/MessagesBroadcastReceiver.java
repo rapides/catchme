@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.util.LongSparseArray;
+import android.widget.Toast;
 
 import com.catchme.messages.interfaces.NewerMessagesListener;
 import com.google.gson.Gson;
@@ -28,12 +29,14 @@ public class MessagesBroadcastReceiver extends BroadcastReceiver {
 
 			long itemId = data.getLong(MessagesRefreshService.ITEM_ID);
 			long convId = data.getLong(MessagesRefreshService.CONVERSATION_ID);
-			int messagesCount = data
-					.getInt(MessagesRefreshService.MESSAGES_COUNT);
-			messageListener.onNewMessage(itemId, convId, messagesCount);
+			/*int messagesCount = data
+					.getInt(MessagesRefreshService.MESSAGES_COUNT);*/
+			
+			messageListener.onNewMessage(itemId, convId, null);
 			Vibrator vibrator = (Vibrator) context
 					.getSystemService(Context.VIBRATOR_SERVICE);
 			vibrator.vibrate(100);
+			Toast.makeText(context, "Vibrate!", Toast.LENGTH_SHORT).show();
 			
 		} else if (intent.getAction().equalsIgnoreCase(
 				MessagesRefreshService.BROADCAST_ERROR)) {

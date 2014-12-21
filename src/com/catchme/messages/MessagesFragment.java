@@ -1,6 +1,6 @@
 package com.catchme.messages;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.IntentFilter;
@@ -150,9 +150,16 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 	@Override
 	public void onNewMessage(long itemId, long conversationId,
-			int newMessagesCount) {
-		((MessagesListAdapter) listView.getAdapter()).notifyDataSetChanged();
-		listView.setSelection(listView.getCount() - 1);
+			LinkedList<Message> newerMessages) {
+		if (this.isVisible()) {
+			((MessagesListAdapter) listView.getAdapter())
+					.notifyDataSetChanged();
+			listView.setSelection(listView.getCount() - 1);
+		} else {
+			//TODO what to do if message list is not visible?
+			Toast.makeText(getActivity(), "New message from: " + itemId,
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -167,7 +174,7 @@ public class MessagesFragment extends Fragment implements OnMessageSent,
 
 	@Override
 	public void onGetMessagesCompleted(long id, long conversationId,
-			ArrayList<Message> messages) {
+			LinkedList<Message> messages) {
 		((MessagesListAdapter) listView.getAdapter()).notifyDataSetChanged();
 		listView.setSelection(listView.getFirstVisiblePosition()
 				+ messages.size());

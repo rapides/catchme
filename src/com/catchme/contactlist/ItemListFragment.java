@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -94,11 +95,11 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
 
-		// Intent messageIntent = new Intent(getActivity(),
-		// MessagesRefreshService.class);
-		// messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
-		// MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
-		// getActivity().startService(messageIntent);
+		Intent messageIntent = new Intent(getActivity(),
+		MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+		MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+		getActivity().startService(messageIntent);
 
 		user = ItemListActivity.getLoggedUser(getActivity());
 		sharedpreferences = getActivity().getSharedPreferences(
@@ -153,7 +154,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				getResources().getString(R.string.app_name));
 		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
 		new GetContactsTask(this.getActivity(), this, dbAdapter,
-				ContactStateType.ACCEPTED);
+				ContactStateType.ACCEPTED).execute(user.getToken());
 		return rootView;
 	}
 

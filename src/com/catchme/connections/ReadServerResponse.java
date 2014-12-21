@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -215,8 +216,8 @@ public class ReadServerResponse {
 		return response;
 	}
 
-	public static ArrayList<Message> getMessagesList(JSONObject fullResponse) {
-		ArrayList<Message> messageList = null;
+	public static LinkedList<Message> getMessagesList(JSONObject fullResponse) {
+		LinkedList<Message> messageList = null;
 
 		try {
 			if (isSuccess(fullResponse)) {
@@ -234,9 +235,9 @@ public class ReadServerResponse {
 		return fullResponse.getJSONArray(ServerConst.MESSAGES);
 	}
 
-	private static ArrayList<Message> getMessageList(JSONArray messageArray)
+	private static LinkedList<Message> getMessageList(JSONArray messageArray)
 			throws JSONException {
-		ArrayList<Message> messageList = new ArrayList<Message>();
+		LinkedList<Message> messageList = new LinkedList<Message>();
 		for (int i = 0; i < messageArray.length(); i++) {
 			messageList.add(getMessage(messageArray.getJSONObject(i)));
 		}

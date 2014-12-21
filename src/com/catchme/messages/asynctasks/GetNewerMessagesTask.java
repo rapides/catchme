@@ -1,6 +1,6 @@
 package com.catchme.messages.asynctasks;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.json.JSONObject;
 
@@ -59,10 +59,10 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 		if (result == null) {
 			listener.onNewMessageError(null);
 		} else if (ReadServerResponse.isSuccess(result)) {
-			ArrayList<Message> newerMessages = ReadServerResponse
+			LinkedList<Message> newerMessages = ReadServerResponse
 					.getMessagesList(result);
 			listener.onNewMessage(item.getId(), conversationId,
-					newerMessages.size());
+					newerMessages);
 		} else {
 			Toast.makeText(context, "Message get NEWER problem",
 					Toast.LENGTH_SHORT).show();

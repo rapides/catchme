@@ -15,7 +15,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.SyncStateContract.Helpers;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
@@ -290,7 +289,7 @@ public class CatchmeDatabaseAdapter {
 		 */
 	}
 
-	public void insertMessages(long conversationId, ArrayList<Message> messages) {
+	public void insertMessages(long conversationId, LinkedList<Message> messages) {
 		for (Message m : messages) {
 			insertMessage(conversationId, m);
 		}
@@ -345,8 +344,8 @@ public class CatchmeDatabaseAdapter {
 	}
 
 	public Message getLastMessage(long conversationId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Message> list = getMessages(conversationId);
+		return list.get(list.size()-1);
 	}
 
 	public Long getOldestMessageId(long conversationId) {
