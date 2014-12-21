@@ -138,8 +138,8 @@ public class ItemListActivity extends FragmentActivity implements
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
-			transaction.setCustomAnimations(android.R.anim.fade_in,
-					android.R.anim.fade_out);
+			transaction.setCustomAnimations(android.R.anim.slide_in_left,
+					android.R.anim.slide_out_right);
 			transaction.replace(R.id.main_fragment_container, frag);
 			transaction.addToBackStack(null);
 			transaction.commit();
@@ -151,8 +151,8 @@ public class ItemListActivity extends FragmentActivity implements
 			frag.setArguments(arguments);
 			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction();
-			transaction.setCustomAnimations(android.R.anim.fade_in,
-					android.R.anim.fade_out);
+			transaction.setCustomAnimations(android.R.anim.slide_in_left,
+					android.R.anim.slide_out_right);
 			transaction.replace(R.id.main_fragment_container, frag);
 			transaction.addToBackStack(null);
 			transaction.commit();
