@@ -10,8 +10,10 @@ public class ServerConst {
 	public static final String URL_USER_CREATE = SERVER_IP+"/api/v1/user/create";
 	public static final String URL_USER_UPDATE_AVATAR = SERVER_IP+"/api/v1/user/upload_avatar";
 	public static final String URL_USER_LOGOUT = SERVER_IP+"/api/v1/auth/";//+ userID
+	public static final String URL_USER_PERSONAL_URL = SERVER_IP+"/api/v1/user/update_personal_data";
 	public static final String URL_CONTACTS_CREATE = SERVER_IP+"/api/v1/contact/create";
 	public static final String URL_CONTACTS_ALL = SERVER_IP+ "/api/v1/contacts/all";
+	public static final String URL_CONTACTS_ACCEPTED = SERVER_IP+ "/api/v1/contacts/accepted";
 	public static final String URL_CONTACTS_SENT = SERVER_IP+ "/api/v1/contacts/invited_by_user";
 	public static final String URL_CONTACTS_RECEIVED = SERVER_IP+ "/api/v1/contacts/invited_by_others";
 	public static final String URL_CONTACTS_UPDATE_STATE_PART1 = SERVER_IP+"/api/v1/contact/";
@@ -35,6 +37,9 @@ public class ServerConst {
 	public static final String USER_FIRST_NAME = "first_name";
 	public static final String USER_LAST_NAME = "last_name";
 	public static final String USER_SEX = "sex";
+	public static final String USER_SEX_MALE = "male";
+	public static final String USER_SEX_FEMALE = "female";
+	public static final String USER_SEX_UNKNOWN = "unknown";
 	public static final String USER_BIRTH_DATE= "dob";
 	public static final String USER_PERSONAL_DATA = "personal_data";
 	public static final String USER_AVATAR = "avatar";

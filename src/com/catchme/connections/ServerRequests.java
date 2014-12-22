@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.UserSex;
 
 public class ServerRequests {
 	public static JSONObject getLocations(String token,
@@ -51,9 +52,12 @@ public class ServerRequests {
 				+ ServerConst.MESSAGE_LAST_ID + oldestMessageId,
 				getHeader(token));
 	}
-
-	public static JSONObject getAcceptedContactsRequest(String token) {
+	public static JSONObject getAllContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_ALL,
+				getHeader(token));
+	}
+	public static JSONObject getAcceptedContactsRequest(String token) {
+		return ServerConnection.GET(ServerConst.URL_CONTACTS_ACCEPTED,
 				getHeader(token));
 	}
 
@@ -105,12 +109,19 @@ public class ServerRequests {
 				buildUpdateUserRequest(name, surname), getHeader(token));
 	}
 
-	public static JSONObject addUserRequest(String name, String surname,
-			String email, String password, String confirmationPassword) {
-		return ServerConnection.JsonPOST(
-				ServerConst.URL_USER_CREATE,
-				buildRegistationRequest(name, surname, email, password,
-						confirmationPassword), getHeader(null));
+	public static JSONObject addUserRequest(String email, String password,
+			String confirmationPassword) {
+		return ServerConnection.JsonPOST(ServerConst.URL_USER_CREATE,
+				buildRegistationRequest(email, password, confirmationPassword),
+				getHeader(null));
+	}
+
+	public static JSONObject addPersonalDataRequest(String token, String name,
+			String surname, UserSex sex, String date) {
+		return ServerConnection.JsonPOST(ServerConst.URL_USER_PERSONAL_URL,
+				buildPersonalDataRequest(name, surname, sex, date),
+				getHeader(token));
+
 	}
 
 	public static JSONObject sendMessageRequest(String token, long convId,
@@ -190,17 +201,15 @@ public class ServerRequests {
 	}
 
 	// TODO check
-	private static JSONObject buildRegistationRequest(String name,
-			String surname, String email, String password,
-			String confirmationPassword) {
+	private static JSONObject buildRegistationRequest(String email,
+			String password, String confirmationPassword) {
 		JSONObject o = new JSONObject();
 		JSONObject user = new JSONObject();
 		try {
-			user.put(ServerConst.USER_FIRST_NAME, name);
-			user.put(ServerConst.USER_LAST_NAME, surname);
 			user.put(ServerConst.USER_EMAIL, email);
 			user.put(ServerConst.USER_PASSWORD, password);
-			user.put(ServerConst.USER_PASSWORD_CONFIRMATION, password);
+			user.put(ServerConst.USER_PASSWORD_CONFIRMATION,
+					confirmationPassword);
 			o.put(ServerConst.USER, user);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
@@ -262,6 +271,22 @@ public class ServerRequests {
 			request.put(ServerConst.POSITION_KEY, detailParams);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
+		}
+		return request;
+	}
+
+	private static JSONObject buildPersonalDataRequest(String name,
+			String surname, UserSex sex, String date) {
+		JSONObject request = new JSONObject();
+		JSONObject personalData = new JSONObject();
+		try {
+			personalData.put(ServerConst.USER_FIRST_NAME, name);
+			personalData.put(ServerConst.USER_LAST_NAME, surname);
+			personalData.put(ServerConst.USER_SEX, sex.getIntegerValue());
+			personalData.put(ServerConst.USER_BIRTH_DATE, date);
+			request.put(ServerConst.USER_PERSONAL_DATA, personalData);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		return request;
 	}

@@ -22,6 +22,7 @@ import android.util.Log;
 import com.catchme.connections.ServerConst;
 import com.catchme.database.model.ExampleItem;
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.UserSex;
 import com.catchme.database.model.Message;
 
 public class CatchmeDatabaseAdapter {
@@ -191,7 +192,8 @@ public class CatchmeDatabaseAdapter {
 		String email = cursor.getString(cursor.getColumnIndex(DB_ITEM_EMAIL));
 		ContactStateType state = ContactStateType.getStateType(cursor
 				.getInt(cursor.getColumnIndex(DB_ITEM_STATE)));
-		String sex = cursor.getString(cursor.getColumnIndex(DB_ITEM_SEX));
+		UserSex sex = UserSex.getSexByString(cursor.getString(cursor
+				.getColumnIndex(DB_ITEM_SEX)));
 		String dob = cursor.getString(cursor.getColumnIndex(DB_ITEM_BIRDTHDAY));
 		LongSparseArray<String> avatars = new LongSparseArray<String>(4);
 		avatars.put(ExampleItem.AVATAR_SMALL,

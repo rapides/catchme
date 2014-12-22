@@ -46,6 +46,8 @@ public class GetContactsTask extends AsyncTask<String, Void, JSONObject> {
 				result = ServerRequests.getSentContactsRequest(token);
 			} else if (state == ContactStateType.RECEIVED) {
 				result = ServerRequests.getReceivedContactsRequest(token);
+			}else{
+				result = ServerRequests.getAllContactsRequest(token);
 			}
 			if (ReadServerResponse.isSuccess(result)) {
 				ArrayList<ExampleItem> contactList = ReadServerResponse

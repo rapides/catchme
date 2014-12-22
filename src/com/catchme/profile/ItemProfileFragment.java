@@ -197,6 +197,6 @@ public class ItemProfileFragment extends Fragment implements
 	@Override
 	public void onImageUploadError(LongSparseArray<String> errors) {
 		Toast.makeText(getActivity(), "UPLOAD FAIL:\n" + errors.toString(),
-				Toast.LENGTH_SHORT).show();
+				Toast.LENGTH_LONG).show();
 	}
 }

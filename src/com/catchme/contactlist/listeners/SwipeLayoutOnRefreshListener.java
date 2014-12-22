@@ -22,14 +22,7 @@ public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
 	@Override
 	public void onRefresh() {
 		new GetContactsTask(context, listener,
-				ContactStateType.ACCEPTED).execute(ItemListActivity
+				ContactStateType.ALL).execute(ItemListActivity
 				.getLoggedUser(context).getToken());
-		new GetContactsTask(context, listener,
-				ContactStateType.RECEIVED).execute(ItemListActivity
-				.getLoggedUser(context).getToken());
-		new GetContactsTask(context, listener,
-				ContactStateType.SENT).execute(ItemListActivity
-				.getLoggedUser(context).getToken());
-		
 	}
 }

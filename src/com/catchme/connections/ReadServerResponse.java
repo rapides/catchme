@@ -19,6 +19,7 @@ import com.catchme.database.model.ExampleItem;
 import com.catchme.database.model.LoggedUser;
 import com.catchme.database.model.Message;
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.ExampleItem.UserSex;
 
 public class ReadServerResponse {
 	public static LongSparseArray<String> getErrors(JSONObject fullResponse) {
@@ -47,22 +48,29 @@ public class ReadServerResponse {
 		try {
 			if (isSuccess(fullResponse)) {
 				JSONObject user = fullResponse.getJSONObject(ServerConst.USER);
-				JSONObject personalData = user
-						.getJSONObject(ServerConst.USER_PERSONAL_DATA);
-				long id = user.getLong(ServerConst.USER_ID);
-				String name = personalData
-						.getString(ServerConst.USER_FIRST_NAME);
-				String surname = personalData
-						.getString(ServerConst.USER_LAST_NAME);
-				String dob = personalData
-						.optString(ServerConst.USER_BIRTH_DATE);
-				String sex = personalData.optString(ServerConst.USER_SEX);
-				String email = user.getString(ServerConst.USER_EMAIL);
-				LongSparseArray<String> avatars = getAvatarsFromArray(user
-						.getJSONObject(ServerConst.USER_AVATAR));
+				if (user.has(ServerConst.USER_PERSONAL_DATA)) {
+					JSONObject personalData = user
+							.getJSONObject(ServerConst.USER_PERSONAL_DATA);
+					long id = user.getLong(ServerConst.USER_ID);
+					String name = personalData
+							.getString(ServerConst.USER_FIRST_NAME);
+					String surname = personalData
+							.getString(ServerConst.USER_LAST_NAME);
+					String dob = personalData
+							.optString(ServerConst.USER_BIRTH_DATE);
+					UserSex sex = UserSex.getSexByString(personalData
+							.optString(ServerConst.USER_SEX));
+					String email = user.getString(ServerConst.USER_EMAIL);
+					LongSparseArray<String> avatars = getAvatarsFromArray(user
+							.getJSONObject(ServerConst.USER_AVATAR));
 
-				logged = new LoggedUser(id, name, surname, email,
-						getToken(fullResponse), avatars, sex, dob);
+					logged = new LoggedUser(id, name, surname, email,
+							getToken(fullResponse), avatars, sex, dob);
+				} else {
+					String email = user.getString(ServerConst.USER_EMAIL);
+					logged = new LoggedUser(-1, null, null, email,
+							getToken(fullResponse), null, null, null);
+				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -135,7 +143,8 @@ public class ReadServerResponse {
 		LongSparseArray<String> avatars = getAvatarsFromArray(user
 				.getJSONObject(ServerConst.USER_AVATAR));
 		String dob = personalData.optString(ServerConst.USER_BIRTH_DATE);
-		String sex = personalData.getString(ServerConst.USER_SEX);
+		UserSex sex = UserSex.getSexByString(personalData
+				.getString(ServerConst.USER_SEX));
 		ExampleItem contact = new ExampleItem(id, name, surname, email, state,
 				conv_ids, avatars, sex, dob);
 		return contact;
@@ -210,7 +219,12 @@ public class ReadServerResponse {
 			throws JSONException {
 		String response = null;
 		if (isSuccess(fullResponse)) {
-			response = fullResponse.getString(ServerConst.TOKEN_RESPONSE);
+			if (fullResponse.has(ServerConst.TOKEN_RESPONSE)) {
+				response = fullResponse.getString(ServerConst.TOKEN_RESPONSE);
+			} else {
+				response = "tempToken";
+				System.out.println("nope, temptoken, nope, nope");
+			}
 		}
 		return response;
 	}

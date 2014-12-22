@@ -10,13 +10,14 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.ExampleItem.UserSex;
 
-public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
+public class PersonalDataTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;
 	private LoginRegisterInterface listener;
 	private LoggedUser user;
 
-	public RegisterTask(Context context, LoginRegisterInterface listener) {
+	public PersonalDataTask(Context context, LoginRegisterInterface listener) {
 		super();
 		this.context = context;
 		this.listener = listener;
@@ -31,15 +32,18 @@ public class RegisterTask extends AsyncTask<String, Void, JSONObject> {
 	protected JSONObject doInBackground(String... params) {
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
-			String email = params[0];
-			String password = params[1];
-			String confirmationPassword = params[2];
-			result = ServerRequests.addUserRequest(email,
-					password, confirmationPassword);
+			String token = params[0];
+			String name = params[1];
+			String surname = params[2];
+			UserSex sex = UserSex.getSexByString(params[3]);
+			String date = null;
+			if(params.length>=3){
+				date = params[4];
+			}
+			result = ServerRequests.addPersonalDataRequest(token, name, surname, sex, date);
 		} else {
 			result = null;
 		}
-
 		return result;
 	}
 

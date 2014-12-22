@@ -15,7 +15,9 @@ import android.widget.Toast;
 import com.catchme.R;
 import com.catchme.contactlist.ItemListFragment;
 import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.ExampleItem.UserSex;
 import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
+import com.catchme.loginregister.asynctasks.PersonalDataTask;
 import com.catchme.loginregister.asynctasks.RegisterTask;
 
 public class RegisterFragment extends Fragment implements OnClickListener,
@@ -24,6 +26,7 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 	private View rootView;
 	private ProgressBar register_loading;
 	private EditText email, name, surname, pass, conf_pass;
+
 	public RegisterFragment() {
 	}
 
@@ -55,10 +58,12 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		new RegisterTask(getActivity(), this).execute(
-				name.getText().toString(), surname.getText().toString(), email
-						.getText().toString(), pass.getText().toString(),
-				conf_pass.getText().toString());
+		new RegisterTask(getActivity(), this).execute(email.getText()
+				.toString(), pass.getText().toString(), conf_pass.getText()
+				.toString());
+		new PersonalDataTask(getActivity(), this).execute(name.getText()
+				.toString(), surname.getText().toString(), UserSex.MAN.getStringValue(),
+				"data w jakims formacie nieznanym");
 	}
 
 	@Override
@@ -69,16 +74,21 @@ public class RegisterFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onCompleted(LoggedUser user) {
 		register_loading.setVisibility(View.GONE);
-		Toast.makeText(getActivity(),
-				"Success! Registered user: " + user.getFullName(),
-				Toast.LENGTH_SHORT).show();
-		ItemListFragment mainFragment = new ItemListFragment();
-		// replace old view
-		getActivity().getSupportFragmentManager().beginTransaction()
-				.replace(R.id.main_fragment_container, mainFragment).commit();
-		// adjust actionBar
-		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActivity().getActionBar().setHomeButtonEnabled(true);
+		if(user.isComplete()){
+			Toast.makeText(getActivity(),
+					"Success! Registered user: " + user.getFullName(),
+					Toast.LENGTH_SHORT).show();
+			ItemListFragment mainFragment = new ItemListFragment();
+			// replace old view
+			getActivity().getSupportFragmentManager().beginTransaction()
+					.replace(R.id.main_fragment_container, mainFragment).commit();
+			// adjust actionBar
+			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+			getActivity().getActionBar().setHomeButtonEnabled(true);
+		}else{
+			//second fragment
+		}
+		
 	}
 
 	@Override

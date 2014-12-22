@@ -153,11 +153,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		getActivity().getActionBar().setTitle(
 				getResources().getString(R.string.app_name));
 		new GetContactsTask(this.getActivity(), this,
-				ContactStateType.ACCEPTED).execute(user.getToken());
-		new GetContactsTask(this.getActivity(), this,
-				ContactStateType.SENT).execute(user.getToken());
-		new GetContactsTask(this.getActivity(), this,
-				ContactStateType.RECEIVED).execute(user.getToken());
+				ContactStateType.ALL).execute(user.getToken());
 		return rootView;
 	}
 

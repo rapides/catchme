@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.support.v4.util.LongSparseArray;
 
 import com.catchme.R;
+import com.catchme.connections.ServerConst;
 
 public class ExampleItem {
 	public static final int IMAGE_INVALID = -1;
@@ -17,18 +18,38 @@ public class ExampleItem {
 	public static final long AVATAR_URL = 3;
 
 	public enum UserSex {
-		UNKNOWN(0), MAN(1), WOMAN(2);
-		UserSex(int val) {
+		UNKNOWN(0, ServerConst.USER_SEX_UNKNOWN), MAN(1,
+				ServerConst.USER_SEX_MALE), WOMAN(2,
+				ServerConst.USER_SEX_FEMALE);
+		UserSex(int val, String stringVal) {
 			intValue = val;
+			this.stringVal = stringVal;
 		}
+
 		int intValue;
+		String stringVal;
+
 		public int getIntegerValue() {
 			return intValue;
+		}
+
+		public static UserSex getSexByString(String sex) {
+			if (sex.equals(MAN.stringVal)) {
+				return MAN;
+			} else if (sex.equals(WOMAN.stringVal)) {
+				return WOMAN;
+			} else {
+				return UNKNOWN;
+			}
+		}
+
+		public String getStringValue() {
+			return stringVal;
 		}
 	}
 
 	public enum ContactStateType {
-		INVITED(0), ACCEPTED(1), REJECTED(2), SENT(3), RECEIVED(4);
+		INVITED(0), ACCEPTED(1), REJECTED(2), SENT(3), RECEIVED(4), ALL(5);
 		int intValue;
 
 		ContactStateType(int val) {
@@ -63,7 +84,7 @@ public class ExampleItem {
 
 	public ExampleItem(long id, String name, String surname, String email,
 			ContactStateType state, List<Long> conv_ids,
-			LongSparseArray<String> avatars, String sex, String dob) {
+			LongSparseArray<String> avatars, UserSex sex, String dob) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
@@ -71,7 +92,7 @@ public class ExampleItem {
 		this.state = state;
 		this.conversationIds = conv_ids;
 		this.avatars = avatars;
-		this.sex = UserSex.UNKNOWN;// TODO importing sex
+		this.sex = sex;
 		this.dateOfBirth = new Date();// TODO importing date
 
 	}
@@ -91,12 +112,6 @@ public class ExampleItem {
 	public String toString() {
 		return "Id: " + id + ", " + name + " " + surname + ", " + email;
 	}
-
-	
-
-	
-
-	
 
 	public String getName() {
 		return name;
@@ -122,13 +137,6 @@ public class ExampleItem {
 		return email;
 	}
 
-	
-	
-
-
-
-	
-
 	/**
 	 * Returns first conversation id. Used in conversations between 2 people.
 	 * 
@@ -137,15 +145,16 @@ public class ExampleItem {
 	public Long getFirstConversationId() {
 		return conversationIds.get(0);
 	}
-	
-	public List<Long> getConversations(){
+
+	public List<Long> getConversations() {
 		return conversationIds;
 	}
 
 	public String getSmallImageUrl() {
 		String url = avatars.get(AVATAR_SMALL);
 		if (url.length() > 4) {
-			return url;
+			return url.contains(ServerConst.SERVER_IP) ? url
+					: ServerConst.SERVER_IP + url;
 		} else {
 			return getDefaultImage();
 		}
@@ -154,7 +163,8 @@ public class ExampleItem {
 	public String getMediumImageUrl() {
 		String url = avatars.get(AVATAR_MEDIUM);
 		if (url.length() > 4) {
-			return url;
+			return url.contains(ServerConst.SERVER_IP) ? url
+					: ServerConst.SERVER_IP + url;
 		} else {
 			return getDefaultImage();
 		}
@@ -163,16 +173,19 @@ public class ExampleItem {
 	public String getLargeImageUrl() {
 		String url = avatars.get(AVATAR_BIG);
 		if (url.length() > 4) {
-			return url;
+			return url.contains(ServerConst.SERVER_IP) ? url
+					: ServerConst.SERVER_IP + url;
 		} else {
 			return getDefaultImage();
 		}
 	}
-	public String getOriginalImageURl(){
+
+	public String getOriginalImageURl() {
 		String url = avatars.get(AVATAR_URL);
-		if(url.length()>4){
-			return url;
-		}else{
+		if (url.length() > 4) {
+			return url.contains(ServerConst.SERVER_IP) ? url
+					: ServerConst.SERVER_IP + url;
+		} else {
 			return getDefaultImage();
 		}
 	}
@@ -181,16 +194,14 @@ public class ExampleItem {
 		return "drawable://" + R.drawable.loader;
 	}
 
-	
-
 	public UserSex getSex() {
 		return sex;
 	}
 
 	public String getBirthday() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd", Locale.getDefault());
-        return dateFormat.format(dateOfBirth);	
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",
+				Locale.getDefault());
+		return dateFormat.format(dateOfBirth);
 	}
 
 }
