@@ -182,11 +182,6 @@ public class ItemProfileFragment extends Fragment implements
 	}
 
 	@Override
-	public void onProgressUpdate(long value) {
-		// TODO no idea how it work
-	}
-
-	@Override
 	public void onImageUploaded() {
 		item = ItemListActivity.getLoggedUser(getActivity());
 		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),

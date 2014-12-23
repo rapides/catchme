@@ -48,8 +48,8 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			((FragmentActivity) context)
 					.getSupportFragmentManager()
 					.beginTransaction()
-					.setCustomAnimations(android.R.anim.slide_in_left,
-							android.R.anim.slide_out_right)
+					.setCustomAnimations(android.R.anim.fade_in,
+							android.R.anim.fade_out)
 					.replace(R.id.main_fragment_container, loginFragment)
 					.commit();
 			((Activity) context).getActionBar()
@@ -62,8 +62,8 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			ItemProfileFragment frag = new ItemProfileFragment();
 			FragmentTransaction transaction = ((FragmentActivity) context)
 					.getSupportFragmentManager().beginTransaction();
-			transaction.setCustomAnimations(android.R.anim.slide_in_left,
-					android.R.anim.slide_out_right);
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
 			transaction.replace(R.id.main_fragment_container, frag);
 			transaction.addToBackStack(null);
 			transaction.commit();

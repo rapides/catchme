@@ -61,10 +61,5 @@ public class UpdateAvatarTask extends AsyncTask<String, Long, JSONObject> {
 		}
 	}
 
-	@Override
-	protected void onProgressUpdate(Long... progress) {
-		listener.onProgressUpdate(progress[0]);
-	}
-
 	
 }

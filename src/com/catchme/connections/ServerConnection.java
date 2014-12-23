@@ -89,7 +89,7 @@ public class ServerConnection {
 			int timeoutConnection = 3000;
 			HttpConnectionParams.setConnectionTimeout(httpParameters,
 					timeoutConnection);
-			int timeoutSocket = 5000;
+			int timeoutSocket = 25000;
 			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 
 			HttpClient client = new DefaultHttpClient(httpParameters);
@@ -141,7 +141,13 @@ public class ServerConnection {
 
 	public static JSONObject uploadImage(String url, String filePath,
 			Map<String, String> header) {
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpParams httpParameters = new BasicHttpParams();
+		int timeoutConnection = 3000;
+		HttpConnectionParams.setConnectionTimeout(httpParameters,
+				timeoutConnection);
+		int timeoutSocket = 5000;
+		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+		HttpClient httpClient = new DefaultHttpClient(httpParameters);
 		HttpPost postMethod = new HttpPost(url);
 		JSONObject result = new JSONObject();
 		try {
