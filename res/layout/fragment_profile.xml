@@ -20,36 +20,41 @@
             android:src="@drawable/o1" />
     </RelativeLayout>
 
-    <LinearLayout 
-        android:id="@+id/profile_name_container"
+    <ViewSwitcher
+        android:id="@+id/profile_switcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/profile_email"
         android:layout_below="@+id/profile_background"
-        android:paddingTop="20dp" >
+        android:layout_centerHorizontal="true" >
 
-        <TextView  
-            android:id="@+id/profile_name"
+        <RelativeLayout
+            android:id="@+id/profile_name_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Janusz" />
+            android:layout_alignLeft="@+id/profile_email"
+            android:paddingTop="20dp" >
 
-        <TextView
-            android:id="@+id/profile_surname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="Nazwisko" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Janusz" />
 
-    <TextView
-        android:id="@+id/profile_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_name_container"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="Email@email.com" />
+            <TextView
+                android:id="@+id/profile_surname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Nazwisko" />
+
+            <TextView
+                android:id="@+id/profile_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Email@email.com" />
+        </RelativeLayout>
+    </ViewSwitcher>
 
     <com.catchme.utils.FloatingActionButton
         xmlns:fab="http://schemas.android.com/apk/res-auto"
@@ -59,7 +64,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/profile_background"
         android:layout_marginTop="-35dp"
-        android:visibility="gone"
+        
         fab:fab_colorNormal="@color/profile_floating_button_base"
         fab:fab_colorPressed="@color/profile_floating_button_pressed"
         fab:fab_icon="@drawable/ic_action_edit" />
@@ -68,7 +73,7 @@
         android:id="@+id/profile_state_buttons_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_email"
+        android:layout_below="@+id/profile_switcher"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" >
 
@@ -76,9 +81,9 @@
             android:id="@+id/profile_reject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/selector_reject_button"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
-            android:background="@drawable/selector_reject_button"
             android:text="@string/profile_reject"
             android:textColor="@color/profile_reject_text" />
 
@@ -87,12 +92,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/profile_reject"
+            android:background="@drawable/selector_accept_button"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
-            android:background="@drawable/selector_accept_button"
             android:text="@string/profile_accept"
             android:textColor="@color/profile_accept_text" />
-
     </RelativeLayout>
 
 </RelativeLayout>
