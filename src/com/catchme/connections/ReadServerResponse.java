@@ -222,8 +222,7 @@ public class ReadServerResponse {
 			if (fullResponse.has(ServerConst.TOKEN_RESPONSE)) {
 				response = fullResponse.getString(ServerConst.TOKEN_RESPONSE);
 			} else {
-				response = "tempToken";
-				System.out.println("nope, temptoken, nope, nope");
+				response = null;
 			}
 		}
 		return response;

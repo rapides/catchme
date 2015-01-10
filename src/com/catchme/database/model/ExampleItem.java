@@ -101,6 +101,7 @@ public class ExampleItem {
 		this.id = item.id;
 		this.name = item.name;
 		this.avatars = item.avatars;
+
 		this.email = item.email;
 		this.surname = item.surname;
 		this.state = item.state;
@@ -161,30 +162,44 @@ public class ExampleItem {
 	}
 
 	public String getMediumImageUrl() {
-		String url = avatars.get(AVATAR_MEDIUM);
-		if (url.length() > 4) {
-			return url.contains(ServerConst.SERVER_IP) ? url
-					: ServerConst.SERVER_IP + url;
+		if (avatars != null) {
+			String url = avatars.get(AVATAR_MEDIUM);
+			if (url.length() > 4) {
+
+				return url.contains(ServerConst.SERVER_IP) ? url
+						: ServerConst.SERVER_IP + url;
+			} else {
+				return getDefaultImage();
+			}
 		} else {
 			return getDefaultImage();
 		}
+
 	}
 
 	public String getLargeImageUrl() {
-		String url = avatars.get(AVATAR_BIG);
-		if (url.length() > 4) {
-			return url.contains(ServerConst.SERVER_IP) ? url
-					: ServerConst.SERVER_IP + url;
+		if (avatars != null) {
+			String url = avatars.get(AVATAR_BIG);
+			if (url.length() > 4) {
+				return url.contains(ServerConst.SERVER_IP) ? url
+						: ServerConst.SERVER_IP + url;
+			} else {
+				return getDefaultImage();
+			}
 		} else {
 			return getDefaultImage();
 		}
 	}
 
 	public String getOriginalImageURl() {
-		String url = avatars.get(AVATAR_URL);
-		if (url.length() > 4) {
-			return url.contains(ServerConst.SERVER_IP) ? url
-					: ServerConst.SERVER_IP + url;
+		if (avatars != null) {
+			String url = avatars.get(AVATAR_URL);
+			if (url.length() > 4) {
+				return url.contains(ServerConst.SERVER_IP) ? url
+						: ServerConst.SERVER_IP + url;
+			} else {
+				return getDefaultImage();
+			}
 		} else {
 			return getDefaultImage();
 		}

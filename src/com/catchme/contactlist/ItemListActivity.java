@@ -23,6 +23,7 @@ import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
+import com.catchme.loginregister.RegisterFragment;
 import com.catchme.messages.MessagesRefreshService;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
@@ -71,38 +72,46 @@ public class ItemListActivity extends FragmentActivity implements
 		}
 
 		if (preferences.contains(USER)) {
-			if (findViewById(R.id.item_detail_container) != null) {
-				// mTwoPane = true;
+			if (getLoggedUser(getApplicationContext()).getToken() != null) {
+				if (findViewById(R.id.item_detail_container) != null) {
+					// mTwoPane = true;
 
-				((ItemListFragment) getSupportFragmentManager()
-						.findFragmentById(R.id.item_list))
-						.setActivateOnItemClick(true);
+					((ItemListFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.item_list))
+							.setActivateOnItemClick(true);
+				}
+				ItemListFragment firstFragment = new ItemListFragment();
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.main_fragment_container, firstFragment)
+						.commit();
+				// LocationRecorder locationRecorder = new
+				// LocationRecorder(getApplicationContext());
+				// locationRecorder.startRecording();
+
+				// set up position listening
+				AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+				Intent i = new Intent(this, LocationPoller.class);
+				Bundle bundle = new Bundle();
+				LocationPollerParameter parameter = new LocationPollerParameter(
+						bundle);
+				parameter.setIntentToBroadcastOnCompletion(new Intent(this,
+						LocationReceiver.class));
+				parameter.setProviders(new String[] {
+						LocationManager.GPS_PROVIDER,
+						LocationManager.NETWORK_PROVIDER });
+				parameter.setTimeout(20000);
+				i.putExtras(bundle);
+				PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+				alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+						SystemClock.elapsedRealtime(), GPS_INTERVAL, pi);
+				getActionBar().setDisplayHomeAsUpEnabled(true);
+				getActionBar().setHomeButtonEnabled(true);
+			} else {
+				RegisterFragment registerFragment = new RegisterFragment();
+				getSupportFragmentManager().beginTransaction()
+						.replace(R.id.main_fragment_container, registerFragment)
+						.commit();
 			}
-			ItemListFragment firstFragment = new ItemListFragment();
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.main_fragment_container, firstFragment)
-					.commit();
-			// LocationRecorder locationRecorder = new
-			// LocationRecorder(getApplicationContext());
-			// locationRecorder.startRecording();
-
-			// set up position listening
-			AlarmManager alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
-			Intent i = new Intent(this, LocationPoller.class);
-			Bundle bundle = new Bundle();
-			LocationPollerParameter parameter = new LocationPollerParameter(
-					bundle);
-			parameter.setIntentToBroadcastOnCompletion(new Intent(this,
-					LocationReceiver.class));
-			parameter.setProviders(new String[] { LocationManager.GPS_PROVIDER,
-					LocationManager.NETWORK_PROVIDER });
-			parameter.setTimeout(20000);
-			i.putExtras(bundle);
-			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-			alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime(), GPS_INTERVAL, pi);
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-			getActionBar().setHomeButtonEnabled(true);
 		} else {
 			getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 					.edit()
@@ -174,6 +183,9 @@ public class ItemListActivity extends FragmentActivity implements
 	public static void setLoggedUser(Context context, LoggedUser user) {
 		SharedPreferences preferences = context.getSharedPreferences(
 				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
+		if (user.getToken() == null) {
+			user.setToken(getLoggedUser(context).getToken());
+		}
 		Editor e = preferences.edit();
 		Gson gsonUser = new Gson();
 		String json = gsonUser.toJson(user);
