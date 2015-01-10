@@ -71,8 +71,7 @@ public class ItemListActivity extends FragmentActivity implements
 			removeLoggedUser(getApplicationContext());
 		}
 
-		if (preferences.contains(USER)) {
-			if (getLoggedUser(getApplicationContext()).getToken() != null) {
+		if (preferences.contains(USER) && getLoggedUser(getApplicationContext()).getToken() != null) {
 				if (findViewById(R.id.item_detail_container) != null) {
 					// mTwoPane = true;
 
@@ -106,12 +105,6 @@ public class ItemListActivity extends FragmentActivity implements
 						SystemClock.elapsedRealtime(), GPS_INTERVAL, pi);
 				getActionBar().setDisplayHomeAsUpEnabled(true);
 				getActionBar().setHomeButtonEnabled(true);
-			} else {
-				RegisterFragment registerFragment = new RegisterFragment();
-				getSupportFragmentManager().beginTransaction()
-						.replace(R.id.main_fragment_container, registerFragment)
-						.commit();
-			}
 		} else {
 			getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 					.edit()
