@@ -152,10 +152,14 @@ public class ExampleItem {
 	}
 
 	public String getSmallImageUrl() {
-		String url = avatars.get(AVATAR_SMALL);
-		if (url.length() > 4) {
-			return url.contains(ServerConst.SERVER_IP) ? url
-					: ServerConst.SERVER_IP + url;
+		if (avatars != null) {
+			String url = avatars.get(AVATAR_SMALL);
+			if (url.length() > 4) {
+				return url.contains(ServerConst.SERVER_IP) ? url
+						: ServerConst.SERVER_IP + url;
+			} else {
+				return getDefaultImage();
+			}
 		} else {
 			return getDefaultImage();
 		}

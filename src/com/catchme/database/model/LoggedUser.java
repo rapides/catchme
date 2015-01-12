@@ -31,7 +31,7 @@ public class LoggedUser extends ExampleItem {
 	}
 
 	public boolean isComplete() {
-		return getName() != null && getSurname() != null;
+		return getName() != null && getSurname() != null && getToken() != null;
 	}
 
 }

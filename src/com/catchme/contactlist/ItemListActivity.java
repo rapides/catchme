@@ -71,7 +71,7 @@ public class ItemListActivity extends FragmentActivity implements
 			removeLoggedUser(getApplicationContext());
 		}
 
-		if (preferences.contains(USER) && getLoggedUser(getApplicationContext()).getToken() != null) {
+		if (preferences.contains(USER) && getLoggedUser(getApplicationContext()).isComplete()) {
 				if (findViewById(R.id.item_detail_container) != null) {
 					// mTwoPane = true;
 
