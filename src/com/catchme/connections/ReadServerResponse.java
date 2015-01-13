@@ -30,10 +30,16 @@ public class ReadServerResponse {
 				System.out.println(fullResponse);
 				JSONArray a = fullResponse
 						.getJSONArray(ServerConst.ERROR_MESSAGES);
+
 				for (int i = 0; i < a.length(); i++) {
 					JSONObject error = a.getJSONObject(i);
-					errors.put(error.getInt(ServerConst.ERROR_ID),
-							error.getString(ServerConst.ERROR_CONTENT));
+					if (error.has(ServerConst.ERROR_CONTENT)) {
+						errors.put(error.getInt(ServerConst.ERROR_ID),
+								error.getString(ServerConst.ERROR_CONTENT));
+					} else {
+						errors.put(error.getInt(ServerConst.ERROR_ID),
+								error.getString("context"));
+					}
 				}
 			}
 		} catch (JSONException e) {

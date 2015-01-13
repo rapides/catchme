@@ -3,4 +3,9 @@
     <issue id="HardcodedText">
         <ignore path="res/layout/fragment_register.xml" />
     </issue>
+    <issue id="NewApi">
+        <ignore path="src/com/catchme/loginregister/LoginFragment.java" />
+        <ignore path="src/com/catchme/loginregister/Register1Fragment.java" />
+        <ignore path="src/com/catchme/loginregister/Register2Fragment.java" />
+    </issue>
 </lint>
