@@ -25,7 +25,7 @@ public class Register1Fragment extends Fragment implements OnClickListener,
 		LoginRegisterInterface {
 	private View rootView;
 	public static final String EMAIL = "useremail";
-	private ProgressBar register_loading;
+	private ProgressBar registerLoading;
 	private EditText email, pass, conf_pass;
 	private Drawable originalBackground;
 
@@ -44,17 +44,14 @@ public class Register1Fragment extends Fragment implements OnClickListener,
 		conf_pass = (EditText) rootView.findViewById(R.id.reg_pass_conf);
 		originalBackground = email.getBackground();
 
-		Bundle arguments = getArguments();
-		String email_arg = arguments.getString(EMAIL);
-
-		if (email_arg != null) {
-
-			email.setText(email_arg, EditText.BufferType.EDITABLE);
+		
+		if (getArguments().containsKey(EMAIL)) {
+			email.setText(getArguments().getString(EMAIL), EditText.BufferType.EDITABLE);
 		}
 
-		register_loading = (ProgressBar) rootView
+		registerLoading = (ProgressBar) rootView
 				.findViewById(R.id.register_spinner);
-		register_loading.setVisibility(View.GONE);
+		registerLoading.setVisibility(View.GONE);
 		Button reg = (Button) rootView.findViewById(R.id.register);
 		reg.setOnClickListener(this);
 		return rootView;
@@ -73,12 +70,12 @@ public class Register1Fragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onPreExecute() {
-		register_loading.setVisibility(View.VISIBLE);
+		registerLoading.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void onCompleted(LoggedUser user) {
-		register_loading.setVisibility(View.GONE);
+		registerLoading.setVisibility(View.GONE);
 		Bundle arguments = new Bundle();
 		arguments
 				.putString(Register2Fragment.EMAIL, email.getText().toString());
@@ -99,7 +96,7 @@ public class Register1Fragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onError(LongSparseArray<String> errors) {
-		register_loading.setVisibility(View.GONE);
+		registerLoading.setVisibility(View.GONE);
 		String errorsString = "";
 		if (errors != null) {
 			for (int i = 0; i < errors.size(); i++) {

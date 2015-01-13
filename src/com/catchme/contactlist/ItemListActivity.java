@@ -23,7 +23,6 @@ import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.locationServices.LocationReceiver;
 import com.catchme.loginregister.LoginFragment;
-import com.catchme.loginregister.RegisterFragment;
 import com.catchme.messages.MessagesRefreshService;
 import com.catchme.profile.ItemProfileFragment;
 import com.commonsware.cwac.locpoll.LocationPoller;
