@@ -1,13 +1,16 @@
 package com.catchme.profile;
 
-import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LongSparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -16,20 +19,22 @@ import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
-import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemProfileFragment extends Fragment implements
-		ContactChangedState {
+		ContactChangedState, ImageUploadingListener {
 	private View rootView;
 	private ExampleItem item;
 	private boolean isLoggedUser;
+	public static final int PICK_IMAGE = 0;
+	private RoundedImageView itemImage;
 
 	public ItemProfileFragment() {
 	}
@@ -42,16 +47,13 @@ public class ItemProfileFragment extends Fragment implements
 
 		if (getArguments() == null) {
 			isLoggedUser = true;
-			Gson gson = new Gson();
-			String json = getActivity().getSharedPreferences(
-					ItemListActivity.PREFERENCES, Context.MODE_PRIVATE)
-					.getString(ItemListActivity.USER, "");
-			item = gson.fromJson(json, LoggedUser.class);
+			item = ItemListActivity.getLoggedUser(getActivity());
 		} else {
 			isLoggedUser = false;
 			long itemId = getArguments().getLong(
 					ItemDetailsFragment.ARG_ITEM_ID);
-			item = ExampleContent.ITEM_MAP.get(itemId);
+			item = CatchmeDatabaseAdapter.getInstance(
+					getActivity().getApplicationContext()).getItem(itemId);
 		}
 
 		TextView txtName = (TextView) rootView.findViewById(R.id.profile_name);
@@ -59,7 +61,7 @@ public class ItemProfileFragment extends Fragment implements
 				.findViewById(R.id.profile_surname);
 		TextView txtEmail = (TextView) rootView
 				.findViewById(R.id.profile_email);
-		RoundedImageView image = (RoundedImageView) rootView
+		itemImage = (RoundedImageView) rootView
 				.findViewById(R.id.profile_image);
 		FloatingActionButton fab = (FloatingActionButton) rootView
 				.findViewById(R.id.profile_floating_action_button);
@@ -69,9 +71,22 @@ public class ItemProfileFragment extends Fragment implements
 		txtName.setText(item.getName());
 		txtSurname.setText(item.getSurname());
 		txtEmail.setText(item.getEmail());
-		image.setImageResource(item.getImageResource());
+		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
+				itemImage);
 		if (isLoggedUser) {
 			fab.setVisibility(View.VISIBLE);
+			fab.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent();
+					intent.setType("image/*");
+					intent.setAction(Intent.ACTION_GET_CONTENT);
+					startActivityForResult(
+							Intent.createChooser(intent, "Select Picture"),
+							PICK_IMAGE);
+				}
+			});
 			buttonsContainer.setVisibility(View.GONE);
 			setHasOptionsMenu(true);
 		} else {
@@ -130,5 +145,53 @@ public class ItemProfileFragment extends Fragment implements
 					Toast.LENGTH_SHORT).show();
 		}
 
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == PICK_IMAGE && data != null && data.getData() != null) {
+			Uri uri = data.getData();
+			String imageFilePath = null;
+			if (uri.getScheme().equals("content")) {// fromGallery
+
+				// User had pick an image.
+				Cursor cursor = getActivity()
+						.getContentResolver()
+						.query(uri,
+								new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+								null, null, null);
+				cursor.moveToFirst();
+
+				// Link to the image
+				imageFilePath = cursor.getString(0);
+				cursor.close();
+			} else {
+				imageFilePath = uri.getSchemeSpecificPart();
+			}
+			Toast.makeText(getActivity(), "DEBUG: " + imageFilePath,
+					Toast.LENGTH_SHORT).show();
+			new UpdateAvatarTask(this.getActivity(), this).execute(
+					((LoggedUser) item).getToken(), imageFilePath);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onPreUpdate() {
+		Toast.makeText(getActivity(), "Started", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onImageUploaded() {
+		item = ItemListActivity.getLoggedUser(getActivity());
+		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
+				itemImage);
+		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onImageUploadError(LongSparseArray<String> errors) {
+		Toast.makeText(getActivity(), "UPLOAD FAIL:\n" + errors.toString(),
+				Toast.LENGTH_LONG).show();
 	}
 }

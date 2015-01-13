@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="4dp" >
+    android:layout_height="wrap_content" >
 
     <com.catchme.utils.RoundedImageView
         android:id="@+id/single_message_image"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/single_message_containter"
         android:layout_alignParentLeft="true"
-        android:layout_alignBottom="@+id/single_message_content"
         android:contentDescription="@string/message_image_description"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" />
+        android:padding="5dp" />
 
-    <TextView
-        android:id="@+id/single_message_content"
+    <RelativeLayout
+        android:id="@+id/single_message_containter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/single_message_image"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+        android:layout_toRightOf="@+id/single_message_image" >
 
-    <TextView
-        android:id="@+id/single_message_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/single_message_content"
-        android:textSize="10sp" />
+        <TextView
+            android:id="@+id/single_message_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
+
+        <TextView
+            android:id="@+id/single_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/single_message_content"
+            android:layout_below="@+id/single_message_content"
+            android:textSize="10sp" 
+            android:textColor="@color/message_timestamp"/>
+    </RelativeLayout>
 
 </RelativeLayout>

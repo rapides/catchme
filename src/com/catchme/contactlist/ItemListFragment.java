@@ -3,13 +3,13 @@ package com.catchme.contactlist;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -20,27 +20,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
+import com.catchme.contactlist.interfaces.OnAddContactCompletedListener;
+import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
 import com.catchme.contactlist.listeners.DrawerOnItemClickListener;
 import com.catchme.contactlist.listeners.FloatingActionButtonListener;
-import com.catchme.contactlist.listeners.ItemListOnItemClickListener;
 import com.catchme.contactlist.listeners.SwipeLayoutOnRefreshListener;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.messages.MessagesRefreshService;
 import com.catchme.utils.FloatingActionButton;
-import com.google.gson.Gson;
 
 @SuppressWarnings("deprecation")
 public class ItemListFragment extends Fragment implements OnQueryTextListener,
-		OnMenuItemClickListener {
+		OnMenuItemClickListener, OnAddContactCompletedListener,
+		OnGetContactCompletedListener {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 	public static final String SELECTED_FILTER = "filter";
@@ -50,9 +55,9 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	private DrawerLayout drawerLayout;
 	private ListView drawerList;
 	private ActionBarDrawerToggle drawerToggle;
-	private SharedPreferences sharedpreferences;
 	private FloatingActionButton fab;
 	private LoggedUser user;
+	private int defaulFilter = ContactStateType.ACCEPTED.getIntegerValue();
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -76,7 +81,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	};
 
 	public ItemListFragment() {
-
 	}
 
 	@Override
@@ -84,11 +88,14 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_item_list,
 				container, false);
-		sharedpreferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		String json = sharedpreferences.getString(ItemListActivity.USER, "");
-		user = new Gson().fromJson(json, LoggedUser.class);
 
+		Intent messageIntent = new Intent(getActivity(),
+				MessagesRefreshService.class);
+		messageIntent.putExtra(MessagesRefreshService.REFRESH_TIME,
+				MessagesRefreshService.MESSAGES_INTERVAL_SHORT);
+		getActivity().startService(messageIntent);
+
+		user = ItemListActivity.getLoggedUser(getActivity());
 		listView = (ListView) rootView.findViewById(R.id.list_item);
 
 		swipeLayout = (SwipeRefreshLayout) rootView
@@ -98,15 +105,13 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		fab = (FloatingActionButton) rootView
 				.findViewById(R.id.list_floating_action_button);
 
-		listView.setAdapter(new CustomListAdapter(getActivity(),
-				new ArrayList<ExampleItem>()));
+		listView.setAdapter(new CustomListAdapter(getActivity()));
 
 		swipeLayout.setOnRefreshListener(new SwipeLayoutOnRefreshListener(
-				swipeLayout, listView, user));
+				getActivity().getApplicationContext(), this));
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
 				R.color.swipelayout_color3);
-
 		drawerList.setAdapter(new DrawerMenuAdapter(getActivity(), user));
 		((DrawerMenuAdapter) drawerList.getAdapter()).notifyDataSetChanged();
 
@@ -115,13 +120,14 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 				R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
+				((DrawerMenuAdapter) drawerList.getAdapter())
+						.notifyDataSetChanged();
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				((DrawerMenuAdapter) drawerList.getAdapter())
-						.notifyDataSetChanged();
+
 			}
 
 		};
@@ -129,35 +135,38 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		drawerLayout.setDrawerListener(drawerToggle);
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		drawerList.setOnItemClickListener(new DrawerOnItemClickListener(
-				getActivity(), drawerLayout, drawerToggle, drawerList,
-				listView, swipeLayout, user));
-		listView.setOnItemClickListener(new ItemListOnItemClickListener(
-				drawerToggle, mCallbacks));
+				getActivity(), drawerLayout, drawerToggle, drawerList));
+		filterList(defaulFilter);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				drawerToggle.setDrawerIndicatorEnabled(false);
+				mCallbacks.onItemSelected(listView
+						.getItemIdAtPosition(position));
+			}
+		});
 		fab.setOnClickListener(new FloatingActionButtonListener(getActivity(),
-				swipeLayout, user));
+				this));
 
-		// filterList(sharedpreferences.getInt(SELECTED_FILTER, 0) - 1);
-
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter(),
-				ContactStateType.getStateType(sharedpreferences.getInt(
-						SELECTED_FILTER, 0))).execute(user.getToken());
+		getActivity().getActionBar().setTitle(
+				getResources().getString(R.string.app_name));
+		new GetContactsTask(this.getActivity(), this,
+				ContactStateType.ACCEPTED).execute(user.getToken());
+		new GetContactsTask(this.getActivity(), this,
+				ContactStateType.RECEIVED).execute(user.getToken());
+		new GetContactsTask(this.getActivity(), this,
+				ContactStateType.SENT).execute(user.getToken());
 		return rootView;
 	}
 
-	private void setListItemChecked(int position) {
+	public void setListItemChecked(int position) {
 		boolean isChecked = listView.getCheckedItemPositions().get(
 				listView.getCheckedItemPositions().keyAt(position));
 		listView.setItemChecked(position, !isChecked);
 		// View itemView = getViewByPosition(position);
 
-		/*
-		 * if (isChecked) {
-		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
-		 * R.color.list_item_background)); } else {
-		 * itemView.setBackgroundColor(getActivity().getResources().getColor(
-		 * R.color.list_item_selected)); }
-		 */
 		String out = "";
 		for (int i = 0; i < listView.getCheckedItemPositions().size(); i++) {
 			out += ""
@@ -169,7 +178,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		System.out.println(out);
 	}
 
-	private View getViewByPosition(int pos) {
+	public View getViewByPosition(int pos) {
 		final int firstListItemPosition = listView.getFirstVisiblePosition();
 		final int lastListItemPosition = firstListItemPosition
 				+ listView.getChildCount() - 1;
@@ -214,6 +223,7 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 					"Activity must implement fragment's callbacks.");
 		}
 		mCallbacks = (Callbacks) activity;
+		super.onAttach(activity);
 	}
 
 	@Override
@@ -257,19 +267,17 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		return listView;
 	}
 
-	/*
-	 * private void filterList(int state) { if (listView != null &&
-	 * listView.getAdapter() != null) { if (state >= 0) { ((CustomListAdapter)
-	 * listView.getAdapter()).getFilter().filter(
-	 * CustomListAdapter.SEARCHTYPES[0] + CustomListAdapter.SEARCHCHAR + state);
-	 * } else { ((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-	 * null); } } }
-	 */
+	private void filterList(int state) {
+		if (listView != null && listView.getAdapter() != null) {
+			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
+					"" + CustomListAdapter.SEARCHTYPES[1] + state);
+		}
+	}
 
 	private void filterList(String newText) {
 		if (listView != null && listView.getAdapter() != null) {
 			((CustomListAdapter) listView.getAdapter()).getFilter().filter(
-					newText);
+					CustomListAdapter.SEARCHTYPES[0] + newText);
 		}
 
 	}
@@ -278,6 +286,21 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		Bundle data = getActivity().getIntent().getExtras();
+		if (data != null && data.containsKey(MessagesRefreshService.ITEM_ID)) {
+			long itemId = data.getLong(MessagesRefreshService.ITEM_ID);
+			Bundle arguments = new Bundle();
+			arguments.putLong(ItemDetailsFragment.ARG_ITEM_ID, itemId);
+			ItemDetailsFragment frag = new ItemDetailsFragment();
+			frag.setArguments(arguments);
+			FragmentTransaction transaction = getActivity()
+					.getSupportFragmentManager().beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+		}
 	}
 
 	@Override
@@ -314,64 +337,32 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	}
 
 	private void openSortMenu() {
-		if (popup == null) {
-			popup = new PopupMenu(getActivity(), getActivity().findViewById(
-					R.id.action_filter));
-			popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
-			popup.setOnMenuItemClickListener(this);
-			popup.getMenu().getItem(1).setChecked(true);
-		} else {
-			ContactStateType state = ContactStateType
-					.getStateType(sharedpreferences.getInt(SELECTED_FILTER, 1));
-			popup.getMenu().getItem(state.getMenuPosition()).setChecked(true);// +1
-																				// because
-																				// model
-			// doesn't handle ALL
-			// filter
-		}
-
+		popup = new PopupMenu(getActivity(), getActivity().findViewById(
+				R.id.action_filter));
+		popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
+		popup.setOnMenuItemClickListener(this);
+		popup.getMenu().getItem(defaulFilter).setChecked(true);
 		popup.show();
 	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		Editor editor = sharedpreferences.edit();
 		switch (item.getItemId()) {
 		case R.id.menu_group_all:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.ACCEPTED).execute(user.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			editor.commit();
+			filterList(-1);
+			defaulFilter = 0;
 			return true;
 		case R.id.menu_group_accepted:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.ACCEPTED).execute(user.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.ACCEPTED.getIntegerValue());
+			defaulFilter = 1;
 			return true;
 		case R.id.menu_group_sent:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.SENT).execute(user.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.SENT.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.SENT.getIntegerValue());
+			defaulFilter = 2;
 			return true;
 		case R.id.menu_group_received:
-			new GetContactsTask(swipeLayout,
-					(CustomListAdapter) listView.getAdapter(),
-					ContactStateType.RECEIVED).execute(user.getToken());
-			item.setChecked(!item.isChecked());
-			editor.putInt(SELECTED_FILTER,
-					ContactStateType.RECEIVED.getIntegerValue());
-			editor.commit();
+			filterList(ContactStateType.RECEIVED.getIntegerValue());
+			defaulFilter = 3;
 			return true;
 		}
 		return false;
@@ -403,12 +394,6 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		filterList(newText);
-		if (sharedpreferences != null) {
-			Editor e = sharedpreferences.edit();
-			e.putInt(SELECTED_FILTER,
-					ContactStateType.ACCEPTED.getIntegerValue());
-			e.commit();
-		}
 		return true;
 	}
 
@@ -417,4 +402,55 @@ public class ItemListFragment extends Fragment implements OnQueryTextListener,
 		return false;
 	}
 
+	@Override
+	public void onAddContactSucceded() {
+		Toast.makeText(getActivity(), "Add contact succeded: ",
+				Toast.LENGTH_SHORT).show();
+		swipeLayout.setRefreshing(false);
+	}
+
+	@Override
+	public void onAddContactError(LongSparseArray<String> errors) {
+		swipeLayout.setRefreshing(false);
+		if (errors == null) {
+			Toast.makeText(getActivity(),
+					getResources().getString(R.string.err_no_internet),
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getActivity(),
+					"Add contact failed, server error\n" + errors,
+					Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	@Override
+	public void onPreAddContact() {
+		swipeLayout.setRefreshing(true);
+	}
+
+	@Override
+	public void onPreGetContacts() {
+		swipeLayout.setRefreshing(true);
+	}
+
+	@Override
+	public void onGetContactsError(LongSparseArray<String> errors) {
+		if (errors == null) {
+			Toast.makeText(getActivity().getApplicationContext(),
+					getResources().getString(R.string.err_no_internet),
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getActivity().getApplicationContext(),
+					"Refresh Failed, server error\n" + errors,
+					Toast.LENGTH_SHORT).show();
+		}
+		swipeLayout.setRefreshing(false);
+	}
+
+	@Override
+	public void onGetContactsSucceded(final ArrayList<ExampleItem> contactList) {
+		((CustomListAdapter) listView.getAdapter()).notifyDataSetChanged();
+		swipeLayout.setRefreshing(false);
+	}
 }

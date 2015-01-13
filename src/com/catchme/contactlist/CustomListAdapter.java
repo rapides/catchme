@@ -1,7 +1,6 @@
 package com.catchme.contactlist;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,29 +12,32 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ListView;
 import android.widget.TextView;
+
 import com.catchme.R;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class CustomListAdapter extends BaseAdapter implements Filterable {
+	public static final int[] SEARCHTYPES = { '$', '%' };
 	private LayoutInflater inflater;
 	private Activity activity;
-	private ArrayList<ExampleItem> items;/*
-	public static final String[] SEARCHTYPES = { "0", "1" };
-	public static final String SEARCHCHAR = ";";*/
+	private ArrayList<ExampleItem> items;
+	private ContactStateType filterType;
 
-	public CustomListAdapter(Activity activity, ArrayList<ExampleItem> items) {
-		this.items = items;
+	public CustomListAdapter(Activity activity) {
 		this.activity = activity;
+		filterType = null;
+		items = CatchmeDatabaseAdapter.getInstance(
+				activity.getApplicationContext()).getItemsByState(filterType);
 	}
 
 	@Override
 	public int getCount() {
-		return items.size();
+		return items == null ? 0 : items.size();
 	}
 
 	@Override
@@ -57,48 +59,21 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 		}
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.list_row, null);
-
 		}
 		ExampleItem item = items.get(position);
-
 		RoundedImageView img = (RoundedImageView) convertView
 				.findViewById(R.id.item_thumbnail);
 		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		// TextView city = (TextView)
-		// convertView.findViewById(R.id.item_city);
-
-		TextView lastMsg = (TextView) convertView
-				.findViewById(R.id.item_last_message);
-
-		if (item.getImageUrl() != null) {
-			ImageLoader.getInstance().displayImage(item.getImageUrl(), img);
-		} else {
-			img.setImageResource(item.getImageResource());
-		}
-
+		ImageLoader.getInstance().displayImage(item.getSmallImageUrl(), img);
 		name.setText(item.getFullName());
-		// city.setText(item.getCity());
-		/*Message m = item.getMessages(item.getFirstConversationId()).get(
-				item.getMessages(item.getFirstConversationId()).size() - 1);
-		if (m.getSenderId() % 2 == 0) {
-			lastMsg.setText("> " + m.getContent());
-		} else {
-			lastMsg.setText("You: " + m.getContent());
-		}*/
-		int maxLength = activity.getResources()
-				.getInteger(R.integer.max_length);
-		/*if (m.getContent().length() > maxLength) {
-
-			lastMsg.setText(lastMsg.getText().subSequence(0, maxLength - 3)
-					+ "...");
-		}*/
 		img.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				ListView parentListView = (ListView) v.getParent().getParent();
+				// ListView parentListView = (ListView)
+				// v.getParent().getParent();
 				// parentListView.setItemChecked(position, true);
-				// todo image checking
+				// TODO image selecting
 			}
 		});
 		return convertView;
@@ -107,12 +82,10 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public Filter getFilter() {
 		Filter filter = new Filter() {
-			;
 			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-
 				items = (ArrayList<ExampleItem>) results.values;
 				notifyDataSetChanged();
 			}
@@ -120,52 +93,49 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				FilterResults results = new FilterResults();
-				
 				if (constraint == null || constraint.length() == 0) {
-					results.values = ExampleContent.ITEMS;
-					results.count = ExampleContent.ITEMS.size();
+					ArrayList<ExampleItem> newValues = CatchmeDatabaseAdapter
+							.getInstance(activity.getApplicationContext())
+							.getItems(null);
+					results.values = newValues;
+					results.count = newValues.size();
 				} else {
-
+					int searchType = Integer.parseInt(constraint.subSequence(0,
+							2).toString());
+					String searchquery = constraint.subSequence(2,
+							constraint.length()).toString();
 					ArrayList<ExampleItem> filteredArrayNames = new ArrayList<ExampleItem>();
-					/*String searchType = constraint.toString().substring(0,
-							constraint.toString().indexOf(SEARCHCHAR));
-					String searchQuery = constraint.toString().substring(
-							constraint.toString().indexOf(SEARCHCHAR) + 1);
-
-					if (searchType.equals(SEARCHTYPES[0])) {
-						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
-
-							if (searchQuery
-									.startsWith("" + dataItem.getState())) {
-								filteredArrayNames.add(dataItem);
-							}
-						}
-					} else if (searchType.equals(SEARCHTYPES[1])) {*/
-						for (int i = 0; i < ExampleContent.ITEMS.size(); i++) {
-							ExampleItem dataItem = ExampleContent.ITEMS.get(i);
-							if (dataItem
-									.getFullName()
-									.toLowerCase(Locale.getDefault())
-									.contains(
-											constraint.toString().toLowerCase(Locale
-													.getDefault()))) {
-								filteredArrayNames.add(dataItem);
-							}
-						}
-					//}
+					if (searchType == SEARCHTYPES[0]) {// search for name
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByName(searchquery);
+					} else if (searchType == SEARCHTYPES[1]) {
+						filterType = ContactStateType.getStateType(Integer
+								.parseInt(searchquery));
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByState(filterType);
+					} else {
+						filteredArrayNames = CatchmeDatabaseAdapter
+								.getInstance(activity.getApplicationContext())
+								.getItemsByState(null);
+					}
 					results.count = filteredArrayNames.size();
 					results.values = filteredArrayNames;
 				}
 				return results;
-
 			}
 		};
 		return filter;
 	}
 
-	public void swapItems(ArrayList<ExampleItem> items) {
-		this.items = items;
-		notifyDataSetChanged();
+	@Override
+	public void notifyDataSetChanged() {
+		if (items == null || items.size() == 0) {
+			items = CatchmeDatabaseAdapter.getInstance(
+					activity.getApplicationContext()).getItemsByState(
+					filterType);
+		}
+		super.notifyDataSetChanged();
 	}
 }

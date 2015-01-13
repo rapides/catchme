@@ -1,42 +1,55 @@
 package com.catchme.messages;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import java.util.LinkedList;
+import java.util.List;
+
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.catchme.R;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.exampleObjects.ExampleContent;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.database.CatchmeDatabaseAdapter;
+import com.catchme.database.model.ExampleItem;
+import com.catchme.database.model.LoggedUser;
+import com.catchme.database.model.Message;
 import com.catchme.itemdetails.ItemDetailsFragment;
-import com.catchme.messages.asynctask.GetMessagesInitTask;
-import com.catchme.messages.asynctask.GetNewerMessagesTask;
+import com.catchme.messages.asynctasks.GetMessagesInitTask;
+import com.catchme.messages.asynctasks.GetNewerMessagesTask;
+import com.catchme.messages.asynctasks.GetOlderMessagesTask;
+import com.catchme.messages.interfaces.GetMessagesListener;
+import com.catchme.messages.interfaces.NewerMessagesListener;
+import com.catchme.messages.interfaces.OnMessageSent;
 import com.catchme.messages.listeners.MessagesRefreshListener;
-import com.catchme.messages.listeners.MessagesScrollListener;
-import com.catchme.messages.listeners.OnMessageSent;
 import com.catchme.messages.listeners.SendButtonOnClickListener;
-import com.google.gson.Gson;
 
-public class MessagesFragment extends Fragment implements OnMessageSent {
+public class MessagesFragment extends Fragment implements OnMessageSent,
+		NewerMessagesListener, GetMessagesListener, OnScrollListener {
 
 	public static int timesClicked = 0;
 	private ExampleItem item;
-	ListView listView;
-	View rootView;
-	EditText textBox;
-	LoggedUser user;
+	private ListView listView;
+	private View rootView;
+	private EditText textBox;
+	private LoggedUser user;
 	private SwipeRefreshLayout swipeLayout;
+	private boolean isGetingMessages;
+	private boolean isMoreMessages;
+	boolean isOpened = false;
 
 	public MessagesFragment() {
 	}
@@ -44,13 +57,25 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		item = ExampleContent.ITEM_MAP.get(getArguments().getLong(
-				ItemDetailsFragment.ARG_ITEM_ID));
-		SharedPreferences preferences = getActivity().getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		String json = preferences.getString(ItemListActivity.USER, "");
-		user = new Gson().fromJson(json, LoggedUser.class);
+		item = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getItem(
+				getArguments().getLong(ItemDetailsFragment.ARG_ITEM_ID));
+		user = ItemListActivity.getLoggedUser(getActivity());
+		isGetingMessages = false;
+		isMoreMessages = true;
 		setListnerToRootView();
+		MessagesBroadcastReceiver receiver = new MessagesBroadcastReceiver(this);
+		IntentFilter filterMessage = new IntentFilter(
+				MessagesRefreshService.BROADCAST_NEW_MESSAGE);
+		IntentFilter filterError = new IntentFilter(
+				MessagesRefreshService.BROADCAST_ERROR);
+		LocalBroadcastManager
+				.getInstance(getActivity().getApplicationContext())
+				.registerReceiver(receiver, filterMessage);
+		LocalBroadcastManager
+				.getInstance(getActivity().getApplicationContext())
+				.registerReceiver(receiver, filterError);
+
 	}
 
 	@Override
@@ -58,37 +83,29 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 			Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.fragment_message_list, container,
 				false);
-		loadData();
-		ImageButton sendBtn = (ImageButton) rootView
-				.findViewById(R.id.message_send);
-		sendBtn.setOnClickListener(new SendButtonOnClickListener(getActivity(),
-				user, item, textBox, this));
-		new GetMessagesInitTask(listView, swipeLayout, item).execute(
-				user.getToken(), "" + item.getFirstConversationId());
-		/*
-		 * getActivity() .startService( new Intent(rootView.getContext(),
-		 * MessagesRefreshService.class));
-		 */
-
-		return rootView;
-	}
-
-	private void loadData() {
 		listView = (ListView) rootView.findViewById(R.id.messages_list);
 		textBox = (EditText) rootView.findViewById(R.id.message_input);
 		TextView t = (TextView) rootView.findViewById(R.id.simpleText);
 		swipeLayout = (SwipeRefreshLayout) rootView
 				.findViewById(R.id.message_swipe_container);
+		ImageButton sendBtn = (ImageButton) rootView
+				.findViewById(R.id.message_send);
 		t.setText("" + item.getFullName());
+		List<Message> listMessages = CatchmeDatabaseAdapter.getInstance(
+				getActivity().getApplicationContext()).getMessages(
+				item.getFirstConversationId());
 		MessagesListAdapter adapter = new MessagesListAdapter(getActivity(),
-				item, user);
+				user, item, item.getFirstConversationId());
 		listView.setAdapter(adapter);
-		if (item.getMessages(item.getFirstConversationId()) != null) {
-			listView.setSelection(item.getMessages(
-					item.getFirstConversationId()).size() - 1);
+		if (listMessages != null && listMessages.size() > 0) {
+			listView.setSelection(CatchmeDatabaseAdapter
+					.getInstance(getActivity().getApplicationContext())
+					.getMessages(item.getFirstConversationId()).size() - 1);
+		} else {
+			new GetMessagesInitTask(getActivity(), item, this).execute(item
+					.getFirstConversationId());
 		}
-		listView.setOnScrollListener(new MessagesScrollListener(listView, item,
-				swipeLayout));
+		listView.setOnScrollListener(this);
 
 		swipeLayout.setColorSchemeResources(R.color.swipelayout_bar,
 				R.color.swipelayout_color1, R.color.swipelayout_color2,
@@ -96,9 +113,11 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 
 		swipeLayout.setOnRefreshListener(new MessagesRefreshListener(
 				swipeLayout));
-	}
 
-	boolean isOpened = false;
+		sendBtn.setOnClickListener(new SendButtonOnClickListener(getActivity(),
+				user, item, textBox, this));
+		return rootView;
+	}
 
 	public void setListnerToRootView() {
 		final View activityRootView = getActivity().getWindow().getDecorView()
@@ -111,8 +130,12 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 						int heightDiff = activityRootView.getRootView()
 								.getHeight() - activityRootView.getHeight();
 						if (heightDiff > 200) { // TODO different resolutions
-							listView.setSelection(item.getMessages(
-									item.getFirstConversationId()).size() - 1);
+							listView.setSelection(CatchmeDatabaseAdapter
+									.getInstance(
+											getActivity()
+													.getApplicationContext())
+									.getMessages(item.getFirstConversationId())
+									.size() - 1);
 							isOpened = true;
 						} else if (isOpened == true) {
 							isOpened = false;
@@ -123,9 +146,71 @@ public class MessagesFragment extends Fragment implements OnMessageSent {
 
 	@Override
 	public void onMessageSent(boolean b) {
-		new GetNewerMessagesTask(listView, item).execute(listView
-				.getItemIdAtPosition(listView.getCount() - 1));
+		new GetNewerMessagesTask(getActivity(), item, this).execute(
+				item.getFirstConversationId(),
+				listView.getItemIdAtPosition(listView.getCount() - 1));
 		textBox.setText("");
 		textBox.setEnabled(true);
 	}
+
+	@Override
+	public void onNewMessage(long itemId, long conversationId,
+			LinkedList<Message> newerMessages) {
+		if (this.isVisible()) {
+			((MessagesListAdapter) listView.getAdapter())
+					.notifyDataSetChanged();
+			listView.setSelection(listView.getCount() - 1);
+		} else {
+			// TODO what to do if message list is not visible?
+			Toast.makeText(getActivity(), "New message from: " + itemId,
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onNewMessageError(LongSparseArray<String> errors) {
+	}
+
+	@Override
+	public void onPreGetMessages() {
+		swipeLayout.setRefreshing(true);
+		isGetingMessages = true;
+	}
+
+	@Override
+	public void onGetMessagesCompleted(long id, long conversationId,
+			LinkedList<Message> messages) {
+		((MessagesListAdapter) listView.getAdapter()).notifyDataSetChanged();
+		listView.setSelection(listView.getFirstVisiblePosition()
+				+ messages.size());
+		isGetingMessages = false;
+		isMoreMessages = messages.size() > 0;
+		swipeLayout.setRefreshing(false);
+	}
+
+	@Override
+	public void onGetMessagesError(LongSparseArray<String> errors) {
+		swipeLayout.setRefreshing(false);
+		Toast.makeText(getActivity(), "Message get OLDER server problem",
+				Toast.LENGTH_SHORT).show();
+		isGetingMessages = false;
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		if (isMoreMessages && !isGetingMessages && firstVisibleItem == 0
+				&& visibleItemCount > 0) {
+			long conversationId = item.getFirstConversationId();
+			new GetOlderMessagesTask(getActivity(), item, this)
+					.execute(conversationId,
+							CatchmeDatabaseAdapter
+							.getInstance(getActivity().getApplicationContext()).getOldestMessageId(conversationId));
+		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+
 }

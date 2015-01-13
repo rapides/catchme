@@ -28,7 +28,7 @@ public class SendLocationTask extends AsyncTask<Location, Void, JSONObject> {
 		JSONObject result = new JSONObject();
 		if (ServerConnection.isOnline(context)) {
 			result = ServerRequests.setUserLocationRequest(token,
-					l.getLatitude(), l.getLongitude());
+					l.getLatitude(), l.getLongitude(), l.getAccuracy(), l.getTime());
 		} else {
 			result = null;
 		}

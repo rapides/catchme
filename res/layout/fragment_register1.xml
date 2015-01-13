@@ -3,13 +3,11 @@
     android:id="@+id/register_scroll_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
     android:fillViewport="true" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:minHeight="450dp" >
 
         <RelativeLayout
@@ -32,12 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:layout_centerVertical="true"
-            
             android:layout_marginBottom="2dp" >
 
             <RelativeLayout
                 android:id="@+id/register_borderContainer"
-                android:layout_width="240dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
@@ -148,7 +145,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/loginbutton_bg"
-            android:text="@string/register_accept" />
+            android:text="@string/register_nextStep" />
 
         <ProgressBar
             android:id="@+id/register_spinner"
@@ -157,6 +154,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
+
     </RelativeLayout>
 
 </ScrollView>

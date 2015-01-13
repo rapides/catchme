@@ -1,14 +1,16 @@
 package com.catchme.connections;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import org.apache.http.Header;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.Log;
 
 public class ServerConnection {
@@ -37,6 +40,7 @@ public class ServerConnection {
 				timeoutConnection);
 		int timeoutSocket = 5000;
 		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+
 		DefaultHttpClient httpclient = new DefaultHttpClient(httpParameters);
 		HttpPost httpost = new HttpPost(url);
 
@@ -56,17 +60,16 @@ public class ServerConnection {
 			responsePost = httpclient.execute(httpost);
 			response = EntityUtils.toString(responsePost.getEntity());
 			result = new JSONObject(response);
-
 		} catch (UnsupportedEncodingException e) {
-			Log.e("JSON Parse error", e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		} catch (ClientProtocolException e) {
-			Log.e("ConnectionError", "Error: " + response);
+			Log.e("ConnectionError", e.getMessage());
 		} catch (IOException e) {
-			Log.e("ConnectionError", "Error: " + e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		} catch (ParseException e) {
-			Log.e("JSON Parse error", e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		} catch (JSONException e) {
-			Log.e("JSON Parse error", e.getMessage());
+			Log.e("ConnectionError", e.getMessage());
 		}
 
 		return result;
@@ -86,8 +89,9 @@ public class ServerConnection {
 			int timeoutConnection = 3000;
 			HttpConnectionParams.setConnectionTimeout(httpParameters,
 					timeoutConnection);
-			int timeoutSocket = 5000;
+			int timeoutSocket = 25000;
 			HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+
 			HttpClient client = new DefaultHttpClient(httpParameters);
 			HttpGet get = new HttpGet(url);
 
@@ -100,9 +104,8 @@ public class ServerConnection {
 			return new JSONObject(EntityUtils.toString(responseGet.getEntity()));
 		} catch (Exception e) {
 			Log.e("ConnectionError", responseGet + "\n" + e.getMessage());
-			// e.printStackTrace();
 		}
-		return null;
+		return new JSONObject();
 	}
 
 	public static JSONObject DELETE(String url, Map<String, String> header) {
@@ -122,19 +125,81 @@ public class ServerConnection {
 					delete.setHeader(s, header.get(s));
 				}
 			}
-			System.out.println("\nHeader: ");
-			for (Header h : delete.getAllHeaders()) {
-				System.out.println(h);
-			}
-			System.out.println();
+			// System.out.println("\nHeader: ");
+			/*
+			 * for (Header h : delete.getAllHeaders()) { System.out.println(h);
+			 * }
+			 */
 			responseDelete = client.execute(delete);
 			return new JSONObject(EntityUtils.toString(responseDelete
 					.getEntity()));
 		} catch (Exception e) {
 			Log.e("ConnectionError", responseDelete + "\n" + e.getMessage());
-			// e.printStackTrace();
 		}
 		return null;
 	}
 
+	public static JSONObject uploadImage(String url, String filePath,
+			Map<String, String> header) {
+		HttpParams httpParameters = new BasicHttpParams();
+		int timeoutConnection = 3000;
+		HttpConnectionParams.setConnectionTimeout(httpParameters,
+				timeoutConnection);
+		int timeoutSocket = 5000;
+		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+		HttpClient httpClient = new DefaultHttpClient(httpParameters);
+		HttpPost postMethod = new HttpPost(url);
+		JSONObject result = new JSONObject();
+		try {
+			JSONObject jsonObject = constructPictureJson(filePath);
+			postMethod.setEntity(new StringEntity(jsonObject.toString()));
+
+			if (header != null) {
+				for (String s : header.keySet()) {
+					postMethod.setHeader(s, header.get(s));
+				}
+			}
+			String response;
+			HttpResponse responsePost = httpClient.execute(postMethod);
+			response = EntityUtils.toString(responsePost.getEntity());
+			result = new JSONObject(response);
+		} catch (HttpResponseException error) {
+			error.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private static JSONObject constructPictureJson(String fileName)
+			throws JSONException, IOException {
+
+		String[] file = fileName.split("/");// TODO check what happens if
+											// platform is android
+		JSONObject request = new JSONObject();
+		JSONObject user = new JSONObject();
+		JSONObject avatar = new JSONObject();
+		/*
+		 * avatar.put("user_id", "1"); avatar.put("folder_id", "1");
+		 * avatar.put("picture_name", "picture name");
+		 * avatar.put("picture_description", "1"); avatar.put("content_type",
+		 * "jpg"); avatar.put("original_filename",
+		 * "base64:"+file[file.length-1]);
+		 */
+		avatar.put("filename", file[file.length - 1]);
+		avatar.put("data", encodePicture(fileName));
+		user.put("avatar", avatar);
+		request.put("user", user);
+		return request;
+	}
+
+	private static String encodePicture(String fileName) throws IOException {
+		File picture = new File(fileName);
+		return Base64.encodeToString(FileUtils.readFileToByteArray(picture),
+				Base64.DEFAULT);
+	}
 }

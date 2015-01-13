@@ -1,40 +1,34 @@
 package com.catchme.contactlist.listeners;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.widget.ListView;
 
-import com.catchme.contactlist.CustomListAdapter;
 import com.catchme.contactlist.ItemListActivity;
-import com.catchme.contactlist.ItemListFragment;
 import com.catchme.contactlist.asynctasks.GetContactsTask;
-import com.catchme.exampleObjects.ExampleContent.ExampleItem.ContactStateType;
-import com.catchme.exampleObjects.ExampleContent.LoggedUser;
+import com.catchme.contactlist.interfaces.OnGetContactCompletedListener;
+import com.catchme.database.model.ExampleItem.ContactStateType;
 
 public class SwipeLayoutOnRefreshListener implements OnRefreshListener {
-	SwipeRefreshLayout swipeLayout;
-	ListView listView;
-	private LoggedUser user;
+	private OnGetContactCompletedListener listener;
 	private Context context;
 
-	public SwipeLayoutOnRefreshListener(SwipeRefreshLayout swipeLayout,
-			ListView listView, LoggedUser user) {
+	public SwipeLayoutOnRefreshListener(Context context,
+			OnGetContactCompletedListener listener) {
 		super();
-		this.swipeLayout = swipeLayout;
-		this.listView = listView;
-		this.user = user;
-		this.context = listView.getContext();
+		this.context = context;
+		this.listener = listener;
 	}
 
 	@Override
 	public void onRefresh() {
-		SharedPreferences prefs = context.getSharedPreferences(
-				ItemListActivity.PREFERENCES, Context.MODE_PRIVATE);
-		int val = prefs.getInt(ItemListFragment.SELECTED_FILTER, 1);
-		new GetContactsTask(swipeLayout,
-				(CustomListAdapter) listView.getAdapter(),
-				ContactStateType.getStateType(val)).execute(user.getToken());
+		new GetContactsTask(context, listener,
+				ContactStateType.ACCEPTED).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
+		new GetContactsTask(context, listener,
+				ContactStateType.RECEIVED).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
+		new GetContactsTask(context, listener,
+				ContactStateType.SENT).execute(ItemListActivity
+				.getLoggedUser(context).getToken());
 	}
 }

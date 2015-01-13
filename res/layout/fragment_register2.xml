@@ -41,10 +41,23 @@
                 android:layout_marginBottom="2dp" >
 
                 <com.catchme.utils.RoundedImageView
-                    android:id = "@+id/user_avatar"
+                    android:id="@+id/user_avatar"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:src="@drawable/catch_me" />
+
+                <Button
+                    android:id="@+id/change_avatar"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent" />
+
+                <ProgressBar
+                    android:id="@+id/upload_avatar_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -60,14 +73,17 @@
                     android:id="@+id/reg_name_container"
                     android:layout_width="225dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp" >
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp" >
 
                     <EditText
                         android:id="@+id/reg_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentRight="true"
                         android:layout_marginBottom="3dp"
+                        android:layout_marginRight="3dp"
                         android:hint="@string/hint_name"
                         android:inputType="text"
                         android:minWidth="200dp" />
@@ -88,14 +104,17 @@
                     android:layout_width="225dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/reg_name_container"
-                    android:layout_marginBottom="2dp" >
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp" >
 
                     <EditText
                         android:id="@+id/reg_surname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentRight="true"
                         android:layout_marginBottom="3dp"
+                        android:layout_marginRight="3dp"
                         android:hint="@string/hint_surname"
                         android:inputType="text"
                         android:minWidth="200dp" />
@@ -112,30 +131,32 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/reg_upload_container"
+                    android:id="@+id/reg_sex_container"
                     android:layout_width="225dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/reg_surname_container"
-                    android:layout_marginBottom="2dp" >
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp" >
 
-                    <EditText
-                        android:id="@+id/reg_image_upload"
-                        android:layout_width="wrap_content"
+                    <Spinner
+                        android:id="@+id/reg_sex"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentRight="true"
                         android:layout_marginBottom="3dp"
-                        android:inputType="text"
-                        android:minWidth="200dp" />
+                        android:layout_marginRight="3dp"
+                        android:prompt="@string/choose_sex" />
 
                     <ImageView
-                        android:id="@+id/reg_icon_upload"
+                        android:id="@+id/reg_icon_sex"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/reg_image_upload"
+                        android:layout_toLeftOf="@+id/reg_sex"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/icon_surname"
-                        android:src="@drawable/icon_avatar_upload" />
+                        android:src="@drawable/icon_user" />
                 </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
