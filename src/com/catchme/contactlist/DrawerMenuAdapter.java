@@ -14,8 +14,7 @@ import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class DrawerMenuAdapter extends BaseAdapter {
-	private String[] array = { "Refresh", "Settings", "Help", "TEST_Login",
-			"Logout" };
+	private String[] array;
 	private LayoutInflater inflater;
 	private Activity activity;
 	private LoggedUser user;
@@ -23,6 +22,7 @@ public class DrawerMenuAdapter extends BaseAdapter {
 	public DrawerMenuAdapter(Activity activity, LoggedUser user) {
 		this.activity = activity;
 		this.user = user;
+		array = activity.getResources().getStringArray(R.array.nav_drawer_menu);
 	}
 
 	@Override

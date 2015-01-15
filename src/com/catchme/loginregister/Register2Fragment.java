@@ -48,7 +48,7 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 
 	public static final int PIC_CROP = 1;
 
-	private ProgressBar register_loading, avatar_uploading;
+	private ProgressBar registerLoading, avatarUploading;
 	private EditText name, surname;
 	private RoundedImageView image;
 	private UserSex sex;
@@ -70,13 +70,20 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 		image = (RoundedImageView) rootView.findViewById(R.id.user_avatar);
 		originalBackground = name.getBackground();
 
-		register_loading = (ProgressBar) rootView
-				.findViewById(R.id.register_spinner);
-		register_loading.setVisibility(View.GONE);
 
-		avatar_uploading = (ProgressBar) rootView
+		/*
+		 * Bundle arguments = getArguments(); email =
+		 * arguments.getString(Register1Fragment.EMAIL); pass =
+		 * arguments.getString(PASS); conf_pass = arguments.getString(CONFPASS);
+		 */
+
+		registerLoading = (ProgressBar) rootView
+				.findViewById(R.id.register_spinner);
+		registerLoading.setVisibility(View.GONE);
+		avatarUploading = (ProgressBar) rootView
+
 				.findViewById(R.id.upload_avatar_progress);
-		avatar_uploading.setVisibility(View.GONE);
+		avatarUploading.setVisibility(View.GONE);
 
 		// Choose Gender Spinner
 		gender = (Spinner) rootView.findViewById(R.id.reg_sex);
@@ -134,12 +141,12 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onPreExecute() {
-		register_loading.setVisibility(View.VISIBLE);
+		registerLoading.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void onCompleted(LoggedUser user) {
-		register_loading.setVisibility(View.GONE);
+		registerLoading.setVisibility(View.GONE);
 
 		Toast.makeText(getActivity(),
 				"Success! Registered user: " + user.getFullName(),
@@ -155,7 +162,7 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onError(LongSparseArray<String> errors) {
-		register_loading.setVisibility(View.GONE);
+		registerLoading.setVisibility(View.GONE);
 		String errorsSring = "";
 		if (errors != null) {
 			for (int i = 0; i < errors.size(); i++) {
@@ -201,10 +208,8 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 			 * ((LoggedUser) item).getToken(), imageFilePath);
 			 */
 		} else if (requestCode == PIC_CROP) {
-			// get the returned data
-			Bundle extras = data.getExtras();
 			// get the cropped bitmap
-			Bitmap thePic = extras.getParcelable("data");
+			Bitmap thePic = data.getExtras().getParcelable("data");
 			// image.setImageBitmap(thePic);
 
 			// Cropped image save and update
@@ -212,17 +217,17 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 			// path to /data/data/yourapp/app_data/imageDir
 			File directory = cw.getExternalFilesDir("AvatarJPG");
 			// Create imageDir
-			if (!directory.exists())
+			if (!directory.exists()) {
 				directory.mkdirs();
+			}
 			File avatar = new File(directory, "profile.jpg");
-			if (avatar.exists())
+			if (avatar.exists()) {
 				avatar.delete();
+			}
 
 			FileOutputStream fos = null;
 			try {
-
 				fos = new FileOutputStream(avatar);
-
 				// Use the compress method on the BitMap object to write image
 				// to the OutputStream
 				thePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -239,7 +244,6 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 			new UpdateAvatarTask(this.getActivity(), this).execute(
 					ItemListActivity.getLoggedUser(getActivity()).getToken(),
 					directory.getAbsolutePath() + "/profile.jpg");
-
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -278,13 +282,15 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onPreUpdate() {
-		avatar_uploading.setVisibility(View.VISIBLE);
+		avatarUploading.setVisibility(View.VISIBLE);
 
 	}
 
 	@Override
 	public void onImageUploaded() {
-		avatar_uploading.setVisibility(View.GONE);
+
+		avatarUploading.setVisibility(View.GONE);
+
 
 	}
 
