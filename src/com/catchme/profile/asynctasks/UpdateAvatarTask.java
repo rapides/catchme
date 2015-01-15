@@ -1,4 +1,4 @@
-package com.catchme.profile;
+package com.catchme.profile.asynctasks;
 
 import org.json.JSONObject;
 
@@ -12,6 +12,7 @@ import com.catchme.connections.ServerConnection;
 import com.catchme.connections.ServerRequests;
 import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.model.LoggedUser;
+import com.catchme.profile.ImageUploadingListener;
 
 public class UpdateAvatarTask extends AsyncTask<String, Long, JSONObject> {
 	private Context context;

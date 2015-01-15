@@ -63,8 +63,8 @@ public class GetNewerMessagesTask extends AsyncTask<Long, Void, JSONObject> {
 					.getMessagesList(result);
 			listener.onNewMessage(item.getId(), conversationId, newerMessages);
 		} else {
-			Toast.makeText(context, "Message get NEWER problem",
-					Toast.LENGTH_SHORT).show();
+			/*Toast.makeText(context, "Message get NEWER problem",
+					Toast.LENGTH_SHORT).show();*/
 			listener.onNewMessageError(ReadServerResponse.getErrors(result));
 		}
 	}

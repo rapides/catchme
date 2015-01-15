@@ -305,9 +305,12 @@ public class ServerRequests {
 		JSONObject user = new JSONObject();
 		try {
 			user.put(ServerConst.USER_EMAIL, email);
-			user.put(ServerConst.USER_PASSWORD, password);
-			user.put(ServerConst.USER_PASSWORD_CONFIRMATION,
-					confirmationPassword);
+			if (password != null) {
+				user.put(ServerConst.USER_PASSWORD, password);
+				user.put(ServerConst.USER_PASSWORD_CONFIRMATION,
+						confirmationPassword);
+			}
+
 			request.put(ServerConst.USER, user);
 		} catch (JSONException e) {
 			Log.e("JSONParseError", e.getMessage());
