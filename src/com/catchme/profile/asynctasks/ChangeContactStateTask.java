@@ -1,4 +1,4 @@
-package com.catchme.profile;
+package com.catchme.profile.asynctasks;
 
 import org.json.JSONObject;
 
@@ -10,6 +10,7 @@ import com.catchme.R;
 import com.catchme.connections.ReadServerResponse;
 import com.catchme.connections.ServerRequests;
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.profile.ContactChangedState;
 
 public class ChangeContactStateTask extends AsyncTask<String, Void, JSONObject> {
 	private Context context;

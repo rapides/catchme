@@ -35,7 +35,7 @@ import com.catchme.database.model.ExampleItem.UserSex;
 import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
 import com.catchme.loginregister.asynctasks.PersonalDataTask;
 import com.catchme.profile.ImageUploadingListener;
-import com.catchme.profile.UpdateAvatarTask;
+import com.catchme.profile.asynctasks.UpdateAvatarTask;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

@@ -47,8 +47,8 @@ public class LocationReceiver extends BroadcastReceiver {
 					new SendLocationTask(context, user.getToken()).execute(loc);
 				} else {
 					Log.i("Location", "LOCATION TRACKING CANCELing");
-					Toast.makeText(context, "LOCATION TRACKING CANCELing",
-							Toast.LENGTH_SHORT).show();
+					/*Toast.makeText(context, "LOCATION TRACKING CANCELing",
+							Toast.LENGTH_SHORT).show();*/
 					AlarmManager alarmManager = (AlarmManager) context
 							.getSystemService(Context.ALARM_SERVICE);
 

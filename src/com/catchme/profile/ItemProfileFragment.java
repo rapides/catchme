@@ -24,6 +24,7 @@ import com.catchme.database.model.ExampleItem;
 import com.catchme.database.model.LoggedUser;
 import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.profile.asynctasks.UpdateAvatarTask;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;

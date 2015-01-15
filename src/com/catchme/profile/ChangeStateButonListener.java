@@ -9,6 +9,7 @@ import com.catchme.contactlist.ItemListActivity;
 import com.catchme.database.model.ExampleItem;
 import com.catchme.database.model.LoggedUser;
 import com.catchme.database.model.ExampleItem.ContactStateType;
+import com.catchme.profile.asynctasks.ChangeContactStateTask;
 
 public class ChangeStateButonListener implements OnClickListener {
 
