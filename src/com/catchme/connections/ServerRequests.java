@@ -52,10 +52,12 @@ public class ServerRequests {
 				+ ServerConst.MESSAGE_LAST_ID + oldestMessageId,
 				getHeader(token));
 	}
+
 	public static JSONObject getAllContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_ALL,
 				getHeader(token));
 	}
+
 	public static JSONObject getAcceptedContactsRequest(String token) {
 		return ServerConnection.GET(ServerConst.URL_CONTACTS_ACCEPTED,
 				getHeader(token));
@@ -200,7 +202,6 @@ public class ServerRequests {
 		return date.format(new Date(fixTime));
 	}
 
-	// TODO check
 	private static JSONObject buildRegistationRequest(String email,
 			String password, String confirmationPassword) {
 		JSONObject o = new JSONObject();
@@ -291,4 +292,26 @@ public class ServerRequests {
 		return request;
 	}
 
+	public static JSONObject updateUserEmail(String token, String email,
+			String password, String passwordConfirmation) {
+		return ServerConnection.JsonPOST(ServerConst.URL_USER_UPDATE_EMAIL,
+				buildEmailUpdate(email, password, passwordConfirmation),
+				getHeader(token));
+	}
+
+	private static JSONObject buildEmailUpdate(String email, String password,
+			String confirmationPassword) {
+		JSONObject request = new JSONObject();
+		JSONObject user = new JSONObject();
+		try {
+			user.put(ServerConst.USER_EMAIL, email);
+			user.put(ServerConst.USER_PASSWORD, password);
+			user.put(ServerConst.USER_PASSWORD_CONFIRMATION,
+					confirmationPassword);
+			request.put(ServerConst.USER, user);
+		} catch (JSONException e) {
+			Log.e("JSONParseError", e.getMessage());
+		}
+		return request;
+	}
 }

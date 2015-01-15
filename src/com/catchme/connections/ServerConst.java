@@ -24,10 +24,11 @@ public class ServerConst {
 	public static final String URL_MESSAGES_GET_PART2_TYPE_OLDER = "/messages/older/";
 	public static final String URL_MESSAGES_GET_PART2_TYPE_INIT = "/messages/init";
 	public static final String URL_POSITIONS_GET = SERVER_IP+"/api/v1/position/list";
+	public static final String URL_USER_UPDATE_EMAIL = SERVER_IP + "/api/v1/user/update";
 	//People stuff
 	public static final String USER_EMAIL = "email";
 	public static final String USER_PASSWORD = "password";
-	public static final String USER_PASSWORD_CONFIRMATION = "TODOTODO";
+	public static final String USER_PASSWORD_CONFIRMATION = "password_confirmation";
 	public static final String USER = "user";
 	public static final String USER_ID = "id";
 	public static final String USER_CONTACT_ID = "contact_id";

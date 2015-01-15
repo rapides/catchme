@@ -51,5 +51,9 @@
     <string name="icon_conf_pass">Icon confirm password</string>
     <string name="register_nextStep">Next Step</string>
     <string name="choose_sex">Choose gender</string>
+    <string name="refresh">Refresh</string>
+    <string name="logout">Logout</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
 
 </resources>

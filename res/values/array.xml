@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="nav_drawer_menu">  
+    <item>@string/settings</item>  
+    <item>@string/about</item>  
+    <item>@string/logout</item>  
+     </array>
+</resources>

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -39,7 +40,7 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (position == 5) {
+		if (position == 3) {
 			ItemListActivity.removeLoggedUser(context);
 			context.stopService(new Intent(context,
 					MessagesRefreshService.class));
@@ -56,6 +57,9 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 					.setDisplayHomeAsUpEnabled(false);
 			((Activity) context).getActionBar().setHomeButtonEnabled(false);
 
+		}
+		if (position == 2) {
+			Toast.makeText(context, "About info", Toast.LENGTH_SHORT).show();
 		}
 		drawerLayout.closeDrawer(drawerList);
 		if (position == 0) {

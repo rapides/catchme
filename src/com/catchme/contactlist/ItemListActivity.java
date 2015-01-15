@@ -40,7 +40,7 @@ public class ItemListActivity extends FragmentActivity implements
 	public static final String USER = "user";
 	public static final String MODEL_VERSION = "model_version";
 	public static final int CURRENT_VERSION = 3;
-	private static final int GPS_INTERVAL = 300000;// ms
+	private static final int GPS_INTERVAL = 120000;// ms
 	public static final int NOTIFICATION_ID = 17;
 
 	/**
