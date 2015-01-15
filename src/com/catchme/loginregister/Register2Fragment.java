@@ -1,6 +1,5 @@
 package com.catchme.loginregister;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -56,7 +55,6 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 	private Drawable originalBackground;
 	private Spinner gender;
 
-
 	public Register2Fragment() {
 	}
 
@@ -71,8 +69,6 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 		surname = (EditText) rootView.findViewById(R.id.reg_surname);
 		image = (RoundedImageView) rootView.findViewById(R.id.user_avatar);
 		originalBackground = name.getBackground();
-
-
 
 		register_loading = (ProgressBar) rootView
 				.findViewById(R.id.register_spinner);
@@ -192,12 +188,14 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 			}
 
 			performCrop(imageFilePath);
-			Toast.makeText(getActivity(),
+			/*Toast.makeText(getActivity(),
 					"DEBUG: " + "file://" + imageFilePath, Toast.LENGTH_LONG)
-					.show();
+					.show();*/
 			// Wyswietla obraz z galeria jako avatar
-			/*ImageLoader.getInstance().displayImage("file://" + imageFilePath,
-					image);*/
+			/*
+			 * ImageLoader.getInstance().displayImage("file://" + imageFilePath,
+			 * image);
+			 */
 			/*
 			 * new UpdateAvatarTask(this.getActivity(), this).execute(
 			 * ((LoggedUser) item).getToken(), imageFilePath);
@@ -287,7 +285,7 @@ public class Register2Fragment extends Fragment implements OnClickListener,
 	@Override
 	public void onImageUploaded() {
 		avatar_uploading.setVisibility(View.GONE);
-		
+
 	}
 
 	@Override

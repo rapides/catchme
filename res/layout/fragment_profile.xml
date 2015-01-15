@@ -13,14 +13,21 @@
 
         <com.catchme.utils.RoundedImageView
             android:id="@+id/profile_image"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:src="@drawable/o1" />
+
+        <ProgressBar
+            android:id="@+id/profile_avatar_uploading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
-    <ViewSwitcher
+    <RelativeLayout
         android:id="@+id/profile_switcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,33 +35,150 @@
         android:layout_centerHorizontal="true" >
 
         <RelativeLayout
-            android:id="@+id/profile_name_container"
+            android:id="@+id/profile_data_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/profile_email"
-            android:paddingTop="20dp" >
+            android:layout_marginTop="20dp"
+            android:visibility="visible" >
 
-            <TextView
-                android:id="@+id/profile_name"
+            <RelativeLayout
+                android:id="@+id/profile_name_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Janusz" />
+                android:layout_centerHorizontal="true" >
 
-            <TextView
-                android:id="@+id/profile_surname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="Nazwisko" />
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Janusz"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/profile_surname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/profile_name"
+                    android:paddingLeft="10dp"
+                    android:text="Nazwisko"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/profile_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="Email@email.com" />
+                android:layout_below="@+id/profile_name_container"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Email@email.com"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/profile_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_email"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Menszczyzna"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/profile_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_sex"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/selector_accept_button"
+                android:minWidth="100dp"
+                android:text="Edit"
+                android:textColor="@color/profile_accept_text" />
         </RelativeLayout>
-    </ViewSwitcher>
+
+        <RelativeLayout
+            android:id="@+id/profile_edit_data_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:visibility="gone" >
+
+            <EditText
+                android:id="@+id/profile_editName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/hint_name"
+                android:inputType="textPersonName"
+                android:minWidth="200dp" />
+
+            <EditText
+                android:id="@+id/profile_editSurname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/profile_editName"
+                android:layout_below="@+id/profile_editName"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_surname"
+                android:inputType="text"
+                android:minWidth="200dp" />
+
+            <EditText
+                android:id="@+id/profile_editEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/profile_editName"
+                android:layout_below="@+id/profile_editSurname"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress"
+                android:minWidth="200dp" />
+
+            <Spinner
+                android:id="@+id/profile_editSex"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/profile_editName"
+                android:layout_below="@+id/profile_editEmail"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginTop="8dp"
+                android:prompt="@string/choose_sex" />
+
+            <Button
+                android:id="@+id/profile_editBack_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_editSex"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/selector_reject_button"
+                android:minWidth="120dp"
+                android:text="Cancel"
+                android:textColor="@color/profile_reject_text" />
+
+            <Button
+                android:id="@+id/profile_editSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/profile_editBack_btn"
+                android:layout_toRightOf="@+id/profile_editBack_btn"
+                android:background="@drawable/selector_accept_button"
+                android:minWidth="120dp"
+                android:text="Save"
+                android:textColor="@color/profile_accept_text" />
+
+            <ProgressBar
+                android:id="@+id/profile_edit_progress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <com.catchme.utils.FloatingActionButton
         xmlns:fab="http://schemas.android.com/apk/res-auto"
@@ -64,7 +188,6 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/profile_background"
         android:layout_marginTop="-35dp"
-        
         fab:fab_colorNormal="@color/profile_floating_button_base"
         fab:fab_colorPressed="@color/profile_floating_button_pressed"
         fab:fab_icon="@drawable/ic_action_edit" />
@@ -85,7 +208,8 @@
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:text="@string/profile_reject"
-            android:textColor="@color/profile_reject_text" />
+            android:textColor="@color/profile_reject_text"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/profile_accept"
@@ -96,7 +220,8 @@
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:text="@string/profile_accept"
-            android:textColor="@color/profile_accept_text" />
+            android:textColor="@color/profile_accept_text"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>
