@@ -18,16 +18,18 @@ public class ExampleItem {
 	public static final long AVATAR_URL = 3;
 
 	public enum UserSex {
-		UNKNOWN(0, ServerConst.USER_SEX_UNKNOWN), MAN(1,
-				ServerConst.USER_SEX_MALE), WOMAN(2,
-				ServerConst.USER_SEX_FEMALE);
-		UserSex(int val, String stringVal) {
+		UNKNOWN(0, ServerConst.USER_SEX_UNKNOWN, "Unknown"), MAN(1,
+				ServerConst.USER_SEX_MALE, "Man"), WOMAN(2,
+				ServerConst.USER_SEX_FEMALE, "Woman");
+		UserSex(int val, String stringVal, String localVal) {
 			intValue = val;
 			this.stringVal = stringVal;
+			this.localVal = localVal;
 		}
 
 		int intValue;
 		String stringVal;
+		String localVal;
 
 		public int getIntegerValue() {
 			return intValue;
@@ -53,7 +55,7 @@ public class ExampleItem {
 		}
 
 		private String getLocalString() {
-			return localString;
+			return localVal;
 		}
 	}
 
