@@ -46,6 +46,15 @@ public class ExampleItem {
 		public String getStringValue() {
 			return stringVal;
 		}
+
+		public static String[] getStringTable() {
+			return new String[] { UNKNOWN.getLocalString(),
+					MAN.getLocalString(), WOMAN.getLocalString() };
+		}
+
+		private String getLocalString() {
+			return localString;
+		}
 	}
 
 	public enum ContactStateType {

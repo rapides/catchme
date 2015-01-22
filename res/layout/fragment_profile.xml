@@ -177,33 +177,12 @@
                 android:inputType="text"
                 android:minWidth="200dp" />
 
-            <TextView
-                android:id="@+id/profile_emailEditLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/profile_editEmail"
-                android:layout_alignParentLeft="true"
-                android:minWidth="65dp"
-                android:text="Email: "
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <EditText
-                android:id="@+id/profile_editEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/profile_editName"
-                android:layout_below="@+id/profile_editSurname"
-                android:layout_marginTop="8dp"
-                android:hint="@string/hint_email"
-                android:inputType="textEmailAddress"
-                android:minWidth="200dp" />
-
             <Spinner
                 android:id="@+id/profile_editSex"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/profile_editName"
-                android:layout_below="@+id/profile_editEmail"
+                android:layout_below="@+id/profile_editSurname"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="3dp"
                 android:layout_marginRight="3dp"
@@ -249,7 +228,6 @@
                 android:minWidth="65dp"
                 android:text="Gender: "
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
         </RelativeLayout>
     </RelativeLayout>
 

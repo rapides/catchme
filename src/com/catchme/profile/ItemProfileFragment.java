@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.LongSparseArray;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,26 +40,30 @@ import com.catchme.database.model.LoggedUser;
 import com.catchme.database.model.ExampleItem.ContactStateType;
 import com.catchme.database.model.ExampleItem.UserSex;
 import com.catchme.itemdetails.ItemDetailsFragment;
+import com.catchme.loginregister.asynctasks.LoginRegisterInterface;
+import com.catchme.loginregister.asynctasks.PersonalDataTask;
 import com.catchme.profile.asynctasks.UpdateAvatarTask;
 import com.catchme.utils.FloatingActionButton;
 import com.catchme.utils.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ItemProfileFragment extends Fragment implements OnClickListener,
-		ContactChangedState, ImageUploadingListener {
+		ContactChangedState, ImageUploadingListener, LoginRegisterInterface {
 	private View rootView;
 	private ExampleItem item;
-	private boolean isLoggedUser;
+	private boolean isLoggedUser, avatarChanged;
 	public static final int PICK_IMAGE = 0;
 	public static final int PIC_CROP = 1;
 
-	private EditText name, surname, email;
+	private EditText name, surname;
 	private RoundedImageView itemImage;
 	private ProgressBar edit_change, avatar_uploading;
 	private Spinner gender;
 	private RelativeLayout profileEditdata, profileData;
 	private FloatingActionButton avatarChangeBtn;
 	private Drawable originalBackground;
+	private UserSex sex;
+	File avatar;
 
 	public ItemProfileFragment() {
 	}
@@ -106,8 +111,8 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
 				itemImage);
 
-		// RelativeLayout buttonsContainer = (RelativeLayout)
-		// rootView.findViewById(R.id.profile_state_buttons_container);
+		RelativeLayout buttonsContainer = (RelativeLayout) rootView
+				.findViewById(R.id.profile_state_buttons_container);
 
 		txtName.setText(item.getName());
 		txtSurname.setText(item.getSurname());
@@ -117,11 +122,11 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 		// Edit Profile Variables
 		name = (EditText) rootView.findViewById(R.id.profile_editName);
 		surname = (EditText) rootView.findViewById(R.id.profile_editSurname);
-		email = (EditText) rootView.findViewById(R.id.profile_editEmail);
+
 		originalBackground = name.getBackground();
 		name.setText(item.getName(), EditText.BufferType.EDITABLE);
 		surname.setText(item.getSurname(), EditText.BufferType.EDITABLE);
-		email.setText(item.getEmail(), EditText.BufferType.EDITABLE);
+
 		gender = (Spinner) rootView.findViewById(R.id.profile_editSex);
 		String[] items = new String[] { "Choose gender", "Male", "Female" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
@@ -142,26 +147,44 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 		Button editSaveBtn = (Button) rootView
 				.findViewById(R.id.profile_editSave);
 		editSaveBtn.setOnClickListener(this);
-		/*
-		 * if (isLoggedUser) { avatarChangeBtn.setVisibility(View.VISIBLE);
-		 * avatarChangeBtn.setOnClickListener(new OnClickListener() {
-		 * 
-		 * @Override public void onClick(View v) { Intent intent = new Intent();
-		 * intent.setType("image/*");
-		 * intent.setAction(Intent.ACTION_GET_CONTENT); startActivityForResult(
-		 * Intent.createChooser(intent, "Select Picture"), PICK_IMAGE); } });
-		 * buttonsContainer.setVisibility(View.GONE); setHasOptionsMenu(true); }
-		 * else { avatarChangeBtn.setVisibility(View.GONE); if (item.getState()
-		 * == ContactStateType.ACCEPTED) {
-		 * buttonsContainer.setVisibility(View.GONE); } else {
-		 * buttonsContainer.setVisibility(View.VISIBLE); Button accept =
-		 * (Button) rootView .findViewById(R.id.profile_accept); Button reject =
-		 * (Button) rootView .findViewById(R.id.profile_reject);
-		 * accept.setOnClickListener(new ChangeStateButonListener(
-		 * getActivity(), item, this)); reject.setOnClickListener(new
-		 * ChangeStateButonListener( getActivity(), item, this));
-		 * setHasOptionsMenu(true); } }
-		 */
+		editBtn.setVisibility(View.GONE);
+
+		avatarChanged = false;
+
+		if (isLoggedUser) {
+			editBtn.setVisibility(View.VISIBLE);
+			setHasOptionsMenu(true);
+			// avatarChangeBtn.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// Intent intent = new Intent();
+			// intent.setType("image/*");
+			// intent.setAction(Intent.ACTION_GET_CONTENT);
+			// startActivityForResult(
+			// Intent.createChooser(intent, "Select Picture"),
+			// PICK_IMAGE);
+			// }
+			// });
+			// buttonsContainer.setVisibility(View.GONE);
+
+		} else {
+			if (item.getState() == ContactStateType.ACCEPTED) {
+				buttonsContainer.setVisibility(View.GONE);
+			} else {
+				buttonsContainer.setVisibility(View.VISIBLE);
+				Button accept = (Button) rootView
+						.findViewById(R.id.profile_accept);
+				Button reject = (Button) rootView
+						.findViewById(R.id.profile_reject);
+				accept.setOnClickListener(new ChangeStateButonListener(
+						getActivity(), item, this));
+				reject.setOnClickListener(new ChangeStateButonListener(
+						getActivity(), item, this));
+				setHasOptionsMenu(true);
+			}
+		}
+
 		return rootView;
 	}
 
@@ -187,10 +210,40 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 			ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
 					itemImage);
 			profileData.setVisibility(View.VISIBLE);
+			avatarChanged = false;
 
 		}
 		if (v.getId() == R.id.profile_editSave) {
-			validate();
+			if (validate()) {
+				if (gender.getSelectedItemPosition() == 0) {
+					sex = UserSex.UNKNOWN;
+				}
+				if (gender.getSelectedItemPosition() == 1) {
+					sex = UserSex.MAN;
+				}
+				if (gender.getSelectedItemPosition() == 2) {
+					sex = UserSex.WOMAN;
+				}
+
+				if (avatarChanged) {
+					String filePath = avatar.getAbsolutePath();
+					new UpdateAvatarTask(this.getActivity(), this).execute(
+							ItemListActivity.getLoggedUser(getActivity())
+									.getToken(), filePath);
+					new PersonalDataTask(getActivity(), this).execute(
+							ItemListActivity.getLoggedUser(getActivity())
+									.getToken(), name.getText().toString(),
+							surname.getText().toString(), sex.getStringValue(),
+							ServerConst.DATE_FORMAT);
+				} else {
+					new PersonalDataTask(getActivity(), this).execute(
+							ItemListActivity.getLoggedUser(getActivity())
+									.getToken(), name.getText().toString(),
+							surname.getText().toString(), sex.getStringValue(),
+							ServerConst.DATE_FORMAT);
+				}
+
+			}
 		}
 
 	}
@@ -269,7 +322,7 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 			// Create imageDir
 			if (!directory.exists())
 				directory.mkdirs();
-			File avatar = new File(directory, "avatarTemp.jpg");
+			avatar = new File(directory, "avatarTemp.jpg");
 			if (avatar.exists())
 				avatar.delete();
 
@@ -285,17 +338,10 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Toast.makeText(getActivity(),
-					"DEBUG: " + directory.getAbsolutePath(), Toast.LENGTH_LONG)
-					.show();
+
 			ImageLoader.getInstance().displayImage(
-					"file://" + directory.getAbsolutePath() + "/profile.jpg",
-					itemImage);
-			/*
-			 * new UpdateAvatarTask(this.getActivity(), this).execute(
-			 * ItemListActivity.getLoggedUser(getActivity()).getToken(),
-			 * directory.getAbsolutePath() + "/profile.jpg");
-			 */
+					"file://" + avatar.getAbsolutePath(), itemImage);
+			avatarChanged = true;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -341,10 +387,12 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onImageUploaded() {
 		avatar_uploading.setVisibility(View.GONE);
-		item = ItemListActivity.getLoggedUser(getActivity());
-		ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
-				itemImage);
-		Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
+		/*
+		 * item = ItemListActivity.getLoggedUser(getActivity());
+		 * ImageLoader.getInstance().displayImage(item.getLargeImageUrl(),
+		 * itemImage); Toast.makeText(getActivity(), "Done",
+		 * Toast.LENGTH_SHORT).show();
+		 */
 	}
 
 	@Override
@@ -372,11 +420,7 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 
 			}
 				break;
-			case R.id.profile_editEmail: {
-				email.setBackgroundDrawable(originalBackground);
 
-			}
-				break;
 			}
 		}
 
@@ -410,29 +454,48 @@ public class ItemProfileFragment extends Fragment implements OnClickListener,
 
 			errCnt += 1;
 		}
-		if (email.getText() == null || email.getText().toString().length() < 1) {
-			email.setError("E-mail is required!");
-			email.setBackgroundResource(R.drawable.error_frame);
-			email.addTextChangedListener(new watcher(email));
-			errorsString += "E-mail is required! \n";
 
-			errCnt += 1;
-		}
-		if (email.getText().toString().length() > 0
-				&& !android.util.Patterns.EMAIL_ADDRESS.matcher(
-						email.getText().toString()).matches()) {
-			email.setError("E-mail is incorrect!");
-			email.setBackgroundResource(R.drawable.error_frame);
-			email.addTextChangedListener(new watcher(email));
-			errorsString += "E-mail is incorrect! \n";
-
-			errCnt += 1;
-		}
 		if (errCnt > 0) {
 			Toast.makeText(getActivity(), errorsString, Toast.LENGTH_SHORT)
 					.show();
 			return false;
 		}
 		return true;
+	}
+
+	// Profile update operations
+
+	@Override
+	public void onPreExecute() {
+		edit_change.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onCompleted(LoggedUser user) {
+		edit_change.setVisibility(View.GONE);
+
+		Toast.makeText(getActivity(),
+				"Success! Edited user: " + user.getFullName(),
+				Toast.LENGTH_SHORT).show();
+		ItemProfileFragment frag = new ItemProfileFragment();
+		FragmentTransaction transaction = getActivity()
+				.getSupportFragmentManager().beginTransaction();
+		transaction.setCustomAnimations(android.R.anim.fade_in,
+				android.R.anim.fade_out);
+		transaction.replace(R.id.main_fragment_container, frag);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
+	@Override
+	public void onError(LongSparseArray<String> errors) {
+		edit_change.setVisibility(View.GONE);
+		String errorsSring = "";
+		if (errors != null) {
+			for (int i = 0; i < errors.size(); i++) {
+				errorsSring += errors.get(errors.keyAt(i)) + "\n";
+			}
+		}
+		Toast.makeText(getActivity(), errorsSring, Toast.LENGTH_SHORT).show();
 	}
 }

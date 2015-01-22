@@ -19,6 +19,7 @@ import com.catchme.database.CatchmeDatabaseAdapter;
 import com.catchme.loginregister.LoginFragment;
 import com.catchme.messages.MessagesRefreshService;
 import com.catchme.profile.ItemProfileFragment;
+import com.catchme.profile.SettingsFragment;
 
 @SuppressWarnings("deprecation")
 public class DrawerOnItemClickListener implements OnItemClickListener {
@@ -58,11 +59,21 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			((Activity) context).getActionBar().setHomeButtonEnabled(false);
 
 		}
-		if (position == 2) {
+		else if (position == 2) {
 			Toast.makeText(context, "About info", Toast.LENGTH_SHORT).show();
 		}
-		drawerLayout.closeDrawer(drawerList);
-		if (position == 0) {
+		else if (position == 1) {
+			SettingsFragment frag = new SettingsFragment();
+			FragmentTransaction transaction = ((FragmentActivity) context)
+					.getSupportFragmentManager().beginTransaction();
+			transaction.setCustomAnimations(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			transaction.replace(R.id.main_fragment_container, frag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+			drawerToggle.setDrawerIndicatorEnabled(false);
+		}
+		else if (position == 0) {
 			ItemProfileFragment frag = new ItemProfileFragment();
 			FragmentTransaction transaction = ((FragmentActivity) context)
 					.getSupportFragmentManager().beginTransaction();
@@ -73,5 +84,6 @@ public class DrawerOnItemClickListener implements OnItemClickListener {
 			transaction.commit();
 			drawerToggle.setDrawerIndicatorEnabled(false);
 		}
+		drawerLayout.closeDrawer(drawerList);
 	}
 }

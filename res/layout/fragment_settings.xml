@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/settings_data_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" >
+
+        <TextView
+            android:id="@+id/settings_emailLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/settings_email"
+            android:layout_alignParentLeft="true"
+            android:minWidth="95dp"
+            android:text="Email: "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/settings_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/settings_emailLabel"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:minWidth="200dp" />
+
+        <TextView
+            android:id="@+id/settings_passLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/settings_password"
+            android:layout_alignParentLeft="true"
+            android:minWidth="95dp"
+            android:text="Password: "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/settings_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_email"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/settings_passLabel"
+            android:hint="@string/hint_password"
+            android:inputType="textVisiblePassword"
+            android:minWidth="200dp" />
+
+        <TextView
+            android:id="@+id/settings_confpassLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/settings_confPass"
+            android:layout_alignParentLeft="true"
+            android:maxWidth="95dp"
+            android:scrollHorizontally="false"
+            android:text="Confirm Passowrod:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/settings_confPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_password"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/settings_confpassLabel"
+            android:hint="@string/hint_conf_pass"
+            android:inputType="textPassword"
+            android:minWidth="200dp" />
+
+        <ProgressBar
+            android:id="@+id/settings_change"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/settings_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settings_data_container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/settings_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/selector_accept_button"
+            android:minWidth="100dp"
+            android:text="Save"
+            android:textColor="@color/profile_accept_text" />
+    </RelativeLayout>
+
+</RelativeLayout>
